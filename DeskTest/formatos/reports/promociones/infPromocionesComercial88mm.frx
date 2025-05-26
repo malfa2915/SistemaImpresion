@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/10/2024 10:31:16" ReportInfo.Modified="02/19/2025 17:39:25" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="RestPedidos" ReferenceName="RestPedidos" DataType="null" Enabled="true">
+      <Column Name="FechaPedido" DataType="System.String"/>
+      <Column Name="CargoPedido" DataType="System.String"/>
+      <Column Name="Usuario" DataType="System.String"/>
+      <Column Name="Moviliario" DataType="System.String"/>
+      <Column Name="TotalImporte" DataType="System.String"/>
+      <Column Name="Cliente" DataType="System.String"/>
+      <Column Name="DocCliente" DataType="System.String"/>
+      <BusinessObjectDataSource Name="PedidosRestDet" DataType="null" Enabled="true">
+        <Column Name="DescPediDet" DataType="System.String"/>
+        <Column Name="CantidadDet" DataType="System.String"/>
+        <Column Name="Importe" DataType="System.String"/>
+        <Column Name="Precio" DataType="System.String"/>
+        <Column Name="UnidadMedida" DataType="System.String"/>
+        <BusinessObjectDataSource Name="ComplementosRest" DataType="null" Enabled="true">
+          <Column Name="Iddocumento" DataType="System.String"/>
+          <Column Name="IddocumentoDet" DataType="System.String"/>
+          <Column Name="IdComplemento" DataType="System.String"/>
+          <Column Name="NombreComplemento" DataType="System.String"/>
+          <Column Name="CantidadComplemento" DataType="System.String"/>
+          <Column Name="FechaDocumento" DataType="System.String"/>
+          <Column Name="GlosarioComplemento" DataType="System.String"/>
+          <Column Name="UsuarioComplemento" DataType="System.String"/>
+        </BusinessObjectDataSource>
+        <BusinessObjectDataSource Name="CombosRest" DataType="null" Enabled="true">
+          <Column Name="Iddocumento" DataType="System.String"/>
+          <Column Name="IdordenDetalle" DataType="System.String"/>
+          <Column Name="ReferenciBeneficio" DataType="System.String"/>
+          <Column Name="ReferenciaProducto" DataType="System.String"/>
+          <Column Name="Afectaciontributaria" DataType="System.String"/>
+          <Column Name="TipoBeneficio" DataType="System.String"/>
+          <Column Name="TipoExistencia" DataType="System.String"/>
+          <Column Name="Cantidad" DataType="System.String"/>
+          <Column Name="NombreCombo" DataType="System.String"/>
+          <Column Name="DetailCombo" DataType="System.String"/>
+          <Column Name="UnidMedidaCombo" DataType="System.String"/>
+          <Column Name="UnidadComercialIdCombo" DataType="System.String"/>
+          <Column Name="UnidadComercialCombo" DataType="System.String"/>
+          <Column Name="DisCountRateCombo" DataType="System.String"/>
+          <Column Name="DisCountValueCombo" DataType="System.String"/>
+          <Column Name="UnidadComercialContenidoCombo" DataType="System.String"/>
+          <Column Name="PrecioCombo" DataType="System.String"/>
+          <Column Name="TotalCombo" DataType="System.String"/>
+          <Column Name="QtycookCombo" DataType="System.String"/>
+          <Column Name="DisCounValueCombo" DataType="System.String"/>
+        </BusinessObjectDataSource>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Parameter Name="Promociones" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="74" PaperHeight="200" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <ReportTitleBand Name="ReportTitle1" Width="279.72"/>
+    <DataBand Name="Data1" Top="2" Width="279.72" Height="18.9">
+      <TextObject Name="Text24" Left="37.8" Width="198.45" Height="18.9" CanGrow="true" CanShrink="true" Text="[RestPedidos.Moviliario]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 10pt, style=Bold, Underline"/>
+    </DataBand>
+    <DataBand Name="Data5" Top="22.9" Width="279.72" Height="15.88">
+      <TextObject Name="Text18" Left="61.99" Top="5.67" Width="204.12" Height="10.21" Text="[RestPedidos.FechaPedido]" VertAlign="Center" Font="Arial, 7.5pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text17" Left="18.9" Top="5.67" Width="49.14" Height="10.21" Text="FECHA:" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+    </DataBand>
+    <DataBand Name="Data2" Top="40.78" Width="279.72" Height="12.86" CanGrow="true" CanShrink="true" CanBreak="true">
+      <TextObject Name="Text16" Left="18.9" Top="2.65" Width="71.82" Height="10.21" CanGrow="true" CanShrink="true" Text="[RestPedidos.CargoPedido]" VertAlign="Center" Font="Arial, 7.5pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text20" Left="90.34" Top="2.65" Width="156.87" Height="10.21" CanGrow="true" CanShrink="true" Text="[RestPedidos.Usuario]" VertAlign="Center" Font="Arial, 7.5pt, style=Bold" Trimming="Word"/>
+    </DataBand>
+    <DataBand Name="Data6" Top="55.64" Width="279.72" Height="20.79">
+      <TableObject Name="Table2" Left="18.9" Top="1.89" Width="247.59" Height="18.9">
+        <TableColumn Name="Column18" Width="37.8"/>
+        <TableColumn Name="Column20" Width="58.59"/>
+        <TableColumn Name="Column19" Width="151.2"/>
+        <TableRow Name="Row9">
+          <TableCell Name="Cell63" Border.Lines="Bottom" Border.Style="Dash" Text="CANT." HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+          <TableCell Name="Cell65" Border.Lines="Bottom" Border.Style="Dash" Text="U.M." HorzAlign="Center" VertAlign="Center" Font="Arial, 6.5pt, style=Bold"/>
+          <TableCell Name="Cell64" Border.Lines="Bottom" Border.Style="Dash" Text="PRODUCTO" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+    </DataBand>
+    <DataBand Name="Data3" Top="78.43" Width="279.72" Height="20.79" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="PedidosRestDet">
+      <SubreportObject Name="Subreport1" Left="18.9" Top="15.12" Width="245.7" Height="5.67" ReportPage="Page2"/>
+      <TextObject Name="Text25" Left="115.29" Width="151.2" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[RestPedidos.PedidosRestDet.DescPediDet]" Font="Calibri, 9pt, style=Bold"/>
+      <TextObject Name="Text26" Left="18.9" Width="32.13" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.CantidadDet]" Font="Calibri, 9.5pt, style=Bold"/>
+      <TextObject Name="Text27" Left="52.92" Width="60.48" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.UnidadMedida]" Font="Calibri, 6.5pt, style=Bold"/>
+    </DataBand>
+  </ReportPage>
+  <ReportPage Name="Page2" PaperWidth="74" RawPaperSize="191" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <DataBand Name="Data4" Width="279.72" Height="10.21" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="ComplementosRest">
+      <TextObject Name="Text22" Left="52.92" Top="-3.02" Width="217.35" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[RestPedidos.PedidosRestDet.ComplementosRest.NombreComplemento]" Font="Calibri, 9pt, style=Bold"/>
+      <TextObject Name="Text23" Left="9.45" Top="-3.02" Width="41.58" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.ComplementosRest.CantidadComplemento]" Font="Calibri, 9.5pt, style=Bold"/>
+    </DataBand>
+  </ReportPage>
+</Report>

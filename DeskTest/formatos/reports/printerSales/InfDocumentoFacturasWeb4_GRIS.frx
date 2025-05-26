@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/07/2022 18:28:27" ReportInfo.Modified="02/26/2025 10:36:02" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="DocumentoFacturas" ReferenceName="DocumentoFacturas" DataType="null" Enabled="true">
+      <Column Name="SerieFact" DataType="System.String"/>
+      <Column Name="NroSerieFact" DataType="System.String"/>
+      <Column Name="RucCliente" DataType="System.String"/>
+      <Column Name="Cliente" DataType="System.String"/>
+      <Column Name="Direccion" DataType="System.String"/>
+      <Column Name="TipoMoneda" DataType="System.String"/>
+      <Column Name="FechaEmision" DataType="System.String"/>
+      <Column Name="FechaVencimiento" DataType="System.String"/>
+      <Column Name="NumeroPedido" DataType="System.String"/>
+      <Column Name="OrdenCompra" DataType="System.String"/>
+      <Column Name="NumeroGuia" DataType="System.String"/>
+      <Column Name="CondicionPago" DataType="System.String"/>
+      <Column Name="OpGratuitas" DataType="System.String"/>
+      <Column Name="OpExonerada" DataType="System.String"/>
+      <Column Name="OpInafecto" DataType="System.String"/>
+      <Column Name="OpGravada" DataType="System.String"/>
+      <Column Name="TotalDescuento" DataType="System.String"/>
+      <Column Name="ISC" DataType="System.String"/>
+      <Column Name="IGV" DataType="System.String"/>
+      <Column Name="ICBPER" DataType="System.String"/>
+      <Column Name="ImporteTotal" DataType="System.String"/>
+      <Column Name="Obsevaciones" DataType="System.String"/>
+      <Column Name="CodQR" DataType="System.String"/>
+      <Column Name="CodBarra" DataType="System.String"/>
+      <Column Name="Vendedor" DataType="System.String"/>
+      <Column Name="Cajero" DataType="System.String"/>
+      <Column Name="Efectivo" DataType="System.String"/>
+      <Column Name="Vuelto" DataType="System.String"/>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DocumentoFacturaDetalle" DataType="null" Enabled="true">
+        <Column Name="NroItem" DataType="System.String"/>
+        <Column Name="Codigo" DataType="System.String"/>
+        <Column Name="Descripcion" DataType="System.String"/>
+        <Column Name="Unidad" DataType="System.String"/>
+        <Column Name="Cantidad" DataType="System.String"/>
+        <Column Name="PrecioUnitario" DataType="System.String"/>
+        <Column Name="Descuento" DataType="System.String"/>
+        <Column Name="DescuentoImporte" DataType="System.String"/>
+        <Column Name="Importe" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CronogramaPagos" DataType="null" Enabled="true">
+        <Column Name="NroItemCronogramas" DataType="System.String"/>
+        <Column Name="ImporteCronograma" DataType="System.String"/>
+        <Column Name="FechaVencimientoCronograma" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaDolares" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaDolares" DataType="System.String"/>
+        <Column Name="DescripcionCuentaDolares" DataType="System.String"/>
+        <Column Name="DescripcionCCICuentaDolares" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaSoles" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaSoles" DataType="System.String"/>
+        <Column Name="DescripcionCuentaSoles" DataType="System.String"/>
+        <Column Name="DescripcionCCICuentaSoles" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaSoles_Dolares" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaSolesDolares" DataType="System.String"/>
+        <Column Name="DescripcionCuenta_Soles" DataType="System.String"/>
+        <Column Name="DescripcionCCICuenta_Soles" DataType="System.String"/>
+        <Column Name="DescripcionCuenta_Dolares" DataType="System.String"/>
+        <Column Name="DescripcionCCICuenta_Dolares" DataType="System.String"/>
+        <Column Name="AdicionalCuentaSoles" DataType="System.String"/>
+        <Column Name="AdicionalCuentaDolares" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="Direcciones" DataType="null" Enabled="true">
+        <Column Name="DirecionCliente" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DocumentoFacturaDetalleDescuentos" DataType="null" Enabled="true">
+        <Column Name="NroItemDescuentos" DataType="System.String"/>
+        <Column Name="CodigoDescuentos" DataType="System.String"/>
+        <Column Name="DescripcionDescuentos" DataType="System.String"/>
+        <Column Name="UnidadDescuentos" DataType="System.String"/>
+        <Column Name="CantidadDescuentos" DataType="System.String"/>
+        <Column Name="PrecioUnitarioDescuentos" DataType="System.String"/>
+        <Column Name="ImporteDescuentos" DataType="System.String"/>
+        <Column Name="ImporteTotalDescuentos" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="NotaCredito" DataType="null" Enabled="true">
+        <Column Name="DescripNC" DataType="System.String"/>
+        <Column Name="MotivoNC" DataType="System.String"/>
+        <Column Name="TipoNC" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Parameter Name="Comprobante" DataType="System.String"/>
+    <Parameter Name="DescripcionMonto" DataType="System.String"/>
+    <Parameter Name="SimboloMoneda" DataType="System.String"/>
+    <Parameter Name="PieTicket" DataType="System.String"/>
+    <Parameter Name="PieTicket02" DataType="System.String"/>
+    <Parameter Name="SimboloMonedaDescripcion" DataType="System.String"/>
+    <Parameter Name="IGV" DataType="System.String"/>
+    <Parameter Name="Descfactura" DataType="System.String"/>
+    <Parameter Name="ObersvacionDG" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" TopMargin="5" BottomMargin="5" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="CabeceraA4Izq" Width="718.2" Height="126.63">
+      <ShapeObject Name="Shape5" Left="491.4" Top="1.89" Width="207.9" Height="120.96" Shape="RoundRectangle"/>
+      <PictureObject Name="Logo02" Left="18.9" Width="425.15" Height="124.74" SizeMode="StretchImage"/>
+      <TextObject Name="TxtNumRuc2" Left="500.85" Top="7.56" Width="56.7" Height="18.9" Text="R.U.C." Font="Arial, 11pt, style=Bold"/>
+      <TextObject Name="txtDesRuc2" Left="567" Top="7.56" Width="132.3" Height="18.9" Text="[DocumentoFacturas.DatosEmpresa.Ruc]" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text56" Left="493.29" Top="27.22" Width="204.12" Height="68.04" Fill.Color="ControlLight" Text="[Descfactura]" HorzAlign="Center" VertAlign="Center" Font="Arial, 15.5pt, style=Bold"/>
+      <TextObject Name="Text62" Left="500.85" Top="92.61" Width="179.55" Height="28.35" Text="[DocumentoFacturas.SerieFact]" HorzAlign="Center" VertAlign="Center" Font="Arial, 11pt, style=Bold"/>
+      <ShapeObject Name="ShRazonSocial" Left="18.9" Top="9.45" Width="425.25" Height="117.18" Visible="false" Border.ShadowColor="LightGray" Border.Color="White" Border.Width="0" Fill.Color="White"/>
+      <TextObject Name="txtRazonSocialTitulo" Left="28.35" Top="15.12" Width="404.46" Height="94.5" Visible="false" Text="[DocumentoFacturas.DatosEmpresa.RazonSocial]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 15pt, style=Bold"/>
+      <ChildBand Name="dtRazonsocial" Top="129.3" Width="718.2" Height="29.11">
+        <ShapeObject Name="Shape7" Left="9.45" Top="0.76" Width="699.3" Height="28.35" Border.ShadowColor="LightGray" Border.Color="LightGray" Border.Width="0" Fill.Color="ControlLight"/>
+        <TextObject Name="Text28" Left="28.35" Top="1.89" Width="659.61" Height="26.46" Text="[DocumentoFacturas.DatosEmpresa.RazonSocial]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 9.5pt, style=Bold"/>
+        <ChildBand Name="dtNombreComercial" Top="161.07" Width="718.2" Height="17.01" Visible="false">
+          <TextObject Name="txtNombrecomercial" Left="9.45" Top="1.89" Width="680.4" Height="15.12" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[DocumentoFacturas.DatosEmpresa.NombreComercial]" HorzAlign="Center" Font="Arial, 7pt"/>
+          <ChildBand Name="dtdireccionEmpresa02" Top="180.75" Width="718.2" Height="20.79">
+            <TextObject Name="txtDireccionDesc" Left="122.85" Width="567" Height="20.79" Text="[DocumentoFacturas.DatosEmpresa.Domicilio]" VertAlign="Center" Font="Arial, 7.5pt, style=Bold"/>
+            <TextObject Name="Text29" Left="9.45" Top="3.78" Width="109.62" Height="17.01" Text="Domicilio fiscal:" Font="Arial, 8pt"/>
+            <LineObject Name="Line18" Left="680.4" Top="18.9" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+            <ChildBand Name="dtAnexoEmpresa02" Top="204.21" Width="718.2" Height="20.79" Visible="false">
+              <TextObject Name="txtEstablecimientDesc" Left="122.85" Width="567" Height="20.79" Text="[DocumentoFacturas.DatosEmpresa.Domicilio02]" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+              <TextObject Name="txtEstablecimient" Left="9.45" Top="3.78" Width="109.62" Height="17.01" Text="Establ. Anexo" Font="Arial, 8pt"/>
+              <LineObject Name="Line19" Left="680.4" Top="18.9" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+              <ChildBand Name="dttelefonEmpresa02" Top="227.66" Width="718.2" Height="20.79">
+                <LineObject Name="Line20" Left="680.4" Top="18.9" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+                <TextObject Name="Text30" Left="9.45" Top="3.78" Width="109.62" Height="17.01" Text="Telefono:" Font="Arial, 8pt"/>
+                <TextObject Name="txtTelefonoDesc" Left="122.85" Top="3.78" Width="567" Height="17.01" Text="[DocumentoFacturas.DatosEmpresa.Telefeno]&#13;&#10;" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                <ChildBand Name="dtPublicidad" Top="251.12" Width="718.2" Height="22.68" Visible="false">
+                  <TextObject Name="txtPublicidad" Left="9.45" Top="3.78" Width="686.07" Height="18.9" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[DocumentoFacturas.DatosEmpresa.Publicidad]" AutoWidth="true" Font="Arial, 7.5pt, style=Bold" Trimming="EllipsisWord"/>
+                  <LineObject Name="Line21" Left="680.4" Top="20.79" Width="-670.95" Border.Color="DimGray" Diagonal="true"/>
+                  <ChildBand Name="dtDatosGeneCliente" Top="276.47" Width="718.2" Height="103.95">
+                    <ShapeObject Name="Shape3" Left="9.45" Top="1.13" Width="699.3" Height="37.8" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+                    <TextObject Name="Text63" Left="37.8" Top="18.9" Width="179.55" Height="17.01" Text="[DocumentoFacturas.FechaEmision]&#13;&#10;" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                    <TextObject Name="Text64" Left="283.5" Top="18.9" Width="160.65" Height="17.01" Text="[DocumentoFacturas.CondicionPago]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                    <TextObject Name="Text65" Left="548.1" Top="18.9" Width="122.85" Height="17.01" Text="[DocumentoFacturas.TipoMoneda]&#13;&#10;" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                    <LineObject Name="Line1" Left="236.25" Top="4.73" Height="30.24" Border.Color="Gray" Diagonal="true"/>
+                    <LineObject Name="Line17" Left="519.75" Top="4.73" Height="30.24" Border.Color="Gray" Diagonal="true"/>
+                    <TextObject Name="Text7" Left="37.8" Top="1.89" Width="179.55" Height="17.01" Text="Fecha de Emision:" HorzAlign="Center" VertAlign="Center" Font="Arial, 8.5pt"/>
+                    <TextObject Name="Text8" Left="292.95" Top="1.89" Width="151.2" Height="17.01" Text="Condición de Pago" HorzAlign="Center" Font="Arial, 8.5pt"/>
+                    <TextObject Name="Text9" Left="557.55" Top="1.89" Width="94.5" Height="18.9" Text="Moneda:" HorzAlign="Center" Font="Arial, 8.5pt"/>
+                    <ShapeObject Name="Shape4" Left="9.45" Top="39.69" Width="699.3" Height="64.26" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+                    <TextObject Name="Text67" Left="28.35" Top="37.8" Width="302.4" Height="20.79" Text="[DocumentoFacturas.RucCliente]&#13;&#10;" VertAlign="Center" Font="Segoe UI, 8.5pt, style=Bold"/>
+                    <LineObject Name="Line6" Left="670.95" Top="58.97" Width="-548.1" Border.Color="DimGray" Diagonal="true"/>
+                    <TextObject Name="Text16" Left="28.35" Top="56.7" Width="85.05" Height="18.9" Text="CLIENTE:" VertAlign="Center" Font="Arial, 9pt" LineHeight="7"/>
+                    <TextObject Name="txtDireccion" Left="122.85" Top="81.27" Width="585.9" Height="20.79" Text="[DocumentoFacturas.Direccion]" VertAlign="Center" Font="Segoe UI, 7.3pt, style=Bold"/>
+                    <TextObject Name="Text68" Left="122.85" Top="58.59" Width="557.55" Height="22.68" Text="[DocumentoFacturas.Cliente]&#13;&#10;" VertAlign="Center" Font="Segoe UI, 7.3pt, style=Bold"/>
+                    <TextObject Name="txtDireccionCab" Left="28.35" Top="79.38" Width="94.5" Height="18.9" Text="DIRECCION:" VertAlign="Center" Font="Arial, 9pt" LineHeight="7"/>
+                    <LineObject Name="Line7" Left="670.95" Top="83.16" Width="-548.1" Border.Color="DimGray" Diagonal="true"/>
+                    <ChildBand Name="CNC" Top="383.08" Width="718.2" Height="47.25" Visible="false">
+                      <ShapeObject Name="Shape11" Left="9.45" Top="0.76" Width="699.3" Height="46.49" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+                      <LineObject Name="Line28" Left="207.9" Top="10.4" Height="30.24" Border.Color="Gray" Diagonal="true"/>
+                      <LineObject Name="Line29" Left="472.5" Top="10.4" Height="30.24" Border.Color="Gray" Diagonal="true"/>
+                      <TextObject Name="Text116" Left="18.9" Top="6.43" Width="179.55" Height="12.47" Text="TIPO DE NC" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt"/>
+                      <TextObject Name="Text117" Left="207.9" Top="6.43" Width="255.15" Height="12.47" Text="DATOS DEL DOCUMENTO QUE MODIFICA" HorzAlign="Center" Font="Arial, 8pt"/>
+                      <TextObject Name="Text119" Left="481.95" Top="6.43" Width="179.55" Height="12.47" Text="MOTIVO" HorzAlign="Center" Font="Arial, 8pt"/>
+                      <TextObject Name="Text121" Left="207.9" Top="20.79" Width="255.15" Height="25.7" Text="[DocumentoFacturas.NotaCredito.DescripNC]" HorzAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+                      <TextObject Name="Text120" Left="18.9" Top="20.03" Width="179.55" Height="20.79" Text="[DocumentoFacturas.NotaCredito.TipoNC]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                      <TextObject Name="Text123" Left="472.5" Top="18.9" Width="226.8" Height="20.79" Text="[DocumentoFacturas.NotaCredito.MotivoNC]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold"/>
+                      <ChildBand Name="EncabezadoDetfactura" Top="433" Width="718.2" Height="18.52">
+                        <ShapeObject Name="Shape10" Left="9.45" Top="1.51" Width="699.3" Height="17.01" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+                        <LineObject Name="Line23" Left="434.7" Top="3.4" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <LineObject Name="Line24" Left="491.4" Top="3.4" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <LineObject Name="Line25" Left="538.65" Top="3.4" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <LineObject Name="Line27" Left="642.6" Top="3.4" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <TextObject Name="Text110" Left="189" Top="4.16" Width="94.5" Height="12.85" Text="DESCRIPCIÓN&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <TextObject Name="Text111" Left="434.7" Top="4.16" Width="56.7" Height="12.85" Text="UNIDAD&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <TextObject Name="Text112" Left="491.4" Top="4.16" Width="47.25" Height="12.85" Text="CANT.&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <TextObject Name="Text113" Left="595.35" Top="4.16" Width="56.7" Height="12.85" Text="DESC." HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <TextObject Name="Text115" Left="642.6" Top="4.16" Width="66.15" Height="12.85" Text="IMPORTE" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <TextObject Name="Text129" Left="538.65" Top="4.16" Width="56.7" Height="12.85" Text="P. UNIT.&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                        <LineObject Name="Line33" Left="593.46" Top="3.4" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <LineObject Name="Line34" Left="103.95" Top="1.51" Height="15.12" Border.Color="Gray" Diagonal="true"/>
+                        <TextObject Name="Text131" Left="18.9" Top="4.16" Width="56.7" Height="12.85" Text="CÓD.&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+                      </ChildBand>
+                    </ChildBand>
+                  </ChildBand>
+                </ChildBand>
+              </ChildBand>
+            </ChildBand>
+          </ChildBand>
+        </ChildBand>
+      </ChildBand>
+    </PageHeaderBand>
+    <DataBand Name="DocFacDet" Top="454.19" Width="718.2" Height="13.23" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="DocumentoFacturaDetalle">
+      <TextObject Name="Text41" Left="105.84" Width="313.74" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.Descripcion]" Font="Book Antiqua, 10.8pt, style=Bold"/>
+      <TextObject Name="Text43" Left="420.34" Width="79.38" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.Unidad]" Font="Book Antiqua, 9pt"/>
+      <TextObject Name="Text44" Left="499.72" Width="45.36" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.Cantidad]" Font="Book Antiqua, 9.5pt"/>
+      <TextObject Name="Text45" Left="543.56" Width="54.81" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.PrecioUnitario]" Font="Book Antiqua, 9.5pt"/>
+      <TextObject Name="Text47" Left="644.49" Width="66.15" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.Importe]" Font="Book Antiqua, 9.5pt"/>
+      <TextObject Name="Text130" Left="593.46" Width="54.81" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.DescuentoImporte]" Font="Book Antiqua, 9.5pt"/>
+      <TextObject Name="Text132" Left="9.45" Top="1.89" Width="98.28" Height="11.34" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturas.DocumentoFacturaDetalle.Codigo]" Font="Book Antiqua, 7.4pt, style=Bold"/>
+    </DataBand>
+    <DataBand Name="DetCronogrPagos" Top="510.55" Width="718.2" Height="17.01" DataSource="CronogramaPagos">
+      <TableObject Name="Table10" Left="9.45" Width="248.35" Height="17.01">
+        <TableColumn Name="Column55" Width="45.26"/>
+        <TableColumn Name="Column56" Width="76.81"/>
+        <TableColumn Name="Column57" Width="126.28"/>
+        <TableRow Name="Row18" Height="17.01">
+          <TableCell Name="CellCuotaDesc" Text="[DocumentoFacturas.CronogramaPagos.NroItemCronogramas]" Font="Arial, 8pt, style=Bold" TextFill.Color="64, 64, 64"/>
+          <TableCell Name="CellCroImportDesc" Text="[DocumentoFacturas.CronogramaPagos.ImporteCronograma]" Font="Arial, 8pt, style=Bold" TextFill.Color="64, 64, 64"/>
+          <TableCell Name="CellFechaVenciDesc" Text="[DocumentoFacturas.CronogramaPagos.FechaVencimientoCronograma]" Font="Arial, 8pt, style=Bold" TextFill.Color="64, 64, 64"/>
+        </TableRow>
+      </TableObject>
+      <DataHeaderBand Name="DhCronogPagos" Top="470.08" Width="718.2" Height="37.8">
+        <ShapeObject Name="Shape12" Left="9.45" Top="5.67" Width="226.8" Height="17.01" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+        <TextObject Name="Text124" Left="37.8" Top="6.8" Width="170.1" Height="15.12" Text="CRONOGRAMA DE PAGOS" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+        <TableObject Name="Table12" Left="9.45" Top="22.68" Width="236.2" Height="15.12" Fill.Color="WhiteSmoke">
+          <TableColumn Name="Column97" Width="58.25"/>
+          <TableColumn Name="Column98" Width="63"/>
+          <TableColumn Name="Column99" Width="114.95"/>
+          <TableRow Name="Row40" Height="15.12">
+            <TableCell Name="Cell231" Text="CUOTA" Font="Arial, 9pt"/>
+            <TableCell Name="Cell232" Text="IMPORTE" Font="Arial, 8pt"/>
+            <TableCell Name="Cell233" Text="F. VENCIMIENTO" Font="Arial, 9.5pt"/>
+          </TableRow>
+        </TableObject>
+      </DataHeaderBand>
+    </DataBand>
+    <DataBand Name="Monto" Top="530.23" Width="718.2" Height="140.99" Visible="false" PrintOnBottom="true">
+      <ShapeObject Name="Shape16" Left="9.45" Top="25.7" Width="699.3" Height="115.29" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <ShapeObject Name="Shape14" Left="189" Top="75.6" Width="217.35" Height="15.12" Visible="false" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TableObject Name="TGravado" Left="434.7" Top="28.35" Width="264.55" Height="81.27" Border.ShadowColor="Silver" Border.Lines="All" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column1" Width="118.1"/>
+        <TableColumn Name="Column90" Width="56.7"/>
+        <TableColumn Name="Column2" Width="89.75"/>
+        <TableRow Name="Row1" Height="13.23">
+          <TableCell Name="Cell1" Border.Lines="Bottom" Border.Color="LightGray" Text="OP. GRAVADAS" Font="Arial, 8pt"/>
+          <TableCell Name="Cell188" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell2" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.OpGravada]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row2" Height="13.23">
+          <TableCell Name="Cell6" Border.Lines="Bottom" Border.Color="LightGray" Text="OP. GRATUITAS" Font="Arial, 8pt"/>
+          <TableCell Name="Cell189" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell7" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.OpGratuitas]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row3" Height="13.23">
+          <TableCell Name="Cell11" Border.Lines="Bottom" Border.Color="LightGray" Text="OP. EXONERADAS" Font="Arial, 8pt"/>
+          <TableCell Name="Cell190" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell12" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.OpExonerada]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row4" Height="13.23">
+          <TableCell Name="Cell16" Border.Lines="Bottom" Border.Color="Gray" Text="I.G.V.   [IGV]" Font="Arial, 8pt"/>
+          <TableCell Name="Cell191" Border.Lines="Bottom" Border.Color="Gray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell17" Border.Lines="Bottom" Border.Color="Gray" Text="[DocumentoFacturas.IGV]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row58" Height="13.23">
+          <TableCell Name="Cell272" Border.Lines="Bottom" Border.Color="Gray" Text="DESCUENTO:" Font="Arial, 8pt"/>
+          <TableCell Name="Cell273" Border.Lines="Bottom" Border.Color="Gray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell274" Border.Lines="Bottom" Border.Color="Gray" Text="[DocumentoFacturas.TotalDescuento]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row27" Height="15.12">
+          <TableCell Name="Cell192" Border.Lines="Bottom" Border.Color="LightGray" Text="TOTAL VENTA" Font="Arial, 9pt, style=Bold"/>
+          <TableCell Name="Cell193" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell194" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.ImporteTotal]" Font="Arial, 9pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="txtDescMontoGr" Left="63.15" Top="5.67" Width="582.12" Height="17.01" Text="[DescripcionMonto]" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="txtSonGr" Left="18.9" Top="5.67" Width="34.02" Height="17.01" Text="Son:" Font="Arial, 9pt, style=Bold"/>
+      <LineObject Name="Line30" Left="9.45" Top="1.51" Width="699.3" Border.Color="ActiveBorder" Border.Width="2" Diagonal="true"/>
+      <ShapeObject Name="Shape13" Left="189" Top="28.35" Width="217.35" Height="15.12" Visible="false" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="txtCuentSoles" Left="207.9" Top="29.48" Width="170.1" Height="15.12" Visible="false" Text="CUENTA EN SOLES:" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TableObject Name="TSoles01" Left="189" Top="41.58" Width="226.81" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column94" Width="226.81"/>
+        <TableRow Name="Row37" Height="17.01">
+          <TableCell Name="Cell222" Fill.Color="White" Text="[DocumentoFacturas.CuentaSoles.DescripcionCuentaSoles]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TSoles02" Left="189" Top="58.59" Width="226.81" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column102" Width="226.81"/>
+        <TableRow Name="Row42" Height="17.01">
+          <TableCell Name="Cell236" Fill.Color="White" Text="[DocumentoFacturas.CuentaSoles.DescripcionCCICuentaSoles]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TDolares01" Left="189" Top="90.72" Width="226.8" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column101" Width="226.8"/>
+        <TableRow Name="Row41" Height="17.01">
+          <TableCell Name="Cell235" Fill.Color="White" Text="[DocumentoFacturas.CuentaDolares.DescripcionCuentaDolares]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TDolares02" Left="189" Top="107.73" Width="226.8" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column103" Width="226.8"/>
+        <TableRow Name="Row43" Height="17.01">
+          <TableCell Name="Cell237" Fill.Color="White" Text="[DocumentoFacturas.CuentaDolares.DescripcionCCICuentaDolares]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="txtCuentDolares" Left="226.8" Top="77.49" Width="151.2" Height="15.12" Visible="false" Text="CUENTA EN DOLARES:" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TableObject Name="TVuelto" Left="434.7" Top="109.62" Width="264.55" Height="26.46" Border.ShadowColor="Silver" Border.Lines="All" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column108" Width="118.1"/>
+        <TableColumn Name="Column109" Width="56.7"/>
+        <TableColumn Name="Column110" Width="89.75"/>
+        <TableRow Name="Row53" Height="13.23">
+          <TableCell Name="Cell257" Border.Lines="Bottom" Border.Color="LightGray" Text="EFECTIVO" Font="Arial, 8pt"/>
+          <TableCell Name="Cell258" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell259" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.Efectivo]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row54" Height="13.23">
+          <TableCell Name="Cell260" Text="VUELTO" Font="Arial, 8pt"/>
+          <TableCell Name="Cell261" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell262" Text="[DocumentoFacturas.Vuelto]" Font="Arial, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <PictureObject Name="CodQRDes" Left="30.24" Top="26.46" Width="122.85" Height="92.61" SizeMode="StretchImage" Image="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"/>
+      <TextObject Name="txtPagSPK" Left="18.9" Top="117.18" Width="149.31" Height="18.9" Text="Consulte su documento electrónico en: https://spk.com.pe/ClienteExt" HorzAlign="Center" Font="Arial, 6pt"/>
+    </DataBand>
+    <DataBand Name="MontoTota" Top="673.88" Width="718.2" Height="86.18" Visible="false" PrintOnBottom="true">
+      <ShapeObject Name="Shape17" Left="9.45" Top="24.57" Width="699.3" Height="61.61" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TableObject Name="TSGravado" Left="463.05" Top="27.59" Width="240.95" Height="28.35" Border.Lines="All" Border.Color="DimGray" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column91" Width="94.5"/>
+        <TableColumn Name="Column92" Width="56.7"/>
+        <TableColumn Name="Column93" Width="89.75"/>
+        <TableRow Name="Row59" Height="13.23">
+          <TableCell Name="Cell275" Border.Lines="Bottom" Border.Color="LightGray" Text="DESCUENTO:" Font="Arial, 8pt"/>
+          <TableCell Name="Cell276" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell277" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.TotalDescuento]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row34" Height="15.12">
+          <TableCell Name="Cell213" Border.Lines="Bottom" Border.Color="LightGray" Text="TOTAL VENTA&#13;&#10;" Font="Arial, 9pt, style=Bold"/>
+          <TableCell Name="Cell214" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell215" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.ImporteTotal]" Font="Arial, 9.5pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="Text125" Left="63.15" Top="4.16" Width="582.12" Height="17.01" Text="[DescripcionMonto]" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text126" Left="18.9" Top="4.16" Width="34.02" Height="17.01" Text="Son:" Font="Arial, 9pt, style=Bold"/>
+      <LineObject Name="Line31" Left="9.45" Width="699.3" Border.Color="ActiveBorder" Border.Width="2" Diagonal="true"/>
+      <ShapeObject Name="Shape21" Left="236.25" Top="28.35" Width="217.35" Height="15.12" Visible="false" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <ShapeObject Name="Shape22" Left="18.9" Top="28.35" Width="217.35" Height="15.12" Visible="false" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="txtCuentSolesNota" Left="37.8" Top="30.24" Width="170.1" Height="15.12" Visible="false" Text="CUENTA EN SOLES:" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TableObject Name="TSolesNota02" Left="18.9" Top="60.48" Width="217.36" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column105" Width="217.36"/>
+        <TableRow Name="Row45" Height="17.01">
+          <TableCell Name="Cell239" Fill.Color="White" Text="[DocumentoFacturas.CuentaSoles.DescripcionCCICuentaSoles]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TDolaresNota01" Left="236.25" Top="43.47" Width="217.35" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column106" Width="217.35"/>
+        <TableRow Name="Row46" Height="17.01">
+          <TableCell Name="Cell240" Fill.Color="White" Text="[DocumentoFacturas.CuentaDolares.DescripcionCuentaDolares]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TDolaresNota02" Left="236.25" Top="60.48" Width="217.35" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column107" Width="217.35"/>
+        <TableRow Name="Row47" Height="17.01">
+          <TableCell Name="Cell241" Fill.Color="White" Text="[DocumentoFacturas.CuentaDolares.DescripcionCCICuentaDolares]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <TextObject Name="txtCuentDolaresNota" Left="274.05" Top="30.24" Width="151.2" Height="15.12" Visible="false" Text="CUENTA EN DOLARES:" HorzAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TableObject Name="TSVuelto" Left="463.05" Top="55.94" Width="240.95" Height="26.46" Border.ShadowColor="Silver" Border.Lines="All" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column111" Width="94.5"/>
+        <TableColumn Name="Column112" Width="56.7"/>
+        <TableColumn Name="Column113" Width="89.75"/>
+        <TableRow Name="Row55" Height="13.23">
+          <TableCell Name="Cell263" Border.Lines="Bottom" Border.Color="LightGray" Text="EFECTIVO" Font="Arial, 8pt"/>
+          <TableCell Name="Cell264" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell265" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.Efectivo]" Font="Arial, 8pt"/>
+        </TableRow>
+        <TableRow Name="Row56" Height="13.23">
+          <TableCell Name="Cell266" Text="VUELTO" Font="Arial, 8pt"/>
+          <TableCell Name="Cell267" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <TableCell Name="Cell268" Text="[DocumentoFacturas.Vuelto]" Font="Arial, 8pt"/>
+        </TableRow>
+      </TableObject>
+      <TableObject Name="TSolesNota01" Left="18.9" Top="43.47" Width="217.36" Height="17.01" Visible="false" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column117" Width="217.36"/>
+        <TableRow Name="Row60" Height="17.01">
+          <TableCell Name="Cell278" Fill.Color="White" Text="[DocumentoFacturas.CuentaSoles.DescripcionCuentaSoles]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+    </DataBand>
+    <DataBand Name="MontoPedido" Top="762.73" Width="718.2" Height="52.92" Visible="false" PrintOnBottom="true">
+      <TextObject Name="Text127" Left="63.15" Top="5.67" Width="582.12" Height="17.01" Text="[DescripcionMonto]" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="Text128" Left="18.9" Top="5.67" Width="34.02" Height="17.01" Text="Son:" Font="Arial, 9pt, style=Bold"/>
+      <ShapeObject Name="Shape23" Left="9.45" Top="24.57" Width="699.3" Height="24.57" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TableObject Name="Table13" Left="18.9" Top="27.59" Width="240.95" Height="15.12" Border.Lines="All" Border.Color="DimGray" Fill.Color="WhiteSmoke">
+        <TableColumn Name="Column114" Width="94.5"/>
+        <TableColumn Name="Column115" Width="56.7"/>
+        <TableColumn Name="Column116" Width="89.75"/>
+        <TableRow Name="Row57" Height="15.12">
+          <TableCell Name="Cell269" Border.Lines="Bottom" Border.Color="LightGray" Text="TOTAL VENTA&#13;&#10;" Font="Arial, 9pt, style=Bold"/>
+          <TableCell Name="Cell270" Border.Lines="Bottom" Border.Color="LightGray" Text="[SimboloMoneda]" HorzAlign="Center" Font="Arial, 9pt"/>
+          <TableCell Name="Cell271" Border.Lines="Bottom" Border.Color="LightGray" Text="[DocumentoFacturas.ImporteTotal]" Font="Arial, 9.5pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <LineObject Name="Line32" Left="9.45" Width="699.3" Border.Color="ActiveBorder" Border.Width="2" Diagonal="true"/>
+    </DataBand>
+    <ColumnFooterBand Name="FootLogo" Top="818.32" Width="718.2" Height="56.7" Visible="false">
+      <PictureObject Name="LogoFood" Left="9.45" Width="689.75" Height="56.7" SizeMode="StretchImage"/>
+    </ColumnFooterBand>
+    <PageFooterBand Name="FoodPag" Top="877.68" Width="718.2" Height="126.63" CanShrink="true">
+      <ShapeObject Name="Shape18" Left="429.03" Top="1.89" Width="283.5" Height="124.74" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <ShapeObject Name="Shape20" Left="11.34" Top="1.89" Width="415.8" Height="124.74" Border.Color="ActiveBorder" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="txtObservacionesDesc" Left="18.9" Top="18.14" Width="402.57" Height="102.06" CanGrow="true" CanShrink="true" Text="[ObersvacionDG]" Font="Arial, 8pt"/>
+      <TextObject Name="txtTituloObervaciones" Left="182.55" Top="3.02" Width="109.62" Height="13.99" Text="Observaciones:" Font="Arial, 9pt, style=Bold, Underline"/>
+      <TextObject Name="txtDesFood03" Left="437.7" Top="102.06" Width="260.82" Height="15.12" CanGrow="true" CanShrink="true" Text="[DocumentoFacturas.DatosEmpresa.DescripcionFoot03]" HorzAlign="Center" Font="Arial, 7.5pt"/>
+      <TextObject Name="txtVendedorDesc" Left="438.48" Top="43.85" Width="260.82" Height="13.23" CanGrow="true" CanShrink="true" Text="[DocumentoFacturas.Vendedor]" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+      <TextObject Name="txtVendedor" Left="456.6" Top="26.46" Width="66.15" Height="13.23" CanGrow="true" CanShrink="true" Text="Vendedor:" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="txtFootMensaje02" Left="442.26" Top="9.45" Width="260.82" Height="10.58" Visible="false" CanGrow="true" CanShrink="true" Text="CANJEAR POR FACTURA O BOLETA DE VENTA" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="txtCajerName" Left="456.6" Top="59.72" Width="51.03" Height="13.23" Visible="false" CanGrow="true" CanShrink="true" Text="Cajero:" VertAlign="Center" Font="Arial, 9pt"/>
+      <TextObject Name="txtcajeroDet" Left="438.48" Top="75.6" Width="260.82" Height="13.23" Visible="false" CanGrow="true" CanShrink="true" Text="[DocumentoFacturas.Cajero]" VertAlign="Center" Font="Arial, 7pt, style=Bold"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

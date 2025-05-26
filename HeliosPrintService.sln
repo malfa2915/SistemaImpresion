@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.32413.511
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeskTest", "DeskTest\DeskTest.csproj", "{FA4994D5-0FBB-4A65-858F-DF5A53C992D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HeliosPrintService", "HeliosPrintService\HeliosPrintService.csproj", "{E23C2E61-021E-4146-B5F0-9169CC8D0F20}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CallWinform", "CallWinform\CallWinform.csproj", "{CBBDEA6A-48B6-42C8-AF44-FAAB04C0A3B0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA4994D5-0FBB-4A65-858F-DF5A53C992D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA4994D5-0FBB-4A65-858F-DF5A53C992D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA4994D5-0FBB-4A65-858F-DF5A53C992D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA4994D5-0FBB-4A65-858F-DF5A53C992D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E23C2E61-021E-4146-B5F0-9169CC8D0F20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E23C2E61-021E-4146-B5F0-9169CC8D0F20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E23C2E61-021E-4146-B5F0-9169CC8D0F20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E23C2E61-021E-4146-B5F0-9169CC8D0F20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CBBDEA6A-48B6-42C8-AF44-FAAB04C0A3B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBBDEA6A-48B6-42C8-AF44-FAAB04C0A3B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBBDEA6A-48B6-42C8-AF44-FAAB04C0A3B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBBDEA6A-48B6-42C8-AF44-FAAB04C0A3B0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {15285831-644F-48BB-BA48-B4D421EAFC4D}
+	EndGlobalSection
+EndGlobal

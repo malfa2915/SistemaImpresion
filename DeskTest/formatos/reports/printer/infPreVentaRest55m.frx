@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="07/19/2022 17:38:47" ReportInfo.Modified="04/15/2024 21:50:58" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="RestPedidos" ReferenceName="RestPedidos" DataType="null" Enabled="true">
+      <Column Name="FechaPedido" DataType="System.String"/>
+      <Column Name="CargoPedido" DataType="System.String"/>
+      <Column Name="Usuario" DataType="System.String"/>
+      <Column Name="Moviliario" DataType="System.String"/>
+      <Column Name="TotalImporte" DataType="System.String"/>
+      <Column Name="Cliente" DataType="System.String"/>
+      <Column Name="DocCliente" DataType="System.String"/>
+      <BusinessObjectDataSource Name="PedidosRestDet" DataType="null" Enabled="true">
+        <Column Name="DescPediDet" DataType="System.String"/>
+        <Column Name="CantidadDet" DataType="System.String"/>
+        <Column Name="Importe" DataType="System.String"/>
+        <Column Name="Precio" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="54" PaperHeight="1000" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <ReportTitleBand Name="ReportTitle1" Width="204.12" Height="100.93">
+      <TextObject Name="Text12" Left="9.45" Top="58.59" Width="43.47" Height="10.21" Text="USUARIO:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+      <TextObject Name="Text16" Left="52.54" Top="58.59" Width="130.41" Height="10.21" Text="[RestPedidos.Usuario]" VertAlign="Center" Font="Segoe UI, 5.9pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text21" Left="45.36" Top="9.45" Width="94.5" Height="10.21" Text="PRE VENTA" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 8pt, style=Bold, Underline"/>
+      <TextObject Name="Text24" Left="11.34" Top="30.24" Width="160.65" Height="19.66" Text="[RestPedidos.Moviliario]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 8.5pt, style=Bold, Underline"/>
+      <TextObject Name="Text19" Left="9.45" Top="71.82" Width="43.47" Height="10.21" Text="CARGO:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+      <TextObject Name="Text20" Left="52.54" Top="71.82" Width="130.41" Height="10.21" Text="[RestPedidos.CargoPedido]" VertAlign="Center" Font="Segoe UI, 5.9pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text17" Left="9.45" Top="85.05" Width="43.47" Height="10.21" Text="FECHA:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+      <TextObject Name="Text18" Left="52.54" Top="85.05" Width="130.41" Height="10.21" Text="[RestPedidos.FechaPedido]" VertAlign="Center" Font="Segoe UI, 5.9pt, style=Bold" Trimming="Word"/>
+    </ReportTitleBand>
+    <DataBand Name="DPedidos" Top="128.37" Width="204.12" Height="27.59" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="PedidosRestDet">
+      <TextObject Name="Text22" Left="9.45" Width="177.66" Height="15.12" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[RestPedidos.PedidosRestDet.DescPediDet]" Font="Segoe UI, 6.8pt" Trimming="Word"/>
+      <TextObject Name="Text23" Left="145.06" Top="16.25" Width="41.58" Height="11.34" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.Importe]" HorzAlign="Right" Font="Segoe UI, 6.8pt"/>
+      <TextObject Name="Text25" Left="58.97" Top="16.25" Width="41.58" Height="11.34" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.CantidadDet]" HorzAlign="Center" Font="Segoe UI, 6.8pt"/>
+      <TextObject Name="Text28" Left="102.06" Top="16.25" Width="41.58" Height="11.34" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.Precio]" HorzAlign="Center" Font="Segoe UI, 6.8pt"/>
+      <DataHeaderBand Name="DHeaderPedidos" Top="102.93" Width="204.12" Height="23.44">
+        <TableObject Name="TEncabezadoDet" Left="9.45" Width="177.97" Height="23.44">
+          <TableColumn Name="Column7" Width="36.21"/>
+          <TableColumn Name="Column8" Width="27.97"/>
+          <TableColumn Name="Column9" Width="0"/>
+          <TableColumn Name="Column10" Width="31"/>
+          <TableColumn Name="Column11" Width="38.56"/>
+          <TableColumn Name="Column12" Width="44.23"/>
+          <TableRow Name="Row6" Height="11.34">
+            <TableCell Name="CellDescrip" Border.Lines="Top" Border.Width="0.5" Text="DESCRIPCION" VertAlign="Center" Font="Arial, 6pt, style=Bold" ColSpan="3"/>
+            <TableCell Name="Cell49" Border.Lines="Top" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt"/>
+            <TableCell Name="Cell50" Border.Lines="Top" Border.Width="0.5" Font="Arial, 5pt"/>
+            <TableCell Name="Cell51" Border.Lines="Top" Border.Width="0.5" Font="Arial, 10pt"/>
+            <TableCell Name="Cell52" Border.Lines="Top" Border.Width="0.5" Font="Arial, 10pt"/>
+            <TableCell Name="Cell53" Border.Lines="Top" Border.Width="0.5" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt"/>
+          </TableRow>
+          <TableRow Name="Row7" Height="12.1">
+            <TableCell Name="CellUnidad" Border.Lines="Bottom" Border.Style="Dash" VertAlign="Center" Font="Arial, 6pt, style=Bold" ColSpan="3"/>
+            <TableCell Name="Cell55" Font="Arial, 10pt, style=Bold"/>
+            <TableCell Name="Cell56" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+            <TableCell Name="CellCant" Border.Lines="Top, Bottom" Border.LeftLine.Style="Dash" Border.TopLine.Color="Transparent" Border.TopLine.Style="Dash" Border.RightLine.Style="Dash" Border.BottomLine.Style="Dash" Text="CANT." HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+            <TableCell Name="CellPrecio" Border.Lines="Bottom" Border.Style="Dash" Text="PRECIO" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+            <TableCell Name="CellTotal" Border.Lines="Bottom" Border.Style="Dash" Text="IMPORTE" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+          </TableRow>
+        </TableObject>
+      </DataHeaderBand>
+    </DataBand>
+    <DataBand Name="Dtotal" Top="157.96" Width="204.12" Height="17.01">
+      <TextObject Name="txtTotalventa" Left="18.9" Top="7.56" Width="86.94" Height="9.45" Text="IMPORTE TOTAL" Font="Arial, 6pt"/>
+      <TextObject Name="txtTotalventaDesc" Left="120.49" Top="7.56" Width="66.15" Height="9.45" Text="[RestPedidos.TotalImporte]" HorzAlign="Right" Font="Arial, 7pt, style=Bold"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="176.97" Width="204.12" Height="78.62">
+      <TextObject Name="Text26" Left="9.45" Top="28.35" Width="54.81" Height="10.21" Text="Nro. DOC" VertAlign="Center" Font="Segoe UI, 6.5pt, style=Bold"/>
+      <LineObject Name="Line14" Left="75.6" Top="34.02" Width="117.18" Border.Color="Gray" Border.Style="Dash" Border.Width="2" Diagonal="true"/>
+      <TextObject Name="Text27" Left="9.45" Top="64.26" Width="45.36" Height="14.36" Text="CLIENTE" VertAlign="Center" Font="Segoe UI, 6.5pt, style=Bold"/>
+      <LineObject Name="Line15" Left="75.6" Top="71.82" Width="117.18" Border.Color="Gray" Border.Style="Dash" Border.Width="2" Diagonal="true"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>

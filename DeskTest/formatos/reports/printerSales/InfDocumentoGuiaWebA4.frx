@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="03/24/2022 11:06:44" ReportInfo.Modified="03/14/2024 13:02:30" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="DocumentoGuia" ReferenceName="DocumentoGuia" DataType="null" Enabled="true">
+      <Column Name="Ruc" DataType="System.String"/>
+      <Column Name="Serie" DataType="System.String"/>
+      <Column Name="NroSerie" DataType="System.String"/>
+      <Column Name="FechaEmision" DataType="System.String"/>
+      <Column Name="FechaInicioTraslado" DataType="System.String"/>
+      <Column Name="MotivoTraslado" DataType="System.String"/>
+      <Column Name="ModalidadTransporte" DataType="System.String"/>
+      <Column Name="TipoTraslado" DataType="System.String"/>
+      <Column Name="PesoBruto" DataType="System.String"/>
+      <Column Name="RazonDestinatario" DataType="System.String"/>
+      <Column Name="DocDestinatario" DataType="System.String"/>
+      <Column Name="PuntoPartida" DataType="System.String"/>
+      <Column Name="PuntoLlegada" DataType="System.String"/>
+      <Column Name="ObervacionesGuias" DataType="System.String"/>
+      <Column Name="ObervacionesOtros" DataType="System.String"/>
+      <BusinessObjectDataSource Name="Conductores" DataType="null" Enabled="true">
+        <Column Name="NroItem" DataType="System.String"/>
+        <Column Name="NroConductor" DataType="System.String"/>
+        <Column Name="DatosConductor" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DocumentoGuiaDetalle" DataType="null" Enabled="true">
+        <Column Name="NroDetalleGuia" DataType="System.String"/>
+        <Column Name="CodigoDetalleGuia" DataType="System.String"/>
+        <Column Name="DescripcionDetalleGuia" DataType="System.String"/>
+        <Column Name="UMDetalleGuia" DataType="System.String"/>
+        <Column Name="PesoDetalleGuia" DataType="System.String"/>
+        <Column Name="CantidadDetalleGuia" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="Placas" DataType="null" Enabled="true">
+        <Column Name="NroPlaca" DataType="System.String"/>
+        <Column Name="NroItemPlaca" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Parameter Name="Descfactura" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="CabeceraA4" Width="718.2"/>
+    <PageHeaderBand Name="CabeceraA4Izq" Top="4" Width="718.2" Height="139.86">
+      <PictureObject Name="Logo02" Left="18.9" Width="453.6" Height="139.86" SizeMode="StretchImage"/>
+      <ShapeObject Name="Shape19" Left="500.85" Top="9.45" Width="207.9" Height="120.96" Shape="RoundRectangle"/>
+      <TextObject Name="txtDesRuc2" Left="510.3" Top="15.12" Width="56.7" Height="18.9" Text="R.U.C." Font="Arial, 11pt, style=Bold"/>
+      <TextObject Name="TxtNumRuc2" Left="576.45" Top="15.12" Width="132.3" Height="18.9" Text="[DocumentoGuia.DatosEmpresa.Ruc]" Font="Arial, 12pt, style=Bold"/>
+      <TextObject Name="Text107" Left="500.85" Top="37.8" Width="206.01" Height="56.7" Fill.Color="DodgerBlue" Text="[Descfactura]" HorzAlign="Center" Font="Arial, 16pt, style=Bold" TextFill.Color="White"/>
+      <TextObject Name="txtDescTipoDoc2" Left="500.85" Top="90.72" Width="207.9" Height="37.8" Text="[DocumentoGuia.Serie]" HorzAlign="Center" VertAlign="Center" Font="Arial, 11pt, style=Bold"/>
+    </PageHeaderBand>
+    <DataBand Name="ChRazonsocial" Top="147.86" Width="718.2" Height="33.64">
+      <ShapeObject Name="Shape7" Left="9.45" Width="699.3" Height="32.13" Border.ShadowColor="LightGray" Border.Color="LightGray" Border.Width="0" Fill.Color="LightGray"/>
+      <TextObject Name="Text48" Left="9.45" Width="697.41" Height="33.64" CanGrow="true" CanShrink="true" GrowToBottom="true" Text="[DocumentoGuia.DatosEmpresa.RazonSocial]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 10pt, style=Bold"/>
+    </DataBand>
+    <DataBand Name="CdireccionEmpresa02" Top="185.5" Width="718.2" Height="24.57">
+      <TextObject Name="Text29" Left="9.45" Top="7.56" Width="109.62" Height="13.23" Text="Domicilio fiscal:" Font="Arial, 8pt, style=Bold"/>
+      <TextObject Name="txtDireccionDesc" Left="122.85" Width="567" Height="24.57" Text="[DocumentoGuia.DatosEmpresa.Domicilio]" VertAlign="Center" Font="Arial, 7.5pt"/>
+      <LineObject Name="Line18" Left="680.4" Top="22.68" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+    </DataBand>
+    <DataBand Name="CAnexoEmpresa02" Top="214.07" Width="718.2" Height="24.57">
+      <TextObject Name="txtEstablecimientDesc" Left="122.85" Width="567" Height="24.57" Text="[DocumentoGuia.DatosEmpresa.Establecimiento]" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="txtEstablecimient" Left="9.45" Top="3.78" Width="109.62" Height="13.23" Text="Establ. Anexo" Font="Arial, 8pt, style=Bold"/>
+      <LineObject Name="Line19" Left="680.4" Top="22.68" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+    </DataBand>
+    <DataBand Name="CtelefonEmpresa02" Top="242.64" Width="718.2" Height="18.14">
+      <TextObject Name="txtTelefonoDesc" Left="122.85" Width="567" Height="17.01" Text="[DocumentoGuia.DatosEmpresa.Telefeno]" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text30" Left="9.45" Top="3.78" Width="109.62" Height="13.23" Text="Telefono:" Font="Arial, 8pt, style=Bold"/>
+      <LineObject Name="Line20" Left="680.4" Top="17.01" Width="-557.55" Border.Color="DimGray" Diagonal="true"/>
+    </DataBand>
+    <DataBand Name="CDatostraslado" Top="264.78" Width="718.2" Height="136.08">
+      <ShapeObject Name="Shape4" Left="9.45" Top="28.35" Width="689.85" Height="107.73" Border.Color="DodgerBlue" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="Text16" Left="18.9" Top="34.02" Width="132.3" Height="13.23" Text="FECHA DE EMISIÓN:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text108" Left="18.9" Top="49.14" Width="207.9" Height="13.23" Text="FECHA DE INICIO DE TRASLADO:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text109" Left="18.9" Top="64.26" Width="160.65" Height="13.23" Text="MOTIVO DE TRASLADO:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text110" Left="18.9" Top="81.27" Width="207.9" Height="13.23" Text="MODALIDAD DE TRANSPORTE:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text111" Left="18.9" Top="98.28" Width="141.75" Height="13.23" Text="TIPO DE TRASLADO:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text112" Left="18.9" Top="115.29" Width="226.8" Height="13.23" Text="PESO BRUTO TOTAL DE GUIA(KGM):" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <LineObject Name="Line21" Left="652.05" Top="49.14" Width="-434.7" Border.Color="DimGray" Diagonal="true"/>
+      <LineObject Name="Line22" Left="652.05" Top="66.15" Width="-434.7" Border.Color="DimGray" Diagonal="true"/>
+      <LineObject Name="Line23" Left="652.05" Top="83.16" Width="-434.7" Border.Color="DimGray" Diagonal="true"/>
+      <LineObject Name="Line24" Left="652.05" Top="100.17" Width="-434.7" Border.Color="DimGray" Diagonal="true"/>
+      <LineObject Name="Line25" Left="652.05" Top="117.18" Width="-434.7" Border.Color="DimGray" Diagonal="true"/>
+      <TextObject Name="Text113" Left="213.57" Top="34.02" Width="425.25" Height="13.23" Text="[DocumentoGuia.FechaEmision]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <TextObject Name="Text114" Left="213.57" Top="50.65" Width="425.25" Height="13.23" Text="[DocumentoGuia.FechaInicioTraslado]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <TextObject Name="Text115" Left="213.57" Top="67.28" Width="425.25" Height="13.23" Text="[DocumentoGuia.MotivoTraslado]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <TextObject Name="Text116" Left="213.57" Top="83.92" Width="425.25" Height="13.23" Text="[DocumentoGuia.ModalidadTransporte]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <TextObject Name="Text117" Left="213.57" Top="102.06" Width="425.25" Height="13.23" Text="[DocumentoGuia.TipoTraslado]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <TextObject Name="Text118" Left="213.57" Top="119.07" Width="425.25" Height="13.23" Text="[DocumentoGuia.PesoBruto]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <ShapeObject Name="Shape14" Left="9.45" Top="5.67" Width="311.85" Height="18.9" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+      <TextObject Name="txtCuentDolares" Left="75.6" Top="5.67" Width="207.9" Height="15.12" Text="DATOS DEL INICIO DE TRASLADO" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+    </DataBand>
+    <DataBand Name="CDDestinatario" Top="404.86" Width="718.2" Height="73.71">
+      <ShapeObject Name="Shape20" Left="9.45" Top="26.46" Width="689.85" Height="47.25" Border.Color="DodgerBlue" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="Text119" Left="18.9" Top="32.13" Width="179.55" Height="13.23" Text="DENOMINACIÓN O RAZÓN:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text120" Left="213.57" Top="32.13" Width="463.05" Height="20.79" CanGrow="true" GrowToBottom="true" Text="[DocumentoGuia.RazonDestinatario]" Font="Arial, 8pt, style=Bold" LineHeight="11"/>
+      <TextObject Name="Text121" Left="18.9" Top="51.03" Width="189" Height="17.01" Text="DOCUMENTO DE IDENTIDAD:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text122" Left="213.57" Top="54.81" Width="463.05" Height="15.12" Text="[DocumentoGuia.DocDestinatario]" VertAlign="Center" Font="Arial, 8pt, style=Bold" LineHeight="7"/>
+      <ShapeObject Name="Shape21" Left="9.45" Top="3.78" Width="311.85" Height="18.9" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+      <TextObject Name="Text123" Left="75.6" Top="3.78" Width="207.9" Height="15.12" Text="DATOS DEL DESTINATARIO" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+      <LineObject Name="Line33" Left="661.5" Top="52.16" Width="-444.15" Border.Color="DimGray" Diagonal="true"/>
+    </DataBand>
+    <DataBand Name="CDPartidadLlegada" Top="482.57" Width="718.2" Height="83.16">
+      <ShapeObject Name="Shape22" Left="9.45" Top="26.46" Width="689.85" Height="56.7" Border.Color="DodgerBlue" Fill.Color="WhiteSmoke" Shape="RoundRectangle"/>
+      <TextObject Name="Text124" Left="18.9" Top="30.24" Width="179.55" Height="17.01" Text="PUNTO DE PARTIDA:&#13;&#10;" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text125" Left="213.57" Top="28.35" Width="463.05" Height="20.79" CanGrow="true" GrowToBottom="true" Text="[DocumentoGuia.PuntoPartida]" Font="Arial, 8pt, style=Bold" LineHeight="11"/>
+      <TextObject Name="Text126" Left="18.9" Top="56.7" Width="189" Height="17.01" Text="PUNTO DE LLEGADA:" VertAlign="Center" Font="Arial, 8pt" LineHeight="7"/>
+      <TextObject Name="Text127" Left="213.57" Top="56.7" Width="463.05" Height="20.79" CanGrow="true" GrowToBottom="true" Text="[DocumentoGuia.PuntoLlegada]" Font="Arial, 8pt, style=Bold" LineHeight="11"/>
+      <LineObject Name="Line27" Left="661.5" Top="52.92" Width="-444.15" Border.Color="DimGray" Diagonal="true"/>
+      <ShapeObject Name="Shape23" Left="9.45" Top="3.78" Width="311.85" Height="18.9" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+      <TextObject Name="Text128" Left="9.45" Top="3.78" Width="311.85" Height="15.12" Text="DATOS DE PUNTO DE PARTIDA Y PUNTO DE LLEGADA" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+    </DataBand>
+    <DataBand Name="DTrasnportista" Top="615.31" Width="718.2" Height="18.91" Visible="false" DataSource="Conductores">
+      <TableObject Name="Table11" Left="9.45" Width="702.59" Height="18.91">
+        <TableColumn Name="Column60" Width="101.57"/>
+        <TableColumn Name="Column61" Width="601.02"/>
+        <TableRow Name="Row25" Height="18.91">
+          <TableCell Name="Cell86" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Conductores.NroConductor]" Font="Arial, 7.6pt, style=Bold"/>
+          <TableCell Name="Cell87" Border.Lines="Left" Border.Color="White" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Conductores.DatosConductor]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <DataHeaderBand Name="DHeaderTrasnportista" Top="569.73" Width="718.2" Height="41.58" Visible="false">
+        <TextObject Name="Text51" Left="9.45" Top="26.46" Width="113.4" Height="15.12" Text="Nro." Font="Arial, 8pt, style=Italic"/>
+        <TextObject Name="Text52" Left="122.85" Top="26.46" Width="132.3" Height="15.12" Text="Nombre" Font="Arial, 8pt, style=Italic"/>
+        <ShapeObject Name="Shape24" Left="9.45" Top="3.78" Width="311.85" Height="18.9" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+        <TextObject Name="Text135" Left="9.45" Top="3.78" Width="311.85" Height="15.12" Text="TRANSPORTISTA" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+      </DataHeaderBand>
+    </DataBand>
+    <DataBand Name="DVehiculoCondDet" Top="683.8" Width="718.2" Height="18.91" Visible="false" DataSource="Conductores">
+      <TableObject Name="Table4" Left="9.45" Width="705.88" Height="18.91">
+        <TableColumn Name="Column9" Width="63.77"/>
+        <TableColumn Name="Column55" Width="101.57"/>
+        <TableColumn Name="Column56" Width="540.54"/>
+        <TableRow Name="Row24" Height="18.91">
+          <TableCell Name="Cell40" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Conductores.NroItem]" Font="Arial, 7.6pt, style=Bold"/>
+          <TableCell Name="Cell41" Border.Lines="Left, Right" Border.Color="White" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Conductores.NroConductor]" Font="Arial, 7.6pt, style=Bold"/>
+          <TableCell Name="Cell42" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Conductores.DatosConductor]" Font="Arial, 7.6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <DataHeaderBand Name="HeaderDetfactura" Top="638.22" Width="718.2" Height="41.58" Visible="false">
+        <TextObject Name="Text32" Left="9.45" Top="26.46" Width="66.15" Height="15.12" Text="Nro." Font="Arial, 8pt, style=Italic"/>
+        <TextObject Name="Text33" Left="75.6" Top="26.46" Width="113.4" Height="15.12" Text="Nro. documento" Font="Arial, 8pt, style=Italic"/>
+        <TextObject Name="Text34" Left="189" Top="26.46" Width="132.3" Height="15.12" Text="Datos del conductor" Font="Arial, 8pt, style=Italic"/>
+        <ShapeObject Name="Shape25" Left="9.45" Top="3.78" Width="311.85" Height="18.9" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+        <TextObject Name="Text136" Left="9.45" Top="3.78" Width="311.85" Height="15.12" Text="DATOS DE LOS  VEHICULOS Y CONDUCTORES" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+      </DataHeaderBand>
+    </DataBand>
+    <DataBand Name="DPlacaDet" Top="729.61" Width="718.2" Height="18.91" Visible="false" DataSource="Placas">
+      <TableObject Name="Table7" Left="9.45" Width="155.89" Height="18.91">
+        <TableColumn Name="Column30" Width="63.77"/>
+        <TableColumn Name="Column31" Width="92.12"/>
+        <TableRow Name="Row10" Height="18.91">
+          <TableCell Name="Cell81" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Placas.NroItemPlaca]" Font="Arial, 8pt, style=Bold"/>
+          <TableCell Name="Cell82" Border.Lines="Left" Border.Color="White" Fill.Color="242, 242, 242" Text="[DocumentoGuia.Placas.NroPlaca]" Font="Arial, 8.5pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <DataHeaderBand Name="DHeaderPlacaDet" Top="706.71" Width="718.2" Height="18.9" Visible="false">
+        <TextObject Name="Text49" Left="66.15" Width="85.05" Height="18.9" Text="NRO. PLACA" Font="Arial, 8pt"/>
+        <TextObject Name="Text47" Left="9.45" Width="66.15" Height="15.12" Text="Nro." Font="Arial, 8pt, style=Italic"/>
+      </DataHeaderBand>
+    </DataBand>
+    <DataBand Name="DocGuiadet" Top="781.09" Width="718.2" Height="17.77" DataSource="DocumentoGuiaDetalle">
+      <TextObject Name="Text41" Left="128.52" Width="362.88" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.DescripcionDetalleGuia]" Font="Arial, 8pt"/>
+      <TextObject Name="Text58" Left="9.45" Width="47.63" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.NroDetalleGuia]" Font="Arial, 8pt"/>
+      <TextObject Name="Text59" Left="56.7" Width="71.82" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.CodigoDetalleGuia]" Font="Arial, 8pt"/>
+      <TextObject Name="Text60" Left="491.4" Width="71.82" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.UMDetalleGuia]" Font="Arial, 8pt"/>
+      <TextObject Name="Text61" Left="567" Width="55.19" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.PesoDetalleGuia]" Font="Arial, 8pt"/>
+      <TextObject Name="Text62" Left="623.7" Width="86.56" Height="17.77" CanGrow="true" CanShrink="true" GrowToBottom="true" ShiftMode="WhenOverlapped" Text="[DocumentoGuia.DocumentoGuiaDetalle.CantidadDetalleGuia]" HorzAlign="Center" Font="Arial, 8pt"/>
+      <DataHeaderBand Name="DocHeaderGuiadet" Top="752.52" Width="718.2" Height="24.57">
+        <ShapeObject Name="Shape10" Left="9.45" Top="3.78" Width="699.3" Height="20.79" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+        <TextObject Name="Text129" Left="13.23" Top="5.67" Width="37.8" Height="18.9" Text="Nro." HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text130" Left="56.7" Top="7.56" Width="66.15" Height="15.12" Text="CÓDIGO&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text131" Left="226.8" Top="7.56" Width="179.55" Height="15.12" Text="DESCRIPCIÓN&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text132" Left="500.85" Top="7.56" Width="56.7" Height="15.12" Text="UNIDAD&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text133" Left="576.45" Top="7.56" Width="47.25" Height="15.12" Text="PESO" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text134" Left="633.15" Top="7.56" Width="66.15" Height="15.12" Text="CANTIDAD" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <LineObject Name="Line28" Left="56.7" Top="3.78" Height="18.9" Border.Color="DimGray" Diagonal="true"/>
+        <LineObject Name="Line29" Left="122.85" Top="3.78" Height="18.9" Border.Color="DimGray" Diagonal="true"/>
+        <LineObject Name="Line30" Left="491.4" Top="3.78" Height="18.9" Border.Color="DimGray" Diagonal="true"/>
+        <LineObject Name="Line31" Left="567" Top="3.78" Height="18.9" Border.Color="DimGray" Diagonal="true"/>
+        <LineObject Name="Line32" Left="623.7" Top="3.78" Height="18.9" Border.Color="DimGray" Diagonal="true"/>
+      </DataHeaderBand>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="802.86" Width="718.2" Height="133.43">
+      <TextObject Name="txtObservacionesDesc" Left="167.1" Top="28.35" Width="497.07" Height="26.46" CanGrow="true" CanShrink="true" Text="[DocumentoGuia.ObervacionesGuias]" Font="Arial, 8pt"/>
+      <TextObject Name="txtNumPaginas" Left="652.05" Top="79.38" Width="52.92" Height="17.01" Text="[Page#]" Font="Arial, 8pt"/>
+      <TextObject Name="Text35" Left="15.9" Width="680.4" Height="9.45" Border.Lines="Top" Border.Color="66, 171, 153" HorzAlign="Center" Font="Arial, 8.5pt"/>
+      <TextObject Name="txtTituloObervaciones" Left="160.65" Top="9.45" Width="109.62" Height="17.01" Text="Observaciones:" Font="Arial, 9pt, style=Bold, Underline"/>
+      <PictureObject Name="CodQRDes" Left="9.45" Top="1.13" Width="143.64" Height="132.3" SizeMode="StretchImage" Image="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"/>
+    </PageFooterBand>
+  </ReportPage>
+</Report>

@@ -1,0 +1,160 @@
+﻿<?xml version="1.0"?>
+<doc>
+<assembly>
+<name>
+Helios.Cont.Business.Entity
+</name>
+</assembly>
+<members>
+<member name="T:Helios.Cont.Business.Entity.My.Resources.Resources">
+<summary>
+  A strongly-typed resource class, for looking up localized strings, etc.
+</summary>
+</member>
+<member name="P:Helios.Cont.Business.Entity.My.Resources.Resources.ResourceManager">
+<summary>
+  Returns the cached ResourceManager instance used by this class.
+</summary>
+</member>
+<member name="P:Helios.Cont.Business.Entity.My.Resources.Resources.Culture">
+<summary>
+  Overrides the current thread's CurrentUICulture property for all
+  resource lookups using this strongly typed resource class.
+</summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.almacen.Status.Anulado">
+ <summary>
+ Status: R
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.codigo.Status.Anulado">
+ <summary>
+ Status: R
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.configuracionInicio.StyleSaleEnum.Style1">
+ <summary>
+ Venta POS ventana General
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.configuracionInicio.StyleSaleEnum.Style2">
+ <summary>
+ Venta POS ventana market full
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.configuracionInicio.StyleSaleEnum.Style3">
+ <summary>
+ Venta Restaurante
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentocompra.Query.OtherOutlets">
+ <summary>
+ Otras Salidas de almacén
+ </summary>
+</member>
+<member name="P:Helios.Cont.Business.Entity.documentocompradetalle.ImporteDBMN">
+ <summary>
+ Importe nota de debito moneda nacional
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="P:Helios.Cont.Business.Entity.documentocompradetalle.ImporteDBME">
+ <summary>
+ Importe nota de debito moneda extranjera
+ </summary>
+ <value></value>
+ <returns></returns>
+ <remarks></remarks>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentoEntregaProductos.Status.Anulado">
+ <summary>
+ Status: R
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentoventaAbarrotes.Status.Anulado">
+ <summary>
+ Status: R
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentoventaAbarrotes.QueryPOS.OtherOutlets">
+ <summary>
+ Otras Salidas de almacén
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentoventaAbarrotes.QueryPOS.SalesFullByUser">
+ <summary>
+ Ventas Por Usuario
+ </summary>
+</member>
+<member name="P:Helios.Cont.Business.Entity.documentoventaAbarrotesDet.GetCantidadAcuenta">
+ <summary>
+ Suma de cantidades distribuidas
+ </summary>
+ <returns></returns>
+</member>
+<member name="P:Helios.Cont.Business.Entity.documentoventaAbarrotesDet.GetCantidadSaldo">
+ <summary>
+ Saldo pendiente en unidades o cantidad
+ </summary>
+ <returns></returns>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ItemGrupo.TypeGroup.Entregable">
+ <summary>
+ Lista seleccionable
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ItemGrupo.TypeGroup.EntregableFull">
+ <summary>
+ Lista entregada por completo
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.documentoventaTransporte.QueryPOS.OtherOutlets">
+ <summary>
+ Otras Salidas de almacén
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.ApplicationApproved">
+ <summary>
+ Solicitud Aprobada
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.Shipped">
+ <summary>
+ Entregado
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.OrdersReceip">
+ <summary>
+ Ordenes por Recepcionar
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.ReceipsRevized">
+ <summary>
+ Recepciones Revisadas
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.ReceipObser">
+ <summary>
+ Recepciones Observadas
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.ReceipManufacturing">
+ <summary>
+ En Fabricación
+ </summary>
+</member>
+<member name="F:Helios.Cont.Business.Entity.ordenCompras.TypeConsut.ReceipCompleted">
+ <summary>
+ Recepcion Completada
+ </summary>
+</member>
+<member name="T:Helios.Cont.Business.Entity.TransactionDataBE">
+ <summary>
+ Clase que contiene la información del usuario que utiliza la aplicación
+ </summary>
+ <remarks></remarks>
+</member>
+</members>
+</doc>

@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="06/14/2023 12:21:54" ReportInfo.Modified="06/15/2023 16:40:47" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="Cajas" ReferenceName="Cajas" DataType="null" Enabled="true">
+      <Column Name="FondoInicio" DataType="System.String"/>
+      <Column Name="OtrosIngresos" DataType="System.String"/>
+      <Column Name="OtrosEgresos" DataType="System.String"/>
+      <Column Name="Ventas" DataType="System.String"/>
+      <Column Name="CobranzasDeudas" DataType="System.String"/>
+      <Column Name="AnticipoRecibidos" DataType="System.String"/>
+      <Column Name="FechaCierre" DataType="System.String"/>
+      <Column Name="Total" DataType="System.String"/>
+      <Column Name="Cargo" DataType="System.String"/>
+      <Column Name="NroDocumento" DataType="System.String"/>
+      <Column Name="Usuario" DataType="System.String"/>
+      <Column Name="FechaActualizacion" DataType="System.String"/>
+      <Column Name="FechaApertura" DataType="System.String"/>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CierreGeneralDetalle" DataType="null" Enabled="true">
+        <Column Name="DescripcionCaja" DataType="System.String"/>
+        <Column Name="MontoSolesCaja" DataType="System.String"/>
+        <Column Name="MontoDolaresCaja" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CierreGeneralDetalleOtros" DataType="null" Enabled="true">
+        <Column Name="DescripcionCajaOtros" DataType="System.String"/>
+        <Column Name="MontoSolesCajaOtros" DataType="System.String"/>
+        <Column Name="MontoDolaresCajaOtros" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="74" PaperHeight="200" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="1" OtherPagesSource="1" LastPageSource="1" Watermark.Font="Arial, 60pt">
+    <ReportTitleBand Name="ReportTitle1" Width="279.72" Height="140.62">
+      <TextObject Name="Text8" Left="103.57" Top="22.68" Width="326.97" Height="10.21" Text="[Cajas.DatosEmpresa.Ruc]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text7" Left="13.23" Top="22.68" Width="75.6" Height="10.21" Text="RUC EMPRESA:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text9" Left="13.23" Top="35.91" Width="75.6" Height="10.21" Text="EMPRESA:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text10" Left="13.23" Top="77.49" Width="92.61" Height="10.21" Text="ESTABLECIMIENTO:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text11" Left="13.23" Top="90.72" Width="75.6" Height="10.21" Text="DNI:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text12" Left="13.23" Top="103.95" Width="75.6" Height="10.21" Text="USUARIO:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text13" Left="9.45" Top="49.14" Width="510.3" Height="21.92" ShiftMode="WhenOverlapped" Text="[Cajas.DatosEmpresa.RazonSocial]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text14" Left="94.12" Top="77.49" Width="326.97" Height="10.21" ShiftMode="WhenOverlapped" Text="[Cajas.DatosEmpresa.Establecimiento]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text15" Left="94.12" Top="90.72" Width="326.97" Height="10.21" Text="[Cajas.NroDocumento]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text16" Left="94.12" Top="103.95" Width="175.77" Height="10.21" Text="[Cajas.Usuario]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text17" Left="13.23" Top="130.41" Width="75.6" Height="10.21" Text="FECHA:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text18" Left="94.12" Top="130.41" Width="326.97" Height="10.21" Text="[Cajas.FechaCierre]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text19" Left="13.23" Top="117.18" Width="75.6" Height="10.21" Text="CARGO:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text20" Left="94.12" Top="117.18" Width="326.97" Height="10.21" Text="[Cajas.Cargo]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text21" Left="77.49" Width="94.5" Height="10.21" Text="CIERRE DE CAJA" VertAlign="Center" Font="Segoe UI, 7.5pt, style=Bold, Underline"/>
+    </ReportTitleBand>
+    <DataBand Name="Data1" Top="143.29" Width="279.72" Height="17.38">
+      <TextObject Name="Text26" Left="18.9" Top="3.02" Width="94.5" Height="14.36" ShiftMode="WhenOverlapped" Text="EFECTIVO CAJA" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold, Underline" Trimming="Word"/>
+    </DataBand>
+    <DataBand Name="Data2" Top="163.33" Width="279.72" Height="14.74">
+      <TableObject Name="Table2" Left="13.23" Width="227.17" Height="14.74">
+        <TableColumn Name="Column17" Width="44.97"/>
+        <TableColumn Name="Column18" Width="45.01"/>
+        <TableColumn Name="Column19" Width="63.87"/>
+        <TableColumn Name="Column20" Width="73.32"/>
+        <TableRow Name="Row9" Height="14.74">
+          <TableCell Name="Cell62" Border.Lines="Bottom" Border.Style="Dash" Text="DETALLE" VertAlign="Center" Font="Arial, 6pt, style=Bold" ColSpan="3"/>
+          <TableCell Name="Cell63" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell64" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+          <TableCell Name="Cell65" Border.Lines="Top, Bottom" Border.LeftLine.Style="Dash" Border.TopLine.Color="Transparent" Border.TopLine.Style="Dash" Border.RightLine.Style="Dash" Border.BottomLine.Style="Dash" Text="MONTO SOLES" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <DataBand Name="Data7" Top="180.74" Width="279.72" Height="19.66" DataSource="CierreGeneralDetalle">
+        <TableObject Name="Table1" Left="13.23" Width="227.17" Height="19.66" GrowToBottom="true">
+          <TableColumn Name="Column12" Width="44.97"/>
+          <TableColumn Name="Column13" Width="45.01"/>
+          <TableColumn Name="Column14" Width="63.87"/>
+          <TableColumn Name="Column15" Width="73.32"/>
+          <TableRow Name="Row8" Height="19.66">
+            <TableCell Name="Cell57" Text="[Cajas.CierreGeneralDetalle.DescripcionCaja]" VertAlign="Center" Font="Arial, 7pt" ColSpan="3"/>
+            <TableCell Name="Cell58" Font="Arial, 10pt, style=Bold"/>
+            <TableCell Name="Cell59" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+            <TableCell Name="Cell60" Text="[Cajas.CierreGeneralDetalle.MontoSolesCaja]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+          </TableRow>
+        </TableObject>
+      </DataBand>
+    </DataBand>
+    <DataBand Name="Data3" Top="203.07" Width="279.72" Height="18.14">
+      <TextObject Name="Text27" Left="15.12" Top="3.78" Width="94.5" Height="14.36" ShiftMode="WhenOverlapped" Text="OTROS MEDIOS" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold, Underline" Trimming="Word"/>
+    </DataBand>
+    <DataBand Name="Data4" Top="223.87" Width="279.72" Height="14.74">
+      <TableObject Name="Table3" Left="13.23" Width="227.17" Height="14.74">
+        <TableColumn Name="Column21" Width="44.97"/>
+        <TableColumn Name="Column22" Width="45.01"/>
+        <TableColumn Name="Column23" Width="63.87"/>
+        <TableColumn Name="Column24" Width="73.32"/>
+        <TableRow Name="Row10" Height="14.74">
+          <TableCell Name="Cell66" Border.Lines="Bottom" Border.Style="Dash" Text="DETALLE" VertAlign="Center" Font="Arial, 6pt, style=Bold" ColSpan="3"/>
+          <TableCell Name="Cell67" Font="Arial, 10pt, style=Bold"/>
+          <TableCell Name="Cell68" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+          <TableCell Name="Cell69" Border.Lines="Top, Bottom" Border.LeftLine.Style="Dash" Border.TopLine.Color="Transparent" Border.TopLine.Style="Dash" Border.RightLine.Style="Dash" Border.BottomLine.Style="Dash" Text="MONTO SOLES" HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+      <DataBand Name="Data8" Top="241.28" Width="279.72" Height="19.66" DataSource="CierreGeneralDetalleOtros">
+        <TableObject Name="Table4" Left="13.23" Width="227.17" Height="19.66" GrowToBottom="true">
+          <TableColumn Name="Column25" Width="44.97"/>
+          <TableColumn Name="Column26" Width="45.01"/>
+          <TableColumn Name="Column27" Width="63.87"/>
+          <TableColumn Name="Column28" Width="73.32"/>
+          <TableRow Name="Row11" Height="19.66">
+            <TableCell Name="Cell70" Text="[Cajas.CierreGeneralDetalleOtros.DescripcionCajaOtros]" VertAlign="Center" Font="Arial, 7pt" ColSpan="3"/>
+            <TableCell Name="Cell71" Font="Arial, 10pt, style=Bold"/>
+            <TableCell Name="Cell72" Border.Lines="Bottom" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+            <TableCell Name="Cell73" Text="[Cajas.CierreGeneralDetalleOtros.MontoSolesCajaOtros]" HorzAlign="Center" VertAlign="Center" Font="Arial, 8pt, style=Bold"/>
+          </TableRow>
+        </TableObject>
+      </DataBand>
+    </DataBand>
+    <DataBand Name="Data5" Top="263.61" Width="279.72" Height="37.8">
+      <TextObject Name="Text28" Left="98.28" Top="22.68" Width="75.6" Height="10.21" Text="SUMA TOTAL:" VertAlign="Center" Font="Segoe UI, 7pt"/>
+      <TextObject Name="Text24" Left="171.99" Top="22.68" Width="73.71" Height="10.21" Text="[Cajas.Total]" VertAlign="Center" Font="Segoe UI, 8pt, style=Bold"/>
+      <LineObject Name="Line16" Left="15.12" Top="18.9" Width="226.8" Border.Style="Dash" Border.Width="1.5" Diagonal="true"/>
+    </DataBand>
+    <ReportSummaryBand Name="ReportSummary1" Top="304.07" Width="279.72" Height="58.59">
+      <TextObject Name="Text22" Left="56.7" Top="41.58" Width="54.81" Height="17.01" Text="CAJERO" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <LineObject Name="Line14" Left="28.35" Top="37.8" Width="94.5" Border.Color="Gray" Border.Width="0.5" Diagonal="true"/>
+      <TextObject Name="Text23" Left="179.55" Top="41.58" Width="45.36" Height="17.01" Text="V° B°" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <LineObject Name="Line15" Left="151.2" Top="37.8" Width="94.5" Border.Color="Gray" Border.Width="0.5" Diagonal="true"/>
+    </ReportSummaryBand>
+  </ReportPage>
+</Report>
