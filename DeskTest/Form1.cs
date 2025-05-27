@@ -87,19 +87,19 @@ namespace DeskTest
                                     venta.idEstablecimiento = VentaPrintDirect.idEstablecimiento;
 
 
-                                    var detallepagos = await DocumentoVentaAPI.GetDocumentoCajaDetalle(obj.IdDocumento.GetValueOrDefault());
-                                    if (detallepagos.Count > 0)
-                                    {
-                                        VentaPrintDirect.Pagos = new List<rePrintResponse.mediosDePago>();
-                                        foreach (var item in detallepagos)
-                                        {
-                                            var det = new rePrintResponse.mediosDePago();
-                                            det.medioDePago = item.DescripcionBE;
-                                            det.nombreEntidad = item.DescripcionfinacieraBE;
-                                            det.importePago = (decimal)item.montoSoles;
-                                            VentaPrintDirect.Pagos.Add(det);
-                                        }
-                                    }
+                                    //var detallepagos = await DocumentoVentaAPI.GetDocumentoCajaDetalle(obj.IdDocumento.GetValueOrDefault());
+                                    //if (detallepagos.Count > 0)
+                                    //{
+                                    //    VentaPrintDirect.Pagos = new List<rePrintResponse.mediosDePago>();
+                                    //    foreach (var item in detallepagos)
+                                    //    {
+                                    //        var det = new rePrintResponse.mediosDePago();
+                                    //        det.medioDePago = item.DescripcionBE;
+                                    //        det.nombreEntidad = item.DescripcionfinacieraBE;
+                                    //        det.importePago = (decimal)item.montoSoles;
+                                    //        VentaPrintDirect.Pagos.Add(det);
+                                    //    }
+                                    //}
 
 
                                     var DatosGen = VentaPrintDirect.DatosGenLis.Where(s => s.tipoImpresion == obj.Formato).FirstOrDefault();
