@@ -3317,7 +3317,8 @@ public class Commons
                         }
                         else
                         {
-                            InvoiceDet.Descripcion = det.nombreItem + " " + (det.detalleAdicional);
+                            //InvoiceDet.Descripcion = det.nombreItem + " " + (det.detalleAdicional);
+                            InvoiceDet.Descripcion = det.nombreItem;
                         }
 
                     }
@@ -3802,7 +3803,7 @@ public class Commons
                         }
 
                         //if (returnoConf.SaleNotaAddress == true)
-                        if (docV.ConfInicio.FirstOrDefault().saleNotaAddress == true)
+                        if (docV.ConfInicio.SaleNotaAddress == true)
                         {
 
                                 ChildBand dtdireccionEmpresa02 = webReportValidar.Report.FindObject("dtdireccionEmpresa02") as ChildBand;
@@ -3837,7 +3838,7 @@ public class Commons
 
 
                 }
-                if (docV.ConfInicio.FirstOrDefault().saleNotaAddress == true)//PARA QUE NO SE MUESTRE LA DIRECCION 
+                if (docV.ConfInicio.SaleNotaAddress == true)//PARA QUE NO SE MUESTRE LA DIRECCION 
                 {
 
                     DataBand dtDirecc = webReportValidar.Report.FindObject("dtDirecc") as DataBand;
@@ -3862,7 +3863,7 @@ public class Commons
                 }
 
                 //if (returnoConf.InicioVenta != null)
-                if (docV.ConfInicio.FirstOrDefault().inicioVenta != null)
+                if (docV.ConfInicio.InicioVenta != null)
                 {
                     DataBand DVendedor = webReportValidar.Report.FindObject("DVendedor") as DataBand;
                     DVendedor.Visible = false;
@@ -3903,11 +3904,15 @@ public class Commons
                                     DataBand DocFacDet = webReportValidar.Report.FindObject("DocFacDet") as DataBand;
                                     DocFacDet.Visible = false;
 
-                        if (!String.IsNullOrWhiteSpace(docV.nombreDistribucion))
+                        if (docV.ConfInicio.ShowInfraestructure)
                         {
-                            DataBand dtNromesa = webReportValidar.Report.FindObject("dtNromesa") as DataBand;
-                            dtNromesa.Visible = true;
+                            if (!String.IsNullOrWhiteSpace(docV.nombreDistribucion))
+                            {
+                                DataBand dtNromesa = webReportValidar.Report.FindObject("dtNromesa") as DataBand;
+                                dtNromesa.Visible = true;
+                            }
                         }
+                       
                     }
                 }
                  
@@ -3958,7 +3963,7 @@ public class Commons
                 if (docV.nombreUsuarioPedidos != null && docV.nombreUsuarioPedidos != "0")
                 {
                     //if (returnoConf.InicioVenta == null)
-                    if (docV.ConfInicio.FirstOrDefault().inicioVenta == null)
+                    if (docV.ConfInicio.InicioVenta == null)
                     {
                         DataBand Dcajero = webReportValidar.Report.FindObject("Dcajero") as DataBand;
                         Dcajero.Visible = true;
