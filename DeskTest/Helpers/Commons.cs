@@ -3920,8 +3920,8 @@ public class Commons
 
                     if (docV.tipoDocumento == "ORV")
                 {
-                    DataBand MontoPedido = webReportValidar.Report.FindObject("MontoPedido") as DataBand;
-                    MontoPedido.Visible = true;
+                    //DataBand MontoPedido = webReportValidar.Report.FindObject("MontoPedido") as DataBand;
+                    //MontoPedido.Visible = true;
 
                     DataBand MontoTotal = webReportValidar.Report.FindObject("MontoTotal") as DataBand;
                     MontoTotal.Visible = false;
@@ -4099,8 +4099,8 @@ public class Commons
                 }
                 if (docV.tipoDocumento == "ORV")
                 {
-                    DataBand MontoPedido = webReportValidar.Report.FindObject("MontoPedido") as DataBand;
-                    MontoPedido.Visible = true;
+                    //DataBand MontoPedido = webReportValidar.Report.FindObject("MontoPedido") as DataBand;
+                    //MontoPedido.Visible = true;
 
                     DataBand Monto = webReportValidar.Report.FindObject("Monto") as DataBand;
                     Monto.Visible = false;

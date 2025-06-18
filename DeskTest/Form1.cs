@@ -76,7 +76,7 @@ namespace DeskTest
                                 objPrint.idEmpresa = obj.idEmpresa;
 
                                 var VentaPrintDirect = await DocumentoVentaAPI.directPrinting(obj.IdDocumento.GetValueOrDefault(), obj.FormatoTipo, obj.idEstablecimiento.GetValueOrDefault(), obj.idEmpresa);
-                                VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora).FirstOrDefault();
+                                VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput==obj.Formato).FirstOrDefault();
            
                                 if (VentaPrintDirect.PrintNegocio != null)
 
@@ -615,13 +615,6 @@ namespace DeskTest
 
                                     switch (obj.TipoEnvioImpresion)
                                     {
-                                        case "PNP":
-                                        case "Impresion":
-                                        case "PEDIDO":
-                                        case "Reimpresion":
-                                            detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem)).ToList();
-
-                                            break;
                                         case "PEDIDOADD":
                                             detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem) && s.estadoImpresion == "PI").ToList();
                                             break;
@@ -630,6 +623,7 @@ namespace DeskTest
                                             detBenf = obj.TipoEnvioImpresion;
                                             break;
                                         default:
+                                            detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem)).ToList();
                                             break;
                                     }
 
