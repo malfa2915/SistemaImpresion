@@ -1,0 +1,1181 @@
+﻿@model List<DocumentoFactura>
+    @using Newtonsoft.Json
+
+    @{
+        var color = Model[0].color_print;
+        var datos = Model[0].DocumentoFacturaDetalle;
+        var filasPorPagina = 37;
+        int minimoUltimaHoja = 25;
+
+        // PARA CONTROLAR EL TAMÑO DE LA HOJA
+
+        //para facturas tamaño
+        if (Model[0].tipo_documento == "01")
+        {
+            var item = Model[0];
+            bool tieneObservacion = !string.IsNullOrWhiteSpace(item.Obsevaciones);
+            bool tieneMultiplesCreditos = Model[0].CronogramaPagos.Count() > 1;
+            bool tieneDetraccion = !string.IsNullOrWhiteSpace(Model[0].Detraccion[0].BSDescDetraccion);
+
+            if (tieneMultiplesCreditos)
+            {
+                minimoUltimaHoja = tieneObservacion ? 19 : 21;
+                if (tieneDetraccion)
+                {
+                    minimoUltimaHoja -= 6;
+                }
+            }
+            else
+            {
+                minimoUltimaHoja = tieneObservacion ? 23 : 25;
+                if (tieneDetraccion)
+                {
+                    minimoUltimaHoja -= 6;
+                }
+            }
+        }
+        //para boleta
+        if (Model[0].tipo_documento == "03")
+        {
+            var item = Model[0];
+            bool tieneObservacion = !string.IsNullOrWhiteSpace(item.Obsevaciones);
+            bool tieneMultiplesCreditos = item.CronogramaPagos.Count() > 1;
+
+            if (tieneMultiplesCreditos)
+            {
+                minimoUltimaHoja = tieneObservacion ? 16 : 18;
+            }
+            else
+            {
+                minimoUltimaHoja = tieneObservacion ? 23 : 25;
+            }
+        }
+        //para nota de credito 
+        if (Model[0].tipo_documento == "07")
+        {
+            var item = Model[0];
+            bool tieneObservacion = !string.IsNullOrWhiteSpace(item.Obsevaciones);
+            bool tieneMultiplesCreditos = item.CronogramaPagos.Count() > 1;
+
+            if (tieneMultiplesCreditos)
+            {
+                minimoUltimaHoja = tieneObservacion ? 17 : 19;
+            }
+            else
+            {
+                minimoUltimaHoja = tieneObservacion ? 20 : 22;
+            }
+        }
+
+        //para nota de venta
+        if (Model[0].tipo_documento != "07" && Model[0].tipo_documento != "01" && Model[0].tipo_documento != "03")
+        {
+            var item = Model[0];
+            bool tieneObservacion = !string.IsNullOrWhiteSpace(item.Obsevaciones);
+            bool tieneCuentas = !string.IsNullOrWhiteSpace(item.CuentaSoles[0].DescripcionCuentaSoles) ||
+                                !string.IsNullOrWhiteSpace(item.CuentaDolares[0].DescripcionCuentaDolares);
+            bool tieneMultiplesCreditos = item.CronogramaPagos.Count() > 1;
+
+            if (tieneMultiplesCreditos)
+            {
+                minimoUltimaHoja = tieneObservacion ? 19 : 21;
+            }
+            else
+            {
+                if (tieneObservacion)
+                {
+                    minimoUltimaHoja = tieneCuentas ? 22 : 24;
+                }
+                else
+                {
+                    minimoUltimaHoja = tieneCuentas ? 24 : 26;
+                }
+            }
+        }
+
+        var resto = datos.Count % filasPorPagina;
+        if (resto != 0)
+        {
+            if (resto < minimoUltimaHoja)
+            {
+                var faltan = minimoUltimaHoja - resto;
+                for (int i = 0; i < faltan; i++)
+                {
+                    datos.Add(new DocumentoFacturaDetalle
+                    {
+                        NroItem = " ",
+                        Codigo = " ",
+                        Descripcion = " ",
+                        Unidad = " ",
+                        Cantidad = "0",
+                        PrecioUnitario = "0",
+                        Descuento = " ",
+                        DescuentoImporte = " ",
+                        Importe = " ",
+                        DocumentoFacturaDetalleDescuentos = null
+                    });
+                }
+            }
+            else if (resto >= minimoUltimaHoja && resto < filasPorPagina)
+            {
+                var hasta38 = filasPorPagina - resto;
+                for (int i = 0; i < hasta38; i++)
+                {
+                    datos.Add(new DocumentoFacturaDetalle
+                    {
+                        NroItem = " ",
+                        Codigo = " ",
+                        Descripcion = " ",
+                        Unidad = " ",
+                        Cantidad = "0",
+                        PrecioUnitario = "0",
+                        Descuento = " ",
+                        DescuentoImporte = " ",
+                        Importe = " ",
+                        DocumentoFacturaDetalleDescuentos = null
+                    });
+                }
+
+                for (int i = 0; i < minimoUltimaHoja; i++)
+                {
+                    datos.Add(new DocumentoFacturaDetalle
+                    {
+                        NroItem = " ",
+                        Codigo = " ",
+                        Descripcion = " ",
+                        Unidad = " ",
+                        Cantidad = "0",
+                        PrecioUnitario = "0",
+                        Descuento = " ",
+                        DescuentoImporte = " ",
+                        Importe = " ",
+                        DocumentoFacturaDetalleDescuentos = null
+                    });
+                }
+            }
+        }
+
+        //cantidad de paginas
+        var totalPaginas = (int)Math.Ceiling((double)datos.Count / filasPorPagina);
+        var razonsocial = Model[0].DatosEmpresa[0].RazonSocial;
+        var direccion = Model[0].DatosEmpresa[0].Domicilio;
+        var telefono = Model[0].DatosEmpresa[0].Telefeno;
+        var tipoComprobanteLetra = "";
+
+        switch (Model[0].tipo_documento)
+        {
+            case "01":
+                tipoComprobanteLetra = "Factura Electrónica";
+                break;
+            case "03":
+                tipoComprobanteLetra = "Boleta de Venta Electrónica";
+                break;
+            case "07":
+                tipoComprobanteLetra = "Nota de Crédito Electrónico";
+                break;
+            case "9907":
+                tipoComprobanteLetra = "Nota de Venta";
+                break;
+            case "9903":
+                tipoComprobanteLetra = "Cotización";
+                break;
+            default:
+                tipoComprobanteLetra = "Comprobante Desconocido";
+                break;
+        }
+
+        //para logo
+
+        var path = Model[0].LogoBase64;
+
+    }
+
+
+    <!DOCTYPE html>
+    <html>
+
+    <head>
+        <meta charset="utf-8" />
+        <title>Pruebas de Layout</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+              rel="stylesheet" />
+    </head>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-family: "Roboto", sans-serif;
+    }
+
+    main {
+        float: none;
+        clear: both;
+    }
+
+    footer {
+        position: relative;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+        font-size: 10px;
+    }
+
+
+
+    .pagina {
+        margin: 0 auto;
+        overflow: hidden;
+        min-height: 100%;
+        position: relative;
+    }
+
+    .factura {
+        margin: auto;
+    }
+
+    .factura__contenedor {
+        margin: 0 auto;
+        overflow: hidden;
+    }
+
+
+    .clearfix::after {
+        content: "";
+        display: table;
+        clear: both;
+    }
+
+    .factura__info-imagen {
+        width: 470px;
+        height:130px;
+        margin-bottom: 8px;
+    }
+
+        .factura__info-imagen img {
+            width: 100%;
+            height: 130px;
+            object-fit: contain;
+        }
+
+    .logo__empresa-title {
+        text-align: center;
+        max-width: 465px;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .logo__empresa-direccion {
+        text-align: center;
+        max-width: 465px;
+        font-size: 10px;
+        font-weight: 400;
+        padding-top: 7px;
+    }
+
+    .logo__empresa_telefonos {
+        text-align: center;
+        max-width: 465px;
+        font-size: 10px;
+        font-weight: 400;
+        padding-top: 7px;
+    }
+
+    /* Detalle de factura */
+		.factura__detalle {
+			float: left;
+			width: 215px;
+			height: 130px;
+			padding-left: 31px;
+		}
+
+		.factura__box {
+			width: 100%;
+			border: 1px solid @color;
+			border-radius: 10px;
+			text-align: center;
+			overflow: hidden;
+			font-size: 17px;
+			box-sizing: border-box;
+			height: 100%;
+		}
+
+		.factura__ruc {
+			padding: 5px 10px;
+			font-weight: 800;
+		}
+
+		.factura__titulo {
+			background-color: @color;
+			color: #ffffff;
+			padding: 10px 40px;
+			font-weight: 600;
+		}
+
+		.factura__numero {
+			padding: 10px 8px;
+		}
+
+    /* para datos de la empresa y cliente*/
+
+    .factura-container {}
+
+    .empresa {
+        text-align: start;
+        margin-bottom: 10px;
+        margin-top: 10px;
+    }
+
+    .empresa h2 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .empresa__domicilio {
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    .empresa__direccion {
+        font-size: 10px;
+        font-weight: 400;
+        padding-left: 10px;
+        text-decoration: underline;
+    }
+
+
+
+    /* PARA 1 CREDITO Y SIN CREDITO */
+    /**************************************/
+    .info-factura {
+        display: flex;
+        justify-content: space-between;
+        border: 1px solid
+            @color
+        ;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 5px;
+        height: 40px;
+    }
+
+    .info-factura div {
+        width: 215px;
+        float: left;
+        text-align: center;
+        font-size: 14px;
+        padding: 2px 10px;
+        position: relative;
+        background: transparent;
+    }
+
+    .info-factura div:not(:first-child)::before {
+        content: "";
+        position: absolute;
+        top: 5px;
+        bottom: 5px;
+        left: 0;
+        width: 1px;
+        background-color:
+            @color
+        ;
+    }
+
+    .info-factura__label {
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 12px;
+    }
+
+    .info-factura__value {
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 2;
+    }
+
+
+    /**************************************/
+    .info-factura2 {
+        border: 1px solid
+            @color
+        ;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+
+    .info-factura2 div {
+        width: 150px;
+        width: 150px;
+        float: left;
+        text-align: center;
+        font-size: 14px;
+        padding: 2px 10px;
+        position: relative;
+        background: transparent;
+        height: 100%;
+    }
+
+    .info-factura2 div:not(:first-child)::before {
+        content: "";
+        width: 1px;
+        position: absolute;
+        top: 5px;
+        bottom: 5px;
+        left: 0;
+        background-color:
+            @color
+        ;
+    }
+
+    .info-factura__label2 {
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 12px;
+        text-align: center;
+    }
+
+    .info-factura__value2 {
+        font-weight: 400;
+        font-size: 11px;
+        line-height: 2;
+    }
+
+    .info-factura detalle__notaCredito div {
+        height: 190px;
+        background-color: palevioletred;
+    }
+
+    /* PARA LOS DATOS DEL CLIENTE RUC NOMBRE Y DIRECCION*/
+    /*///////////////////////*/
+    .cliente-info {
+        border: 1px solid
+            @color
+        ;
+        border-radius: 8px;
+        padding: 10px;
+        padding-bottom: 0px;
+    }
+
+    .cliente-linea {
+        width: 100%;
+        overflow: hidden;
+        margin-bottom: 5px;
+    }
+
+    .cliente-label {
+        float: left;
+        width: 60px;
+        font-weight: 500;
+        font-size: 12px;
+    }
+
+    .cliente-dato {
+        float: left;
+        width: calc(100% - 60px);
+        font-weight: 400;
+        font-size: 11px;
+    }
+
+    .detalle__notaCredito {
+        margin-top: 5px;
+        padding-bottom: 0px;
+    }
+
+    /* CODIGO PARA LA TABLA */
+    .container-table {
+	padding-top: 10px;
+	max-width: 710px;
+	margin: 0 auto;
+}
+
+.tabla-productos {
+	border-collapse: collapse;
+	width: 100%;
+	border-bottom: 1px solid @color;
+}
+
+.tabla-encabezado {
+	background-color: @color;
+	color: white;
+}
+
+	.tabla-encabezado tr {
+		border: 1px solid @color;
+		z-index: 999;
+	}
+
+	.tabla-encabezado th:not(:first-child) {
+		border-left: 1px solid white;
+		padding: 3px;
+	}
+
+.celda-dato {
+	border-left: 1px solid @color;
+	border-right: 1px solid @color;
+	padding: 3px;
+}
+
+.celda-encabezado {
+	font-size: 10px;
+	text-align: center;
+	font-weight: 400;
+}
+
+.celda-dato {
+	font-size: 10px;
+	text-align: center;
+}
+
+.ocultar {
+	display: none;
+}
+
+.primera-columna {
+	text-align: left;
+	word-break: break-word;
+	min-width: 270px;
+}
+
+/* ESTILOS PARA EL FOOTER Y EL QR CUENTA SOLES  */
+
+
+		.footer_impresion {
+			width: 710px;
+		}
+
+		.comprobante-container {
+			width: 710px;
+			margin-top: 10px;
+			font-size: 12px;
+		}
+
+		.container-venta-info {
+			float: left;
+		}
+
+		/* dataaaaaaaaaa*/
+
+		.container__qr-cuentas {
+			float: left;
+			width: 410px;
+		}
+
+			.container__qr-cuentas > div:first-child {
+				width: 450px;
+			}
+
+		.container_qr-imagen {
+			float: left;
+			width: 100px;
+			height: 100px;
+		}
+            .container_qr-imagen img{
+                margin:0;
+                padding:0;
+            }
+
+            .comprobante-cuenta-info {
+                float: left;
+                padding-left: 50px;
+            }
+
+		.comprobante-body {
+			border: 1px solid @color;
+			padding: 10px;
+			overflow: hidden;
+			margin-bottom: 10px;
+			position: relative;
+			border-radius: 10px;
+		}
+
+		/* QR */
+		.comprobante-qr {
+			float: left;
+			width: 100px;
+			height: 100px;
+			margin-right: 10px;
+		}
+
+		/* Info de cuenta */
+		.comprobante-title-line {
+			padding-top: 10px;
+			font-size: 11px;
+			max-width: 272px;
+		}
+
+		.container-venta-info {
+			float: left;
+		}
+
+		/* Tabla de montos */
+		.comprobante-venta-info {
+			width: 260px;
+			border: 1px solid @color;
+			font-size: 13px;
+			border-radius: 5px;
+			padding: 5px;
+			margin-bottom: 16px;
+		}
+
+		.comprobante-link-info {
+			clear: both;
+			font-size: 11px;
+			padding-top: 15px;
+			width: 410px;
+			text-align: start;
+		}
+
+		.Montotext,
+		span {
+			font-size: 12px;
+			font-weight: bold;
+		}
+
+		.comprobante-cuenta-label {
+			display: block;
+			background: @color;
+			color: white;
+			padding: 2px 5px;
+			margin-bottom: 4px;
+		}
+
+		.comprobante-cuenta-text {
+			margin: 3px 0;
+			text-align: start;
+		}
+
+		.comprobante-venta-tabla {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+			.comprobante-venta-tabla td {
+				padding: 2px 5px;
+				text-align: start;
+			}
+
+				.comprobante-venta-tabla td:last-child {
+					text-align: right;
+				}
+
+                		/* Pie del comprobante */
+		.comprobante-footer-vendedor {
+			text-align: start;
+		}
+
+		.comprobante-footer {
+			border: 1px solid @color;
+			margin-top: 10px;
+			padding: 8px;
+			overflow: hidden;
+			text-align: start;
+		}
+
+			.comprobante-footer strong {
+				margin-bottom: 5px;
+			}
+
+		.comprobante-vendedor-nombre {
+			font-weight: 400;
+		}
+
+        /* PARA TABLA CON CUOTAS */
+
+        /*/ para tabla*/
+        .comprobante-footer {
+            overflow: hidden;
+        }
+
+        .cuotas-bloques {
+            width: 100%;
+        }
+
+        .cuotas-bloque {
+            float: left;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .tabla-cuotas {
+            width: 100%;
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+            font-size: 12px;
+        }
+
+            .tabla-cuotas th,
+            .tabla-cuotas td {
+                border: 1px solid black;
+                padding: 5px;
+                width: 60px;
+            }
+
+                .tabla-cuotas th:nth-child(3n):not(:last-child),
+                .tabla-cuotas td:nth-child(3n):not(:last-child) {
+                    border-right: 2px solid black;
+                }
+
+/*PARA LAS DETRACCIONES */
+/*  para las detracciones */
+.detraccion-box {
+	border: 1px solid @color;
+	border-radius: 10px;
+	width: 710px;
+	overflow: hidden;
+	margin-top: 10px;
+}
+
+.titulo {
+	font-weight: bold;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
+
+.fila {
+	clear: both;
+	padding-bottom: 20px;
+	padding-left: 10px;
+}
+
+.etiqueta {
+	float: left;
+	width: 100px;
+	font-weight: bold;
+	text-align: start;
+}
+
+.valor {
+	float: left;
+}
+
+.separador {
+	float: left;
+	width: 300px;
+}
+
+.porcentaje {
+	float: left;
+	width: 210px;
+	text-align: center;
+	font-weight: bold;
+}
+
+	.porcentaje span {
+		font-weight: 400;
+	}
+
+.monto {
+	float: left;
+	font-weight: bold;
+	width: 210px;
+}
+
+	.monto span {
+		font-weight: 400;
+	}
+
+
+
+    /* OTROS*/
+    .float_left {
+        float: left;
+    }
+    </style>
+
+
+    <body>
+        @*<pre>
+            @Raw(JsonConvert.SerializeObject(Model[0], Formatting.Indented))
+            </pre>*@
+
+        @for (int pagina = 0; pagina < totalPaginas; pagina++)
+        {
+            var inicio = pagina * filasPorPagina;
+            var fin = Math.Min(inicio + filasPorPagina, datos.Count);
+
+
+            <div class="pagina">
+                <header>
+                    <section class="factura" style="padding-bottom: 5px;">
+                        <div class="factura__contenedor">
+                            <div class="factura__encabezado clearfix ">
+                                <div class="factura__info-imagen float_left">
+                                    @if (string.IsNullOrWhiteSpace(path))
+                                    {
+                                        <h1 class="logo__empresa-title">@razonsocial</h1>
+                                        if (!string.IsNullOrWhiteSpace(direccion))
+                                        {
+                                            <h5 class="logo__empresa-direccion">Direccion: @direccion</h5>
+
+                                        }
+
+                                        if (!string.IsNullOrWhiteSpace(telefono))
+                                        {
+                                            <h6 class="logo__empresa_telefonos"> Telf: @telefono </h6>
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <img src="@path" alt="Encabezado Marly Import" />
+                                    }
+
+                                </div>
+                                <div class="factura__detalle float_left">
+                                    <div class="factura__box">
+                                        <div class="factura__ruc">
+                                            <strong>R.U.C.</strong> @Model[0].DatosEmpresa[0].Ruc
+                                        </div>
+                                        <div class="factura__titulo">@tipoComprobanteLetra</div>
+                                        <div class="factura__numero"><strong>@Model[0].SerieFact</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </section>
+                    <section>
+                        <div class="factura-container">
+
+                            <!-- Para 1 solo credito -->
+                            @if (Model[0].CronogramaPagos != null && Model[0].CronogramaPagos.Count == 1)
+                            {
+                                <div class="info-factura2">
+                                    <div>
+                                        <span class="info-factura__label2">Fecha de Emisión:</span><br />
+                                        <span class="info-factura__value2">@Model[0].FechaEmision</span>
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label2">Condición de Pago:</span><br />
+                                        <span class="info-factura__value">
+                                            @(string.IsNullOrWhiteSpace(Model[0].CondicionPago) ? "-"
+                                        : (Model[0].CondicionPago))
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label2">Moneda:</span><br />
+                                        <span class="info-factura__value2">@Model[0].TipoMoneda</span>
+
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label2" style="padding-left:25px; margin:auto;">
+                                            Fecha de
+                                            Vencimiento:
+                                        </span><br />
+                                        <span class="info-factura__value2" style="padding-left:25px; margin:auto;">@Model[0].CronogramaPagos[0].FechaVencimientoCronograma</span>
+
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="info-factura">
+                                    <div>
+                                        <span class="info-factura__label">Fecha de Emisión:</span><br />
+                                        <span class="info-factura__value">@Model[0].FechaEmision</span>
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label">Condición de Pago:</span><br />
+
+                                        <span class="info-factura__value">
+                                            @(string.IsNullOrWhiteSpace(Model[0].CondicionPago) ? "-"
+                                    : (Model[0].CondicionPago))
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label">Moneda:</span><br />
+                                        <span class="info-factura__value">@Model[0].TipoMoneda</span>
+                                    </div>
+                                </div>
+                            }
+
+                            <div class="cliente-info">
+                                <div class="cliente-linea">
+                                    <span class="cliente-label">Dni/Ruc:</span><span class="cliente-dato">
+                                        @(string.IsNullOrWhiteSpace(Model[0].RucCliente) ? "-" : Model[0].RucCliente)
+                                    </span>
+                                </div>
+                                <div class="cliente-linea">
+                                    <span class="cliente-label">Cliente:</span><span class="cliente-dato">@Model[0].Cliente</span>
+                                </div>
+                                <div class="cliente-linea">
+                                    <span class="cliente-label">Dirección:</span><span class="cliente-dato">
+                                        @(string.IsNullOrWhiteSpace(Model[0].Direccion) ? "-" : Model[0].Direccion)
+                                    </span>
+                                </div>
+                            </div>
+                            @if (Model[0].tipo_documento == "07")
+                            {
+                                <div class="info-factura detalle__notaCredito">
+                                    <div>
+                                        <span class="info-factura__label">Tipo de NC:</span><br />
+                                        <span class="info-factura__value">@Model[0].NotaCredito[0].TipoNC</span>
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label">Datos del documento que modifica:</span><br />
+                                        <span class="info-factura__value" style="font-size:10px">@Model[0].NotaCredito[0].DescripNC</span>
+                                        @*@Raw(@Model[0].NotaCredito[0].DescripNC.Replace("\r\n", "<br />").Replace("\n", "<br />"))*@
+                                    </div>
+                                    <div>
+                                        <span class="info-factura__label">Motivo:</span><br />
+                                        <span class="info-factura__value">@Model[0].NotaCredito[0].MotivoNC</span>
+                                        <span class="info-factura__value" style="visibility: hidden;">&nbsp;</span>
+
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </section>
+                </header>
+                <main>
+                    <section>
+                        <div class="container-table">
+                            <table class="tabla-productos">
+                                <thead class="tabla-encabezado">
+                                    <tr>
+
+                                        @* @if (Model.ConfInicio.SalesCode == true)
+                                            {
+                                                <th class="celda-encabezado">COD.</th>
+                                            } *@
+
+
+                                        @*<th class="celda-encabezado" style="max-width:15px !important;">COD.</th>*@
+                                        <th class="celda-encabezado">DESCRIPCIÓN</th>
+                                        <th class="celda-encabezado">UNIDAD</th>
+                                        <th class="celda-encabezado">CANT.</th>
+                                        <th class="celda-encabezado">P. UNIT.</th>
+                                        <th class="celda-encabezado">DESC.</th>
+                                        <th class="celda-encabezado">IMPORTE</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="tabla-cuerpo">
+                                    @for (int i = inicio; i < fin; i++)
+                                    {
+                                        var item = datos[i];
+                                        <tr>
+
+                                            @* @if (Model.ConfInicio.SalesCode == true)
+                                                {
+                                                    <td class="celda-dato">@((string.IsNullOrWhiteSpace(item.CodigoBI) ? "" :
+                                                                                            item.CodigoBI))</td>
+                                                                            } *@
+                                            @*<td class="celda-dato primera-columna" style="max-width:15px !important;">@(i + 1)</td>*@
+                                            <td class="celda-dato primera-columna">@item.Descripcion</td>
+                                            <td class="celda-dato segunda-columna">@item.Unidad</td>
+                                            <td class="celda-dato tercera-columna">
+                                                @(item.Cantidad == "0" && string.IsNullOrWhiteSpace(item.Descripcion) ? " " : item.Cantidad)
+                                            </td>
+                                            @*ojo con esta linea *************************************************************************************************** *@
+
+                                            <td class="celda-dato cuarta-columna">
+                                                @Raw(item.PrecioUnitario == "0" && string.IsNullOrWhiteSpace(item.Descripcion)
+                                                   ? "<span style='visibility:hidden'>x</span>"
+                                                   : item.PrecioUnitario)
+                                            </td>
+
+                                            <td class="celda-dato quinta-columna">
+                                                @(string.IsNullOrWhiteSpace(item.Descuento) ? "" : item.Descuento)
+                                            </td>
+
+                                            <td class="celda-dato sexta-columna">
+                                                @(item.Importe == "0" && string.IsNullOrWhiteSpace(item.Descripcion) ? " " : item.Importe)
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </section>
+                </main>
+            </div>
+
+        }
+
+        <footer>
+            <section class="footer_impresion">
+                <div class="comprobante-container">
+                    <div class="comprobante-body">
+                        <div class="container__qr-cuentas">
+                            <div>
+                                <div class="container_qr-imagen">
+                                    @if (Model[0].tipo_documento == "01" || Model[0].tipo_documento == "03" || Model[0].tipo_documento == "07")
+                                    {
+                                        <img src="@Model[0].QrImageBase64" alt="Código QR" width="100" height="100" />
+                                    }
+
+                                </div>
+                                <div class="comprobante-cuenta-info">
+                                    @* Mostrar cuentas en SOLES *@
+                                    @if (Model[0].CuentaSoles != null)
+                                    {
+                                        <strong class="comprobante-cuenta-label">CUENTA EN SOLES:</strong>
+                                        foreach (var cuenta in Model[0].CuentaSoles)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(cuenta.DescripcionCuentaSoles))
+                                            {
+
+                                                <p class="comprobante-cuenta-text">
+                                                    @Raw(cuenta.DescripcionCuentaSoles.Replace("\r\n", "<br />").Replace("\n", "<br />"))
+                                                </p>
+
+                                            }
+                                        }
+                                    }
+
+                                    @* Mostrar cuentas en DÓLARES *@
+                                    @if (Model != null && Model.Count > 0 && Model[0].CuentaDolares != null)
+                                    {<strong class="comprobante-cuenta-label">CUENTA EN DÓLARES:</strong>
+
+                                        foreach (var cuenta in Model[0].CuentaDolares)
+                                        {
+                                            if (!string.IsNullOrWhiteSpace(cuenta.DescripcionCuentaDolares))
+                                            {
+
+                                                <p class="comprobante-cuenta-text">
+                                                    @Raw(cuenta.DescripcionCuentaDolares.Replace("\r\n", "<br />").Replace("\n", "<br />"))
+                                                </p>
+
+                                            }
+                                        }
+                                    }
+
+
+                                </div>
+                            </div>
+                            <div>
+                                <div class="comprobante-link-info">
+                                    <p class="Montotext">SON: <span>@Model[0].Montoletras</span></p>
+                                    @if (Model[0].tipo_documento == "01" || Model[0].tipo_documento == "03" || Model[0].tipo_documento == "07")
+                                    {
+                                        <p class="InfoUrl">
+                                            Representación impresa del comprobante de venta electrónica, consulte su documento en:
+                                            <span>https://spk.com.pe/ClienteExt</span>
+                                        </p>
+                                    }
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="container-venta-info">
+                            <div class="comprobante-venta-info">
+
+                                <table class="comprobante-venta-tabla">
+                                    @if (Model[0].tipo_documento == "01" || Model[0].tipo_documento == "03" || Model[0].tipo_documento == "07")
+                                    {
+                                        <tr><td>OP. GRAVADAS</td><td>@Model[0].simboloMoneda</td><td>@Model[0].OpGravada</td></tr>
+                                        <tr><td>OP. GRATUITAS</td><td>@Model[0].simboloMoneda</td><td>@Model[0].OpGratuitas</td></tr>
+                                        <tr><td>OP. EXONERADAS</td><td>@Model[0].simboloMoneda</td><td>@Model[0].OpExonerada</td></tr>
+                                        <tr><td>I.G.V. <strong>@Model[0].tasaIgv</strong> %</td><td>@Model[0].simboloMoneda</td><td>@Model[0].IGV</td></tr>
+                                    }
+
+                                    <tr><td>DESCUENTO</td><td>@Model[0].simboloMoneda</td><td>@Model[0].TotalDescuento</td></tr>
+                                    <tr><td><strong>TOTAL VENTA</strong></td><td><strong>@Model[0].simboloMoneda</strong></td><td><strong>@Model[0].ImporteTotal</strong></td></tr>
+                                </table>
+
+                            </div>
+                            <div class="comprobante-footer-vendedor">
+                                <strong>Vendedor:</strong> <span class="comprobante-vendedor-nombre">@Model[0].Vendedor</span>
+                            </div>
+                        </div>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(Model[0].Obsevaciones))
+                    {
+                        <div class="comprobante-footer">
+                            <div class="comprobante-footer-observacion">
+                                <strong>Observaciones:</strong>
+                                <span class="comprobante-vendedor-nombre">
+                                    @(string.IsNullOrWhiteSpace(Model[0].Obsevaciones) || Model[0].Obsevaciones == "null" ? "-" : Model[0].Obsevaciones)
+                                </span>
+                            </div>
+                        </div>
+                    }
+                    @if (Model[0].CronogramaPagos != null && Model[0].CronogramaPagos.Count() > 1)
+                    {
+                        <div class="comprobante-footer">
+                            <div class="cuotas-bloques">
+                                @{
+                                    var pagos = Model[0].CronogramaPagos.ToList();
+                                    int total = pagos.Count;
+                                    int bloqueIndex = 0;
+                                }
+
+                                @while (bloqueIndex < total)
+                                {
+                                    var bloque = pagos.Skip(bloqueIndex).Take(3).ToList();
+                                    <div class="cuotas-bloque">
+                                        <table class="tabla-cuotas">
+                                            <tr>
+                                                @foreach (var item in bloque)
+                                                {
+                                                    <th>N° Cuota</th>
+                                                    <th>Fec. Venc.</th>
+                                                    <th>Monto</th>
+                                                }
+                                            </tr>
+                                            <tr>
+                                                @foreach (var item in bloque)
+                                                {
+                                                    <td>@item.NroItemCronogramas</td>
+                                                    <td>@item.FechaVencimientoCronograma</td>
+                                                    <td>@item.ImporteCronograma</td>
+                                                }
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    bloqueIndex += 3;
+                                }
+
+
+                            </div>
+                        </div>
+                    }
+
+
+
+                    @if (Model[0].Detraccion[0] != null && !string.IsNullOrWhiteSpace(Model[0].Detraccion[0].BSDescDetraccion))
+                    {
+                        <div class="detraccion-box">
+                            <div class="titulo">Información de detracción</div>
+
+                            <div class="fila">
+                                <div class="etiqueta">Leyenda:</div>
+                                <div class="valor">@Model[0].Detraccion[0].TipoOpDescDetraccion</div>
+                            </div>
+
+                            <div class="fila">
+                                <div class="etiqueta">Bien o Servicio:</div>
+                                <div class="valor">@Model[0].Detraccion[0].BSDescDetraccion</div>
+                            </div>
+
+                            <div class="fila">
+                                <div class="etiqueta">Medio de pago:</div>
+                                <div class="valor">@Model[0].Detraccion[0].MedioPagoDescDetraccion</div>
+                            </div>
+
+                            <div class="fila">
+                                <div class="etiqueta">Nro.Cta. B.N.</div>
+                                <div class="valor">@Model[0].Detraccion[0].CuentaBNDetraccion</div>
+                                <div class="separador"></div>
+                                <div class="porcentaje">% Detracción <span> @Model[0].Detraccion[0].PorcentajeDetraccion</span></div>
+                                <div class="monto">Monto Detracción <span> @Model[0].Detraccion[0].MontoDetraccion</span></div>
+                            </div>
+
+                        </div>
+                    }
+                </div>
+            </section>
+        </footer>
+
+    </body>
+
+</html>
+
+
+

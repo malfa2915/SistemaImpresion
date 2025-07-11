@@ -1,28 +1,35 @@
-﻿using FastReport;
+﻿using DeskTest.Models.PrinterPedidosRest.BaseCaja;
+using DinkToPdf;
+using FastReport;
+using FastReport.Barcode;
+using FastReport.Table;
 using Helios.Cont.Business.Entity;
+using Helios.Web.Core.Models.Order.PrinterPedidosRest.BaseCaja;
+using Newtonsoft.Json;
+using QRCoder;
+using RazorEngine;
+using RazorEngine.Templating;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Drawing.Printing;
+using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
-using System.Drawing;
-using QRCoder;
-
-
-using Font = System.Drawing.Font;
-using System.Drawing.Text;
-using FastReport.Barcode;
-using System.Drawing.Printing;
-using FastReport.Table;
-using Newtonsoft.Json;
 using System.Windows.Forms;
-using Helios.Web.Core.Models.Order.PrinterPedidosRest.BaseCaja;
-using DeskTest.Models.PrinterPedidosRest.BaseCaja;
+using Font = System.Drawing.Font;
 
 
 public class Commons
-    {
+{
+    private static readonly SynchronizedConverter _converter = new SynchronizedConverter(new PdfTools());
+
 
     //public void ImprimirPedido(List<detalleItemsImpresoras> order, String ISPRINTER, String nameMesa, String nameVendedor, String nameAlmacen, String namecargo, String NombreInfra, String NombreAdicional)
     //    {
@@ -265,7 +272,7 @@ public class Commons
     //                    {
     //                        nameMesa = "";
     //                    }
-                                            
+
     //                    print.AnadirLineaEmpresa("PEDIDO - " + itemPrint.aliasImpresora);
     //                    print.AnadirLineaEmpresa("");
     //                    print.AnadirLineaEmpresa(nameMesa);
@@ -734,7 +741,7 @@ public class Commons
     //                    {
     //                        nameMesa = "";
     //                    }
-                          
+
     //                    print.AnadirLineaEmpresa("ANULACIÓN");
     //                    print.AnadirLineaEmpresa("");
     //                    print.AnadirLineaEmpresa("PEDIDO - " + itemPrint.aliasImpresora);
@@ -962,7 +969,7 @@ public class Commons
     //                    {
     //                        nameMesa = "";
     //                    }
-                                             
+
     //                    print.AnadirLineaEmpresa("ANULACIÓN");
     //                    print.AnadirLineaEmpresa("");
     //                    print.AnadirLineaEmpresa("PEDIDO - " + itemPrint.aliasImpresora);
@@ -1192,7 +1199,7 @@ public class Commons
     //    {
 
     //        //TITULO
-         
+
 
     //                if (ISPRINTER.formatoImpresion == "80MM")
     //                {
@@ -1242,7 +1249,7 @@ public class Commons
 
     //                    print.ImprimeTicket(ISPRINTER.IPImpresion , ISPRINTER.relacionImpresora, (int)ISPRINTER.numImpresion);                                           
 
-                       
+
     //                }
     //                else if (ISPRINTER.formatoImpresion == "55MM")
     //                {
@@ -1337,7 +1344,7 @@ public class Commons
 
 
 
-          
+
 
     //    }
     //    catch (Exception)
@@ -1351,7 +1358,7 @@ public class Commons
 
     //-----------------------------------------------fast report -----------------------------------------------------
 
-    public void ImprimirVoucher(documentoventaAbarrotes order,ImpresorasNegocio printImp,datosGenerales datosGenera)
+    public void ImprimirVoucher(documentoventaAbarrotes order, ImpresorasNegocio printImp, datosGenerales datosGenera)
     {
 
         try
@@ -1365,11 +1372,11 @@ public class Commons
             if (order != null)
             {
 
-                    var pathReport = "";
+                var pathReport = "";
 
-                    var listGeneral = new List<DocumentoFactura>();
+                var listGeneral = new List<DocumentoFactura>();
 
-                if(printImp != null)
+                if (printImp != null)
                 {
                     if (printImp.formatoImpresion == "45MM")
                     {
@@ -1475,7 +1482,7 @@ public class Commons
                         }
                     }
 
-                  
+
 
                     string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
                     Report.Load(path);
@@ -1492,7 +1499,7 @@ public class Commons
 
                         }
                     }
-                     
+
 
                     Report.Report.SetParameterValue("SimboloMoneda", "S/");
                     Report.RegisterData(listGeneral, "DocumentoFacturas");
@@ -1526,7 +1533,7 @@ public class Commons
                     }
                 }
 
-                   
+
 
             }
 
@@ -1556,7 +1563,7 @@ public class Commons
     }
 
     //public void ImprimirPromociones(List<detalleItemsImpresoras> PrinDet, printProductComercial order, PrintQueue printQ ,ImpresorasNegocio ImpresoraN)
-          public void ImprimirPromociones(List<printProductComercial> PrinDet)
+    public void ImprimirPromociones(List<printProductComercial> PrinDet)
     {
 
         try
@@ -1571,7 +1578,7 @@ public class Commons
             //TITULO
             if (PrinDet != null)
             {
-                foreach(var dt in PrinDet)
+                foreach (var dt in PrinDet)
                 {
                     if (PrinDet != null)
                     {
@@ -1603,7 +1610,7 @@ public class Commons
                         Report.Load(path);
 
                         //Report.Report.SetParameterValue("Promociones", order.grupoProducto);
-                        
+
                         Report.RegisterData(listGeneral, "RestPedidos");
                         Report.Prepare();
 
@@ -1641,7 +1648,7 @@ public class Commons
                 }
             }
 
-        
+
 
         }
         catch (Exception ex)
@@ -1655,7 +1662,7 @@ public class Commons
 
     public List<SpPedidosRest> GetPromociones(printProductComercial ventaData)
     {
-        var produc="";
+        var produc = "";
         var listInvoice = new List<SpPedidosRest>();
         var objCuenta = new SpPedidosRest();
 
@@ -1685,7 +1692,7 @@ public class Commons
                     {
                         ObjComple = new SpComplementoRest();
                         ObjComple.NombreComplemento = comp.productoBene;
-                        ObjComple.CantidadComplemento = "( "+ comp.CantidadBene.ToString("N0") + " )";
+                        ObjComple.CantidadComplemento = "( " + comp.CantidadBene.ToString("N0") + " )";
                         listComplemento.Add(ObjComple);
                     }
 
@@ -1697,7 +1704,7 @@ public class Commons
             {
                 CantidadDet = det.Cantidad.ToString("N0"),
                 DescPediDet = produc,
-                UnidadMedida=det.UMedida,
+                UnidadMedida = det.UMedida,
                 ComplementosRest = listComplemento
             });
 
@@ -1710,9 +1717,9 @@ public class Commons
 
 
 
-    public void ImprimirPedidoReImpersionFastReport(List<detalleItemsImpresoras> order,  PrintQueue tipo, ImpresorasNegocio ImpresoraN, documentoventaAbarrotes ventaData, configuracionInicio ConfigInicio)
+    public void ImprimirPedidoReImpersionFastReport(List<detalleItemsImpresoras> order, PrintQueue tipo, ImpresorasNegocio ImpresoraN, documentoventaAbarrotes ventaData, configuracionInicio ConfigInicio)
     {
- 
+
         try
         {
 
@@ -1729,7 +1736,7 @@ public class Commons
                 foreach (var p in order)
                 {
                     var pathReport = "";
-       
+
                     var listGeneral = new List<SpPedidosRest>();
 
                     if (p.formatoImpresion == "45MM")
@@ -1757,7 +1764,7 @@ public class Commons
                     }
                     else if (tipo.TipoEnvioImpresion == "Anulacion")
                     {
-                        p.titleInput = "ANULACIÓN " +" - "+ p.aliasImpresora;
+                        p.titleInput = "ANULACIÓN " + " - " + p.aliasImpresora;
 
                         //listGeneral.AddRange(GetPedido(ventaData, p, "Anulacion", ConfigInicio));
                     }
@@ -1786,7 +1793,7 @@ public class Commons
                         Report.Load(path);
                         //Report.Report.SetParameterValue("UbicacionPedido", p.relacionImpresora);
 
-                        Report.RegisterData(listGeneral, "RestPedidos");      
+                        Report.RegisterData(listGeneral, "RestPedidos");
                         Report.Prepare();
 
                         if (ventaData.descripAdicinalPedido != null)
@@ -1808,7 +1815,7 @@ public class Commons
                             DataBand dtClie = Report.Report.FindObject("dtClie") as DataBand;
                             dtClie.Visible = false;
                         }
-                        if (ConfigInicio.InicioVenta !=null)
+                        if (ConfigInicio.InicioVenta != null)
                         {
                             DataBand dtubicacion = Report.Report.FindObject("dtubicacion") as DataBand;
                             dtubicacion.Visible = false;
@@ -1829,12 +1836,11 @@ public class Commons
                         pdfExport.Dispose();
                         strm.Position = 0;
 
-                            Report.PrintSettings.Printer = p.relacionImpresora;
-                        
+                        Report.PrintSettings.Printer = p.relacionImpresora;
                         int printNr = (int)ImpresoraN.numImpresion;
                         if (ImpresoraN != null)
                         {
-                         
+
                             for (int i = 0; i < printNr; i++)
                             {
                                 Report.Report.PrintSettings.ShowDialog = false;
@@ -1872,13 +1878,14 @@ public class Commons
         var listAdciona = new List<SpAdicionalRestDet>();
         var item = "";//f
         var ImpresorasList = new List<documentoventaDetalleBeneficios>();
-        var Distribucion="";
+        var Distribucion = "";
         var CantiComplemento = "";
         //objCuenta.FechaPedido = fecha;
         objCuenta.FechaPedido = tipo.FechaEnvio.GetValueOrDefault().ToString("dd-MM-yyyy") + "  Hora: " + tipo.FechaEnvio.GetValueOrDefault().ToString("HH:mm:tt");
         objCuenta.CargoPedido = ventaData.cargoOperacion + " :";
         objCuenta.Usuario = ventaData.usuarioOperacion;
-        Distribucion= ventaData.nombreDistribucion;
+        objCuenta.NombreCliente = ventaData.nombrePedido;
+        Distribucion = ventaData.nombreDistribucion;
         if (ventaData.nombreDistribucion == null)
         {
             Distribucion = "Venta directa   |";
@@ -1892,7 +1899,7 @@ public class Commons
         {
             objCuenta.DocCliente = p.titleInput;
         }
-      
+
         //objCuenta.DocCliente = NroPedido +" Nro:  "+  ventaData.numeroVenta;
 
         objCuenta.PedidosRestDet = new List<SpPedidosRestDet>();
@@ -2074,7 +2081,7 @@ public class Commons
                     }
                 }
 
-                if (det.detalleAdicional !=null)
+                if (det.detalleAdicional != null)
                 {
                     if (det.detalleAdicional.Length > 0)
                     {
@@ -2103,7 +2110,8 @@ public class Commons
                         }
                     }
                 }
-                else{
+                else
+                {
                     if (det.delivery == true)
                     {
                         item = det.nombreItem.ToUpper() + "  <LLEVAR>";
@@ -2114,7 +2122,7 @@ public class Commons
                         item = det.nombreItem.ToUpper();
                     }
                 }
-               
+
 
                 objCuenta.PedidosRestDet.Add(new SpPedidosRestDet()
                 {
@@ -2209,7 +2217,7 @@ public class Commons
                 //        listpromociones.Add(ObjPromo);
                 //    }
                 //}
-                if (det.detalleAdicional!=null)
+                if (det.detalleAdicional != null)
                 {
                     if (det.detalleAdicional.Length > 0)
                     {
@@ -2237,7 +2245,7 @@ public class Commons
                         }
                     }
                 }
-              
+
                 objCuenta.PedidosRestDet.Add(new SpPedidosRestDet()
                 {
                     CantidadDet = det.monto1.GetValueOrDefault().ToString("N0"),
@@ -2310,7 +2318,7 @@ public class Commons
 
                 if (det.detalleAdicional != null)
                 {
-                    if (det.detalleAdicional.Length > 0 )
+                    if (det.detalleAdicional.Length > 0)
                     {
                         item = det.nombreItem.ToUpper() + " (" + det.detalleAdicional + ")";
                         if (det.delivery == true)
@@ -2338,29 +2346,29 @@ public class Commons
 
                 }
                 else
-                {   
-                        if (det.delivery == true)
-                        {
-                            item = det.nombreItem.ToUpper() + "  <LLEVAR>";
-                        }
-                        else if (det.delivery == false)
-                        {
-                            //item = det.nombreItem.ToUpper() + "  [PARA LA MESA]";
-                            item = det.nombreItem.ToUpper();
-                        }
+                {
+                    if (det.delivery == true)
+                    {
+                        item = det.nombreItem.ToUpper() + "  <LLEVAR>";
+                    }
+                    else if (det.delivery == false)
+                    {
+                        //item = det.nombreItem.ToUpper() + "  [PARA LA MESA]";
+                        item = det.nombreItem.ToUpper();
+                    }
 
                 }
                 objCuenta.PedidosRestDet.Add(new SpPedidosRestDet()
-                    {
-                        CantidadDet = det.monto1.GetValueOrDefault().ToString("N0"),
-                        DescPediDet = item,
-                        //Precio = det.precioUnitario.GetValueOrDefault().ToString("N2"),
-                        Importe = det.usuarioModificacion,
-                        ComplementosRest = listComplemento,
-                        CombosRest = listpromociones
-                    });
-      
-              
+                {
+                    CantidadDet = det.monto1.GetValueOrDefault().ToString("N0"),
+                    DescPediDet = item,
+                    //Precio = det.precioUnitario.GetValueOrDefault().ToString("N2"),
+                    Importe = det.usuarioModificacion,
+                    ComplementosRest = listComplemento,
+                    CombosRest = listpromociones
+                });
+
+
 
             }
         }
@@ -2374,7 +2382,7 @@ public class Commons
 
 
 
-    public void ImprimirPrecuentaFastReport(List<documentoventaAbarrotesDet> order, ImpresorasNegocio ISPRINTER, String nameMesa, String nameVendedor, String nameAlmacen, String namecargo, String NombreInfra, string fecha, string tipo, documentoventaAbarrotes DatosV, List<detalleItemsImpresoras> DetImpre,configuracionInicio Config)
+    public void ImprimirPrecuentaFastReport(List<documentoventaAbarrotesDet> order, ImpresorasNegocio ISPRINTER, String nameMesa, String nameVendedor, String nameAlmacen, String namecargo, String NombreInfra, string fecha, string tipo, documentoventaAbarrotes DatosV, List<detalleItemsImpresoras> DetImpre, configuracionInicio Config)
 
     {
         var pathReport = "";
@@ -2391,31 +2399,31 @@ public class Commons
 
             //TITULO
             if (order != null)
-            {                                           
+            {
 
-                    if (ISPRINTER.formatoImpresion == "45MM")
-                    {
+                if (ISPRINTER.formatoImpresion == "45MM")
+                {
                     pathReport = @"formatos\reports\printer\infPreVentaRest45m.frx";
-                    }
-                    else if (ISPRINTER.formatoImpresion == "55MM")
-                    {
+                }
+                else if (ISPRINTER.formatoImpresion == "55MM")
+                {
                     pathReport = @"formatos\reports\printer\infPreVentaRest55m.frx";
-                    }
-                    else if (ISPRINTER.formatoImpresion == "80MM")
-                    {
+                }
+                else if (ISPRINTER.formatoImpresion == "80MM")
+                {
                     pathReport = @"formatos\reports\printer\infPreVentaRest.frx";
                     //pathReport = @"formatos\reports\printer\infPreVentaRestMatricial.frx";
                 }
 
                 //listGeneral.AddRange(GetPreCuenta(fecha, consultaNombre.CustomListaUsuarioRol.FirstOrDefault().nombrePerfil, consultaNombre.Full_Name, nameMesa, order, "", DatosV));
                 listGeneral.AddRange(GetPreCuenta(fecha, nameMesa, order, "", DatosV));
-             
+
 
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
                 Report.Load(path);
                 Report.RegisterData(listGeneral, "RestPedidos");
 
-                Report.Report.SetParameterValue("SimboloMoneda","S/");
+                Report.Report.SetParameterValue("SimboloMoneda", "S/");
                 Report.Prepare();
 
                 if (Config.InicioVenta != null)
@@ -2450,13 +2458,13 @@ public class Commons
 
                     for (int i = 0; i < numPrint; i++)
                     {
-                    Report.Report.PrintSettings.ShowDialog = false;
-                    Report.Print();
-                        }
+                        Report.Report.PrintSettings.ShowDialog = false;
+                        Report.Print();
+                    }
                 }
 
-                
-                 
+
+
             }
 
         }
@@ -2470,7 +2478,7 @@ public class Commons
 
 
 
-        public List<SpPedidosRest> GetPreCuenta(string fecha, string NroMesa, List<documentoventaAbarrotesDet> p, string tipo,documentoventaAbarrotes DatosV)
+    public List<SpPedidosRest> GetPreCuenta(string fecha, string NroMesa, List<documentoventaAbarrotesDet> p, string tipo, documentoventaAbarrotes DatosV)
     {
         var listInvoice = new List<SpPedidosRest>();
 
@@ -2483,23 +2491,23 @@ public class Commons
         objCuenta.Moviliario = NroMesa; // colocar pisoy anu
         //objCuenta.TotalImporte = importe.ToString("N2");
         objCuenta.Cliente = "-";
-        objCuenta.DocCliente ="";
+        objCuenta.DocCliente = "";
 
         objCuenta.PedidosRestDet = new List<SpPedidosRestDet>();
 
         var impor = 0.00;
-            foreach (var det in p)
+        foreach (var det in p)
+        {
+            objCuenta.PedidosRestDet.Add(new SpPedidosRestDet()
             {
-                objCuenta.PedidosRestDet.Add(new SpPedidosRestDet()
-                {
-                    CantidadDet = det.monto1.GetValueOrDefault().ToString("N0"),
-                    DescPediDet = det.nombreItem,
-                    Precio = det.precioUnitario.GetValueOrDefault().ToString("N2"),
-                    Importe = det.importeMN.GetValueOrDefault().ToString("N2")
+                CantidadDet = det.monto1.GetValueOrDefault().ToString("N0"),
+                DescPediDet = det.nombreItem,
+                Precio = det.precioUnitario.GetValueOrDefault().ToString("N2"),
+                Importe = det.importeMN.GetValueOrDefault().ToString("N2")
 
-                });
+            });
             impor = impor + Convert.ToDouble(det.importeMN);
-            }
+        }
         objCuenta.TotalImporte = impor.ToString("N2");
 
         listInvoice.Add(objCuenta);
@@ -2507,7 +2515,7 @@ public class Commons
         return listInvoice;
     }
 
-    public void ImprimirCompra(documentocompra compras,string formato, ImpresorasNegocio PrintNeg)
+    public void ImprimirCompra(documentocompra compras, string formato, ImpresorasNegocio PrintNeg)
     {
         var pathReport = "";
         var conver = "";
@@ -2520,81 +2528,81 @@ public class Commons
 
 
             //TITULO
-        
 
-                    switch (formato)
-                    {
 
-                        case "TK":
-                            break;
+            switch (formato)
+            {
 
-                        case "A4":
-                         pathReport = @"formatos\reports\printerSales\InfDocumentoCompraWebA4.frx";
+                case "TK":
+                    break;
 
-                            break;
+                case "A4":
+                    pathReport = @"formatos\reports\printerSales\InfDocumentoCompraWebA4.frx";
 
-                        case "A5":
-                            break;
+                    break;
 
-                        default:
-                            break;
-                    }
+                case "A5":
+                    break;
 
-         
-              
-                listGeneral.AddRange(GetCompraFinal(compras));
+                default:
+                    break;
+            }
 
-                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
-                Report.Load(path);
-     
-                var DesFactura = "";
-     
-                if (compras.tipoDoc == "01")
+
+
+            listGeneral.AddRange(GetCompraFinal(compras));
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+            Report.Load(path);
+
+            var DesFactura = "";
+
+            if (compras.tipoDoc == "01")
+            {
+
+                DesFactura = "Factura de compra";
+            }
+            else if (compras.tipoDoc == "03")
+            {
+                DesFactura = "Boleta de compra";
+            }
+            else if (compras.tipoDoc == "9907")
+            {
+                DesFactura = "Nota de compra";
+            }
+
+            Report.Report.SetParameterValue("Descfactura", DesFactura);
+            Report.Report.SetParameterValue("SimboloMoneda", "S/");
+            Report.Report.SetParameterValue("DescripcionMonto", conver);
+
+
+            Report.RegisterData(listGeneral, "DocumentoCompras");
+            Report.Prepare();
+
+
+            //ValidarCompraTrueFalse();
+
+
+
+            var pdfExport = new FastReport.Export.Pdf.PDFExport();
+
+            Report.Report.Report.Export(pdfExport, strm);
+
+            pdfExport.Dispose();
+            strm.Position = 0;
+
+
+
+            Report.PrintSettings.Printer = PrintNeg.relacionImpresora;
+            int numeroPr = (int)PrintNeg.numImpresion;
+            if (PrintNeg != null)
+            {
+                for (int i = 0; i < numeroPr; i++)
                 {
-
-                    DesFactura = "Factura de compra";
+                    Report.Report.PrintSettings.ShowDialog = false;
+                    Report.Print();
                 }
-                else if (compras.tipoDoc == "03")
-                {
-                    DesFactura = "Boleta de compra";
-                }
-                else if (compras.tipoDoc == "9907")
-                {
-                    DesFactura = "Nota de compra";
-                }
-
-                Report.Report.SetParameterValue("Descfactura", DesFactura);
-                Report.Report.SetParameterValue("SimboloMoneda", "S/");
-                Report.Report.SetParameterValue("DescripcionMonto", conver);
-
-
-                Report.RegisterData(listGeneral, "DocumentoCompras");
-                Report.Prepare();
-
-
-                //ValidarCompraTrueFalse();
-
-
-
-                var pdfExport = new FastReport.Export.Pdf.PDFExport();
-
-                Report.Report.Report.Export(pdfExport, strm);
-
-                pdfExport.Dispose();
-                strm.Position = 0;
-
-
-
-                Report.PrintSettings.Printer = PrintNeg.relacionImpresora;
-                int numeroPr = (int)PrintNeg.numImpresion;
-                if (PrintNeg != null)
-                {
-                    for (int i = 0; i < numeroPr; i++)
-                    {
-                        Report.Report.PrintSettings.ShowDialog = false;
-                        Report.Print();
-                    }
-                }
+            }
 
 
         }
@@ -2614,7 +2622,7 @@ public class Commons
         var objCuenta = new SpDocumentoCompra();
         var listInvoiceDet = new List<SpDocumentoCompraDetalle>();
         var InvoiceDet = new SpDocumentoCompraDetalle();
-      
+
 
         //switch (p.tipoDocumentoCliente)
         //{
@@ -2634,7 +2642,7 @@ public class Commons
         objCuenta.SerieFactCompra = compra.serie + " - " + String.Format("{0:00000000}", Convert.ToInt32(compra.numeroDoc));
         objCuenta.FechaEmisionCompra = compra.fechaDoc.GetValueOrDefault().ToString("dd-MM-yyyy HH:mm");
 
-        var Moden="";
+        var Moden = "";
         if (compra.monedaDoc == "1")
         {
             Moden = "SOLES";
@@ -2644,9 +2652,9 @@ public class Commons
             Moden = "DOLARES";
         }
 
-        
 
-        var TipoDoc="";
+
+        var TipoDoc = "";
         if (compra.tipoDoc == "01")
         {
             TipoDoc = "FACTURA";
@@ -2693,8 +2701,6 @@ public class Commons
         return listInvoice;
     }
 
-
-
     public void ImprimirComprobanteFinal(rePrintResponse order, String nameVendedor, String nameAlmacen, String namecargo, String NombreInfra, string fecha, PrintQueue address)
     {
         var pathReport = "";
@@ -2713,95 +2719,79 @@ public class Commons
             //TITULO
             if (order != null)
             {
-      
-                    switch (order.PrintNegocio.printOutput)
-                    {
-                      
-                        case "TK":
 
-              
-                             if (order.PrintNegocio.formatoImpresion == "45MM")
-                                {
-                                pathReport = @"formatos\reports\printer\InfDocfacturaTicket45mm.frx";
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "55MM")
-                            {
-                                pathReport = @"formatos\reports\printer\InfDocfacturaTicket55mm.frx";
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "80MM")
-                            {
-                                pathReport = @"formatos\reports\printer\InfDocfacturaTicketWeb.frx";
-                                //pathReport = @"formatos\reports\printer\InfDocfacturaTicketWebMatricial.frx";
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "80MMLP")
-                            {
-                                pathReport = @"formatos\reports\printer\InfDocfacturaTicketWebLP.frx";
-                            }
-             
+                switch (order.PrintNegocio.printOutput)
+                {
 
-                            break;
-                     
-                        case "A4":
+                    case "TK":
 
-                            if (order.PrintNegocio.formatoImpresion == "NOA4")
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA4.frx";
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "BNA4")
-                            {
-                               
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "CVA4")
-                            {
-                              
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "TGA4")
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebBingText.frx";
-                            }
-                            else if (order.PrintNegocio.formatoImpresion == "CGA4")
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWeb4_GRIS.frx";
-                            }
-                            else
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA4.frx";
-                            }
-            
-                            break;
-                        
-                        case "A5":
-                            if (order.PrintNegocio.formatoImpresion == "HOA5" || order.PrintNegocio.formatoImpresion=="1")
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Horizontal.frx";
-                            }    
-                            else if (order.PrintNegocio.formatoImpresion == "VEA5")
-                            {
-                                pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5.frx";
-                            }
 
-                        if (address.Forma_Impresion!=null)
+                        if (order.PrintNegocio.formatoImpresion == "45MM")
                         {
-                            if (address.Forma_Impresion.Length > 0)
-                            {
-                                if (address.Forma_Impresion == "LX350VE")
-                                {
-                                    pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_VE.frx";
-                                }
-                                if (address.Forma_Impresion == "LX350HO")
-                                {
-                                    pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_HO.frx";
-                                }
-                            }
+                            pathReport = @"formatos\reports\printer\InfDocfacturaTicket45mm.frx";
                         }
-                        
-                        
+                        else if (order.PrintNegocio.formatoImpresion == "55MM")
+                        {
+                            pathReport = @"formatos\reports\printer\InfDocfacturaTicket55mm.frx";
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "80MM")
+                        {
+                            pathReport = @"formatos\reports\printer\InfDocfacturaTicketWeb.frx";
+                            //pathReport = @"formatos\reports\printer\InfDocfacturaTicketWebMatricial.frx";
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "80MMLP")
+                        {
+                            pathReport = @"formatos\reports\printer\InfDocfacturaTicketWebLP.frx";
+                        }
 
-                        break;                       
 
-                        default:
-                            break;
-                    }
+                        break;
+
+                    case "A4":
+
+                        if (order.PrintNegocio.formatoImpresion == "NOA4")
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA4.frx";
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "BNA4")
+                        {
+
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "CVA4")
+                        {
+
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "TGA4")
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebBingText.frx";
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "CGA4")
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWeb4_GRIS.frx";
+                        }
+                        else
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA4.frx";
+                        }
+
+                        break;
+
+                    case "A5":
+                        if (order.PrintNegocio.formatoImpresion == "HOA5" || order.PrintNegocio.formatoImpresion == "1")
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Horizontal.frx";
+                        }
+                        else if (order.PrintNegocio.formatoImpresion == "VEA5")
+                        {
+                            pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5.frx";
+                        }
+
+
+                        break;
+
+                    default:
+                        break;
+                }
 
 
                 var Moden = "";
@@ -2809,7 +2799,7 @@ public class Commons
                 if (order.moneda == "1")
                 {
                     Moden = "SOLES";
-                    simboloMoneda  = "S/.";
+                    simboloMoneda = "S/.";
                 }
                 else if (order.moneda == "2")
                 {
@@ -2830,19 +2820,19 @@ public class Commons
                 {
                     if (order.DatosGen.logo.Length > 0)
                     {
-                    
+
                         switch (order.idEstablecimiento)
                         {
                             case 1:
                                 if (order.DatosGen.logo == "1")
                                 {
                                     pathD = "C:\\logo\\logo.jpg";
-                        
+
                                 }
                                 else if (order.DatosGen.logo == "2")
                                 {
                                     pathD = "C:\\logo\\logo2.jpg";
-                          
+
                                 }
                                 else if (order.DatosGen.logo == "3")
                                 {
@@ -2854,24 +2844,24 @@ public class Commons
                                 if (order.DatosGen.logo == "1")
                                 {
                                     pathD = "C:\\logo\\establecimiento2\\logo.jpg";
-                 
+
                                 }
                                 else if (order.DatosGen.logo == "2")
                                 {
                                     pathD = "C:\\logo\\establecimiento2\\logo2.jpg";
-                       
+
                                 }
                                 else if (order.DatosGen.logo == "3")
                                 {
                                     pathD = "C:\\logo\\establecimiento2\\logo3.jpg";
-                      
+
                                 }
                                 break;
                             case 3:
                                 if (order.DatosGen.logo == "1")
                                 {
                                     pathD = "C:\\logo\\establecimiento3\\logo.jpg";
-   
+
                                 }
                                 else if (order.DatosGen.logo == "2")
                                 {
@@ -2888,7 +2878,7 @@ public class Commons
                                 if (order.DatosGen.logo == "1")
                                 {
                                     pathD = "C:\\logo\\establecimiento4\\logo.jpg";
-         
+
                                 }
                                 else if (order.DatosGen.logo == "2")
                                 {
@@ -2898,7 +2888,7 @@ public class Commons
                                 else if (order.DatosGen.logo == "3")
                                 {
                                     pathD = "C:\\logo\\establecimiento4\\logo3.jpg";
-   
+
                                 }
                                 break;
 
@@ -2920,12 +2910,12 @@ public class Commons
                 conver = Conversiones.Enletras(numeroConverson) + " " + Moden;
 
 
-             
+
 
                 string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
                 Report.Load(path);
-            
-                    if (File.Exists(pathD))
+
+                if (File.Exists(pathD))
                 {
                     if (order.DatosGen.logo.Length > 0)
                     {
@@ -2934,7 +2924,7 @@ public class Commons
                     }
                 }
 
-                if (order.DatosGen.logoFooter!=null)
+                if (order.DatosGen.logoFooter != null)
                 {
                     if (order.DatosGen.logoFooter.Length > 0)
                     {
@@ -2949,7 +2939,7 @@ public class Commons
 
                     }
                 }
-               
+
                 var PorIgv = order.tasaIgv.ToString("N0");
                 //var PorIgv = order.tasaIgv.GetValueOrDefault().ToString("N0");
 
@@ -2999,7 +2989,7 @@ public class Commons
                     DesFactura = "PEDIDO";
                 }
                 Report.Report.SetParameterValue("Descfactura", DesFactura);
-                Report.Report.SetParameterValue("IGV", " ("+ PorIgv + " %)");
+                Report.Report.SetParameterValue("IGV", " (" + PorIgv + " %)");
                 Report.Report.SetParameterValue("SimboloMoneda", simboloMoneda);
                 Report.Report.SetParameterValue("DescripcionMonto", conver);
                 //Report.Report.SetParameterValue("nombregiro", datosGenera.nombreGiro);
@@ -3028,26 +3018,21 @@ public class Commons
 
                 ValidarTrueFalse(order, Report, address, listGeneral, pathD);
 
-                if (order.DatosGen.anchoFormaHoja == "LX350VE" || order.DatosGen.anchoFormaHoja == "LX350HO")
-                    {
-                   
-                }
-                else
-                {
-                    var qr = "";
-                    PictureObject imageLogoCompany = (PictureObject)Report.Report.FindObject("CodQRDes");
-                    QRCodeGenerator gen = new QRCodeGenerator();
-                    //var dt = gen.CreateQrCode(codigoQr.Hash, QRCodeGenerator.ECCLevel.Q);
-                    qr = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
-                           order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
-                           order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
+
+                var qr = "";
+                PictureObject imageLogoCompany = (PictureObject)Report.Report.FindObject("CodQRDes");
+                QRCodeGenerator gen = new QRCodeGenerator();
+                //var dt = gen.CreateQrCode(codigoQr.Hash, QRCodeGenerator.ECCLevel.Q);
+                qr = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
+                       order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
+                       order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
 
 
-                    var dt = gen.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
-                    QRCode code = new QRCode(dt);
-                    imageLogoCompany.Image = code.GetGraphic(6);
-                }
-               
+                var dt = gen.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
+                QRCode code = new QRCode(dt);
+                imageLogoCompany.Image = code.GetGraphic(6);
+
+
 
                 var pdfExport = new FastReport.Export.Pdf.PDFExport();
                 //pdfExport.ShowProgress = false;
@@ -3077,9 +3062,15 @@ public class Commons
                         Report.Print();
                     }
                 }
-               
-                
+
+
+
+
             }
+            //if (string.Equals(address.Tipo_Venta, "RAPIDA", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    ImprimirPeditoTicket(listGeneral, order, address);
+            //}
 
         }
         catch (Exception ex)
@@ -3089,7 +3080,588 @@ public class Commons
 
     }
 
-         public List<DocumentoFactura> GetComprobanteFinal(string fecha, rePrintResponse p, string tipo, string Moden, PrintQueue address)
+
+
+    public void ImprimirComprobanteA4(rePrintResponse order, string nameVendedor, string nameAlmacen, string namecargo, string NombreInfra, string fecha, PrintQueue address)
+    {
+        try
+        {
+            var listGeneral = new List<DocumentoFactura>();
+            var Moden = order.moneda == "1" ? "SOLES" : "DOLARES";
+            var simboloMoneda = order.moneda == "1" ? "S/" : "$";
+
+            listGeneral.AddRange(GetComprobanteFinal(fecha, order, "", Moden, address));
+
+            //  Obtener logo
+            var pathD = "";
+            if (order.DatosGen.logo != null)
+            {
+                if (order.DatosGen.logo.Length > 0)
+                {
+
+                    switch (order.idEstablecimiento)
+                    {
+                        case 1:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\logo3.jpg";
+                                //pathD = $"{Directory.GetCurrentDirectory()}{@"\formatos\Logo\logo3.jpg"}";
+                            }
+                            break;
+                        case 2:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo3.jpg";
+
+                            }
+                            break;
+                        case 3:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo.png";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo3.jpg";
+
+                            }
+                            break;
+                        default:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo3.jpg";
+
+                            }
+                            break;
+
+                    }
+
+
+
+                }
+            }
+            if (File.Exists(pathD))
+            {
+                byte[] imageBytes = File.ReadAllBytes(pathD);
+                string extension = Path.GetExtension(pathD).ToLower(); // .jpg o .png
+                string mimeType = extension == ".png" ? "image/png" : "image/jpeg";
+
+                string base64 = Convert.ToBase64String(imageBytes);
+                string imageBase64 = $"data:{mimeType};base64,{base64}";
+
+
+
+                listGeneral[0].LogoBase64 = imageBase64;
+            }
+
+
+
+            //Detraccion
+
+           
+            if (listGeneral[0].Detraccion == null)
+                listGeneral[0].Detraccion = new List<Detraccion>();
+
+            if (listGeneral[0].Detraccion.Count == 0)
+                listGeneral[0].Detraccion.Add(new Detraccion());
+
+            listGeneral[0].Detraccion[0].TipoOpDescDetraccion = order.TipoOpDescDetraccion;
+            listGeneral[0].Detraccion[0].BSDescDetraccion = order.BSDescDetraccion;
+            listGeneral[0].Detraccion[0].MedioPagoDescDetraccion = order.MedioPagoDescDetraccion;
+            listGeneral[0].Detraccion[0].CuentaBNDetraccion = order.CuentaBNDetraccion;
+            listGeneral[0].Detraccion[0].PorcentajeDetraccion = order.PorcentajeDetraccion.ToString();
+            listGeneral[0].Detraccion[0].MontoDetraccion = order.MontoDetraccion.ToString();
+
+
+            // para qr
+            var textoParaQR = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
+                       order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
+                       order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
+            string qrBase64 = GenerarQrBase64(textoParaQR);
+
+            // Calcular monto en letras
+            var descuenT = order.ImporteDescGlobal == 0 ? order.totaldescuento : order.ImporteDescGlobal;
+            var numeroConverson = Convert.ToDecimal(order.importeTotal - descuenT);
+            string conver = Conversiones.Enletras(numeroConverson) + " " + Moden;
+
+            listGeneral[0].Montoletras = conver;
+            listGeneral[0].tasaIgv = order.tasaIgv.ToString("N2");
+            listGeneral[0].simboloMoneda = simboloMoneda;
+            listGeneral[0].QrImageBase64 = qrBase64;
+
+
+            var model = listGeneral;
+
+            //  Leer plantilla Razor
+            string templatePath = Path.Combine(Application.StartupPath, "Template.cshtml");
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException("No se encontró la plantilla:", templatePath);
+
+            string template = File.ReadAllText(templatePath);
+
+            //  clave única para RazorEngine esto para imprimir diferentes documentos
+            string templateKey = Guid.NewGuid().ToString();
+            string htmlResult = Engine.Razor.RunCompile(template, templateKey, null, model);
+
+            //  Configurar el documento PDF aqui damos tamaños
+            var doc = new HtmlToPdfDocument
+            {
+                GlobalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = DinkToPdf.Orientation.Portrait,
+                    PaperSize = DinkToPdf.PaperKind.A4,
+                    DPI = 300,
+                    ImageDPI = 300,
+                    Margins = new MarginSettings
+                    {
+                        Top = 15,
+                        Bottom = 15,
+                        Left = 10,
+                        Right = 10
+                    }
+                },
+                Objects = {
+                    new ObjectSettings
+                    {
+                        HtmlContent = htmlResult,
+                        WebSettings = new WebSettings
+                        {
+                            DefaultEncoding = "utf-8",
+                            LoadImages = true,
+                            PrintMediaType = true,
+                            EnableIntelligentShrinking = false,
+                            MinimumFontSize = 12
+                        }
+                    }
+                }
+            };
+
+            //  Convertir a PDF 
+            byte[] pdfBytes = _converter.Convert(doc);
+
+            //  Guardamos en archivo temporal
+            string pdfPath = Path.Combine(Application.StartupPath, $"factura_{Guid.NewGuid()}.pdf");
+            File.WriteAllBytes(pdfPath, pdfBytes);
+
+            //  Verificar que se generó correctamente
+            if (!File.Exists(pdfPath))
+                throw new Exception("No se generó el PDF");
+
+            //  Imprimir con SumatraPDF
+            string exePath = Path.Combine(Application.StartupPath, "Sumatra.exe");
+            if (!File.Exists(exePath))
+                throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
+
+            string impresora =order.PrintNegocio.relacionImpresora; 
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = $"-print-to \"{impresora}\" -silent \"{pdfPath}\"",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false
+            };
+
+            using (var process = System.Diagnostics.Process.Start(psi))
+            {
+                process?.WaitForExit(10000); 
+                process?.Close();
+            }
+
+            Thread.Sleep(500); 
+
+            //  Eliminar archivo temporal
+            if (File.Exists(pdfPath))
+                File.Delete(pdfPath);
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error_log.txt", ex.ToString()); 
+            MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+    public void ImprimirComprobanteA5(rePrintResponse order, string nameVendedor, string nameAlmacen, string namecargo, string NombreInfra, string fecha, PrintQueue address)
+    {
+        try
+        {
+            var listGeneral = new List<DocumentoFactura>();
+            var Moden = order.moneda == "1" ? "SOLES" : "DOLARES";
+            var simboloMoneda = order.moneda == "1" ? "S/" : "$";
+
+            listGeneral.AddRange(GetComprobanteFinal(fecha, order, "", Moden, address));
+
+            //  Obtener logo
+            var pathD = "";
+            if (order.DatosGen.logo != null)
+            {
+                if (order.DatosGen.logo.Length > 0)
+                {
+
+                    switch (order.idEstablecimiento)
+                    {
+                        case 1:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\logo3.jpg";
+                                
+                            }
+                            break;
+                        case 2:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento2\\logo3.jpg";
+
+                            }
+                            break;
+                        case 3:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo.png";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento3\\logo3.jpg";
+
+                            }
+                            break;
+                        default:
+                            if (order.DatosGen.logo == "1")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "2")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo2.jpg";
+
+                            }
+                            else if (order.DatosGen.logo == "3")
+                            {
+                                pathD = "C:\\logo\\establecimiento4\\logo3.jpg";
+
+                            }
+                            break;
+
+                    }
+
+
+
+                }
+            }
+            if (File.Exists(pathD))
+            {
+                byte[] imageBytes = File.ReadAllBytes(pathD);
+                string extension = Path.GetExtension(pathD).ToLower(); 
+                string mimeType = extension == ".png" ? "image/png" : "image/jpeg";
+
+                string base64 = Convert.ToBase64String(imageBytes);
+                string imageBase64 = $"data:{mimeType};base64,{base64}";
+
+
+
+                listGeneral[0].LogoBase64 = imageBase64;
+            }
+
+
+
+            //Detraccion
+
+            
+            if (listGeneral[0].Detraccion == null)
+                listGeneral[0].Detraccion = new List<Detraccion>();
+
+            if (listGeneral[0].Detraccion.Count == 0)
+                listGeneral[0].Detraccion.Add(new Detraccion());
+
+            listGeneral[0].Detraccion[0].TipoOpDescDetraccion = order.TipoOpDescDetraccion;
+            listGeneral[0].Detraccion[0].BSDescDetraccion = order.BSDescDetraccion;
+            listGeneral[0].Detraccion[0].MedioPagoDescDetraccion = order.MedioPagoDescDetraccion;
+            listGeneral[0].Detraccion[0].CuentaBNDetraccion = order.CuentaBNDetraccion;
+            listGeneral[0].Detraccion[0].PorcentajeDetraccion = order.PorcentajeDetraccion.ToString();
+            listGeneral[0].Detraccion[0].MontoDetraccion = order.MontoDetraccion.ToString();
+
+
+            // para qr
+            var textoParaQR = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
+                       order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
+                       order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
+            string qrBase64 = GenerarQrBase64(textoParaQR);
+
+            // Calcular monto en letras
+            var descuenT = order.ImporteDescGlobal == 0 ? order.totaldescuento : order.ImporteDescGlobal;
+            var numeroConverson = Convert.ToDecimal(order.importeTotal - descuenT);
+            string conver = Conversiones.Enletras(numeroConverson) + " " + Moden;
+
+            listGeneral[0].Montoletras = conver;
+            listGeneral[0].tasaIgv = order.tasaIgv.ToString("N2");
+            listGeneral[0].simboloMoneda = simboloMoneda;
+            listGeneral[0].QrImageBase64 = qrBase64;
+
+
+            var model = listGeneral;
+
+            // Leer plantilla Razor
+            string templatePath = Path.Combine(Application.StartupPath, "impresionA5.cshtml");
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException("No se encontró la plantilla:", templatePath);
+
+            string template = File.ReadAllText(templatePath);
+
+            // Usar clave única para RazorEngine
+            string templateKey = Guid.NewGuid().ToString();
+            string htmlResult = Engine.Razor.RunCompile(template, templateKey, null, model);
+
+            //  Configurar el documento PDF 
+            var doc = new HtmlToPdfDocument
+            {
+                GlobalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = DinkToPdf.Orientation.Landscape,     
+                    PaperSize = DinkToPdf.PaperKind.A5,        
+                    DPI = 300,
+                    ImageDPI = 300,
+                    Margins = new MarginSettings
+                    {
+                        Top = 10,
+                        Bottom = 10,
+                        Left = 10,
+                        Right = 10
+                    }
+                },
+                Objects = {
+                    new ObjectSettings
+                    {
+                        HtmlContent = htmlResult,
+                        WebSettings = new WebSettings
+                        {
+                            DefaultEncoding = "utf-8",
+                            LoadImages = true,
+                            PrintMediaType = true,
+                            EnableIntelligentShrinking = false,
+                            MinimumFontSize = 12
+                        }
+                    }
+                }
+            };
+
+            //  Convertir a PDF en memoria
+            byte[] pdfBytes = _converter.Convert(doc);
+
+            //  Guardar en archivo temporal
+            string pdfPath = Path.Combine(Application.StartupPath, $"factura_{Guid.NewGuid()}.pdf");
+            File.WriteAllBytes(pdfPath, pdfBytes);
+
+            if (!File.Exists(pdfPath))
+                throw new Exception("No se generó el PDF");
+
+            //  Imprimir con SumatraPDF
+            string exePath = Path.Combine(Application.StartupPath, "Sumatra.exe");
+            if (!File.Exists(exePath))
+                throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
+
+            string impresora = order.PrintNegocio.relacionImpresora;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = $"-print-to \"{impresora}\" -silent \"{pdfPath}\"",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false
+            };
+
+            using (var process = System.Diagnostics.Process.Start(psi))
+            {
+                process?.WaitForExit(10000);
+                process?.Close();
+            }
+
+            Thread.Sleep(500); 
+
+            //  Eliminar archivo temporal
+            if (File.Exists(pdfPath))
+                File.Delete(pdfPath);
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error_log.txt", ex.ToString()); 
+            MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    public void ImprimirPeditoTicket(List<detalleItemsImpresoras> order, PrintQueue tipo, ImpresorasNegocio ImpresoraN, documentoventaAbarrotes ventaData, configuracionInicio ConfigInicio)
+    {
+        try
+        {
+            if (order != null)
+            {
+                foreach (var p in order)
+                {
+
+                    var listGeneral = new List<SpPedidosRest>();
+
+                    listGeneral.AddRange(GetPedido(ventaData, p, tipo, ConfigInicio));
+                    var model = listGeneral;
+                    // Leer plantilla Razor
+                    string templatePath = Path.Combine(Application.StartupPath, "PedidosTicket.cshtml");
+                    if (!File.Exists(templatePath))
+                        throw new FileNotFoundException("No se encontró la plantilla:", templatePath);
+
+                    string template = File.ReadAllText(templatePath);
+
+                    // Usar clave única para RazorEngine
+                    string templateKey = Guid.NewGuid().ToString();
+                    string htmlResult = Engine.Razor.RunCompile(template, templateKey, null, model);
+
+                    //  Configurar el documento PDF 
+                    var doc = new HtmlToPdfDocument
+                    {
+                        GlobalSettings = new GlobalSettings
+                        {
+                            ColorMode = DinkToPdf.ColorMode.Color,
+                            Orientation = DinkToPdf.Orientation.Portrait,
+                            PaperSize = new DinkToPdf.PechkinPaperSize("80mm", "1000mm"),
+                            DPI = 300,
+                            ImageDPI = 300,
+                            Margins = new MarginSettings
+                            {
+                                Top = 0,
+                                Bottom = 0,
+                                Left = 0,
+                                Right = 0
+                            }
+                        },
+                        Objects = {
+                            new ObjectSettings
+                            {
+                                HtmlContent = htmlResult,
+                                WebSettings = new WebSettings
+                                {
+                                    DefaultEncoding = "utf-8",
+                                    LoadImages = true,
+                                    PrintMediaType = true,
+                                    EnableIntelligentShrinking = false,
+                                    MinimumFontSize = 12
+                                }
+                            }
+                        }
+                    };
+
+                    //  Convertir a PDF en memoria
+                    byte[] pdfBytes = _converter.Convert(doc);
+
+                    //  Guardar en archivo temporal
+                    string pdfPath = Path.Combine(Application.StartupPath, $"factura_{Guid.NewGuid()}.pdf");
+                    File.WriteAllBytes(pdfPath, pdfBytes);
+
+                    if (!File.Exists(pdfPath))
+                        throw new Exception("No se generó el PDF");
+
+                    //  Imprimir con SumatraPDF
+                    string exePath = Path.Combine(Application.StartupPath, "Sumatra.exe");
+                    if (!File.Exists(exePath))
+                        throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
+
+                    string impresora = model[0].DocCliente;
+
+                    var psi = new ProcessStartInfo
+                    {
+                        FileName = exePath,
+                        Arguments = $"-print-to \"{impresora}\" -silent \"{pdfPath}\"",
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        UseShellExecute = false
+                    };
+
+                    using (var process = System.Diagnostics.Process.Start(psi))
+                    {
+                        process?.WaitForExit(10000);
+                        process?.Close();
+                    }
+
+                    Thread.Sleep(500);
+
+                    //  Eliminar archivo temporal
+                    if (File.Exists(pdfPath))
+                        File.Delete(pdfPath);
+
+
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error_log.txt", ex.ToString());
+            MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+    }
+
+    public List<DocumentoFactura> GetComprobanteFinal(string fecha, rePrintResponse p, string tipo, string Moden, PrintQueue address)
 
     {
 
@@ -3100,13 +3672,13 @@ public class Commons
         var ExoME = 0.00;
         var InaMN = 0.00;
         var InaME = 0.00;
-        
- 
+
+
         var efec = 0.0;
         //var vuelt = 0.0;
         var OperaGrat = 0.0;
         var telefon = "";
-        var direcc = "";     
+        var direcc = "";
         var cuentaSoles = "";
         var cuentaDolares = "";
 
@@ -3160,7 +3732,7 @@ public class Commons
 
                 cuentaDolares = $"{p.DatosGen.nroCuentaEmpresaDolares}";
             }
-       
+
 
             if (!String.IsNullOrWhiteSpace(address.Direccion))
             {
@@ -3309,15 +3881,6 @@ public class Commons
             objCuenta.SerieFact = p.serieVenta + " - " + String.Format("{0:00000000}", p.numero);
             //objCuenta.FechaEmision = p.fechaDoc.GetValueOrDefault().ToString("dd-MM-yyyy HH:mm");
             objCuenta.FechaEmision = p.fechaDoc.ToString("dd-MM-yyyy HH:mm");
-            if (address.Forma_Impresion== "LX350VE")
-            {
-                var diaL = p.fechaDoc.ToString("dd");
-                var MesL = p.fechaDoc.ToString("MM");
-                var AnioL = p.fechaDoc.ToString("yy");
-
-                objCuenta.FechaEmision = diaL + "      "+ MesL +"        "+ AnioL;
-            }
-  
             objCuenta.Obsevaciones = p.glosa;
             objCuenta.TipoMoneda = Moden;
             objCuenta.CondicionPago = p.terminos;
@@ -3618,7 +4181,7 @@ public class Commons
             }
 
 
-            objCuenta.Vendedor = p.nombreUsuario.ToUpper();
+            objCuenta.Vendedor = string.IsNullOrEmpty(p.nombreUsuario) ? "" : p.nombreUsuario.ToUpper();
             if (p.nombreUsuarioPedidos != null && p.nombreUsuarioPedidos != "0")
             {
                 //if (UsuOrder.Full_Name.Trim().Length > 0)
@@ -3630,7 +4193,7 @@ public class Commons
 
             if (address.TipoNegocio == "RESTAURANTE")
             {
-              
+
 
                 var listaPro = (from dvd in listInvoiceDet
                                 group dvd by new
@@ -3678,19 +4241,21 @@ public class Commons
             objCuenta.NotaCredito = Listnotacredito;
             objCuenta.DocumentoFacturaDetalle = listInvoiceDet;
             objCuenta.DatosEmpresa = ListEmpresa;
+            objCuenta.color_print = p.ConfInicio.color_print;
+            objCuenta.tipo_documento = p.tipoDocumento;
 
             listInvoice.Add(objCuenta);
 
             return listInvoice;
-        
+
         }
         else
         {
-                MessageBox.Show("No existe imppresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("No existe imppresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
             return null;
         }
-      
- 
+
+
     }
 
     //private string GetIdentidadCliente(entidad lenDocCustomer)
@@ -3713,8 +4278,8 @@ public class Commons
     //    return GetIdentidadClien;
     //}
 
-           //private void ValidarTrueFalse(datosGenerales Vobj, rePrintResponse docV, FastReport.Report webReportValidar, PrintQueue address, List<DocumentoFactura> Docfact, ImpresorasNegocio ImpreNego, configuracionInicio returnoConf, string pathD)
-             private void ValidarTrueFalse(rePrintResponse docV, FastReport.Report webReportValidar, PrintQueue address, List<DocumentoFactura> Docfact, string pathD)
+    //private void ValidarTrueFalse(datosGenerales Vobj, rePrintResponse docV, FastReport.Report webReportValidar, PrintQueue address, List<DocumentoFactura> Docfact, ImpresorasNegocio ImpreNego, configuracionInicio returnoConf, string pathD)
+    private void ValidarTrueFalse(rePrintResponse docV, FastReport.Report webReportValidar, PrintQueue address, List<DocumentoFactura> Docfact, string pathD)
     {
         var dt = Docfact.FirstOrDefault().DatosEmpresa.FirstOrDefault();
         if (File.Exists(pathD))
@@ -3755,20 +4320,12 @@ public class Commons
             case "07":
             case "03":
             case "01":
-                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
-                {
-
-                }
-                else
-                {
-                    DataBand Monto = webReportValidar.Report.FindObject("Monto") as DataBand;
-                    Monto.Visible = true;
-
-                }
+                DataBand Monto = webReportValidar.Report.FindObject("Monto") as DataBand;
+                Monto.Visible = true;
 
                 switch (docV.PrintNegocio.printOutput)
                 {
-                    case "TK":                  
+                    case "TK":
                         LineObject Line16 = webReportValidar.Report.FindObject("Line16") as LineObject;
                         Line16.Visible = false;
 
@@ -3801,7 +4358,7 @@ public class Commons
                         }
                         break;
                 }
-           
+
                 break;
             default:
 
@@ -3811,17 +4368,17 @@ public class Commons
 
                         if (!string.IsNullOrWhiteSpace(docV.DatosGen.DescripcionExchangeReturns))
                         {
-                      
+
 
                             DataBand ExchangesRet = webReportValidar.Report.FindObject("ExchangeReturns") as DataBand;
                             ExchangesRet.Visible = true;
                         }
-                     
+
 
                         DataBand codQr = webReportValidar.Report.FindObject("codQr") as DataBand;
                         codQr.Visible = false;
-                       
-                      
+
+
 
                         DataBand FootMensaje02 = webReportValidar.Report.FindObject("FootMensaje02") as DataBand;
                         FootMensaje02.Visible = true;
@@ -3847,29 +4404,22 @@ public class Commons
                         if (docV.ConfInicio.SaleNotaAddress == true)
                         {
 
-                                ChildBand dtdireccionEmpresa02 = webReportValidar.Report.FindObject("dtdireccionEmpresa02") as ChildBand;
-                                dtdireccionEmpresa02.Visible = false;
-                            }
-                        if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
+                            ChildBand dtdireccionEmpresa02 = webReportValidar.Report.FindObject("dtdireccionEmpresa02") as ChildBand;
+                            dtdireccionEmpresa02.Visible = false;
+                        }
+
+                        DataBand MontoTota = webReportValidar.Report.FindObject("MontoTota") as DataBand;
+                        MontoTota.Visible = true;
+                        TextObject txtFootMensaje02 = webReportValidar.Report.FindObject("txtFootMensaje02") as TextObject;
+                        txtFootMensaje02.Visible = true;
+
+                        if (docV.glosa.Trim().Length > 0 && docV.glosa.Trim() != "N/A" && docV.glosa.Trim() != "Observaciones:")
                         {
 
+                            TextObject obdet = webReportValidar.Report.FindObject("txtObservacionesDesc") as TextObject;
+                            obdet.Visible = true;
+
                         }
-                        else
-                        {
-                            DataBand MontoTota = webReportValidar.Report.FindObject("MontoTota") as DataBand;
-                            MontoTota.Visible = true;
-                            TextObject txtFootMensaje02 = webReportValidar.Report.FindObject("txtFootMensaje02") as TextObject;
-                            txtFootMensaje02.Visible = true;
-
-                            if (docV.glosa.Trim().Length > 0 && docV.glosa.Trim() != "N/A" && docV.glosa.Trim() != "Observaciones:")
-                            {
-
-                                TextObject obdet = webReportValidar.Report.FindObject("txtObservacionesDesc") as TextObject;
-                                obdet.Visible = true;
-
-                            }
-                        }
-                       
                         break;
                 }
 
@@ -3916,9 +4466,9 @@ public class Commons
                     DataBand DVendedor = webReportValidar.Report.FindObject("DVendedor") as DataBand;
                     DVendedor.Visible = false;
                 }
-                    
 
-                if (docV.totaldescuento>0)
+
+                if (docV.totaldescuento > 0)
                 {
                     DataBand ImporDescuento = webReportValidar.Report.FindObject("ImporDescuento") as DataBand;
                     ImporDescuento.Visible = true;
@@ -3941,16 +4491,16 @@ public class Commons
                 }
                 if (address.TipoNegocio != null)
                 {
-                   if (address.TipoNegocio == "RESTAURANTE")
-                                {
-                                    DataBand DHInformeRestaurant = webReportValidar.Report.FindObject("DHInformeRestaurant") as DataBand;
-                                    DHInformeRestaurant.Visible = true;
-                                    DataBand DocFacDetRestaurant = webReportValidar.Report.FindObject("DocFacDetRestaurant") as DataBand;
-                                    DocFacDetRestaurant.Visible = true;
-                                    DataHeaderBand DHInforme = webReportValidar.Report.FindObject("DHInforme") as DataHeaderBand;
-                                    DHInforme.Visible = false;
-                                    DataBand DocFacDet = webReportValidar.Report.FindObject("DocFacDet") as DataBand;
-                                    DocFacDet.Visible = false;
+                    if (address.TipoNegocio == "RESTAURANTE")
+                    {
+                        DataBand DHInformeRestaurant = webReportValidar.Report.FindObject("DHInformeRestaurant") as DataBand;
+                        DHInformeRestaurant.Visible = true;
+                        DataBand DocFacDetRestaurant = webReportValidar.Report.FindObject("DocFacDetRestaurant") as DataBand;
+                        DocFacDetRestaurant.Visible = true;
+                        DataHeaderBand DHInforme = webReportValidar.Report.FindObject("DHInforme") as DataHeaderBand;
+                        DHInforme.Visible = false;
+                        DataBand DocFacDet = webReportValidar.Report.FindObject("DocFacDet") as DataBand;
+                        DocFacDet.Visible = false;
 
                         if (docV.ConfInicio.ShowInfraestructure)
                         {
@@ -3960,13 +4510,13 @@ public class Commons
                                 dtNromesa.Visible = true;
                             }
                         }
-                       
+
                     }
                 }
-                 
-                
 
-                    if (docV.tipoDocumento == "ORV")
+
+
+                if (docV.tipoDocumento == "ORV")
                 {
                     //DataBand MontoPedido = webReportValidar.Report.FindObject("MontoPedido") as DataBand;
                     //MontoPedido.Visible = true;
@@ -3999,7 +4549,7 @@ public class Commons
                         dtMediospagos.Visible = true;
                     }
                 }
-               
+
 
                 //if (docV.CustomDocuCaja.Count > 0)
                 //{
@@ -4016,7 +4566,7 @@ public class Commons
                         DataBand Dcajero = webReportValidar.Report.FindObject("Dcajero") as DataBand;
                         Dcajero.Visible = true;
                     }
-                       
+
                 }
                 //if (UsuOrder.Full_Name.Trim().Length > 0)
                 //{
@@ -4032,35 +4582,35 @@ public class Commons
                     DHDireccionCliente.Visible = true;
 
                 }
-               
+
 
 
 
                 if (!String.IsNullOrWhiteSpace(dt.RazonSocial))
-                    {
-                        DataBand dtrazonSocial = webReportValidar.Report.FindObject("dtrazonSocial") as DataBand;
-                        dtrazonSocial.Visible = true;
+                {
+                    DataBand dtrazonSocial = webReportValidar.Report.FindObject("dtrazonSocial") as DataBand;
+                    dtrazonSocial.Visible = true;
 
-                    }
-                    if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
-                    {
-                        DataBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as DataBand;
-                        dtNombreComercial.Visible = true;
+                }
+                if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
+                {
+                    DataBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as DataBand;
+                    dtNombreComercial.Visible = true;
 
                 }
 
                 if (!String.IsNullOrWhiteSpace(dt.Domicilio02))
-                    {
-                        DataBand dtDirecc2 = webReportValidar.Report.FindObject("dtDirecc2") as DataBand;
-                         dtDirecc2.Visible = true;
+                {
+                    DataBand dtDirecc2 = webReportValidar.Report.FindObject("dtDirecc2") as DataBand;
+                    dtDirecc2.Visible = true;
 
-                    }
-                    if (!String.IsNullOrWhiteSpace(dt.Telefeno))
-                    {
-                        DataBand dtTelefono = webReportValidar.Report.FindObject("dtTelefono") as DataBand;
-                        dtTelefono.Visible = true;
+                }
+                if (!String.IsNullOrWhiteSpace(dt.Telefeno))
+                {
+                    DataBand dtTelefono = webReportValidar.Report.FindObject("dtTelefono") as DataBand;
+                    dtTelefono.Visible = true;
 
-                    }
+                }
 
 
 
@@ -4075,77 +4625,70 @@ public class Commons
                         DetCronogrPagos.Visible = true;
                     }
                 }
-                    
-                    if (!String.IsNullOrWhiteSpace(docV.glosa) && docV.glosa != "N/A")
-                    {
-                        DataBand dObservaciones = webReportValidar.Report.FindObject("dObservaciones") as DataBand;
-                        dObservaciones.Visible = true;
 
-                    }
+                if (!String.IsNullOrWhiteSpace(docV.glosa) && docV.glosa != "N/A")
+                {
+                    DataBand dObservaciones = webReportValidar.Report.FindObject("dObservaciones") as DataBand;
+                    dObservaciones.Visible = true;
+
+                }
 
 
                 //if (!String.IsNullOrWhiteSpace(Vobj.glosario))
                 if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad3))
                 {
-                        DataBand dtFood03 = webReportValidar.Report.FindObject("dtFood03") as DataBand;
-                        dtFood03.Visible = true;
+                    DataBand dtFood03 = webReportValidar.Report.FindObject("dtFood03") as DataBand;
+                    dtFood03.Visible = true;
 
-                    }
+                }
                 //if (!String.IsNullOrWhiteSpace(Vobj.nombreGiro))
                 if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad4))
                 {
-                        DataBand dtnombregiro = webReportValidar.Report.FindObject("dtnombregiro") as DataBand;
-                        dtnombregiro.Visible = true;
+                    DataBand dtnombregiro = webReportValidar.Report.FindObject("dtnombregiro") as DataBand;
+                    dtnombregiro.Visible = true;
 
-                    }
+                }
                 //if (!String.IsNullOrWhiteSpace(Vobj.publicidad))
                 if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad2))
                 {
-                        DataBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as DataBand;
+                    DataBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as DataBand;
                     dtPublicidad.Visible = true;
 
-                    }
+                }
                 //if (docV.CustomEntidad.tipoEntidad == "VR")
                 if (docV.tipoEntidad == "VR")
                 {
-                        DataBand DtRucClie = webReportValidar.Report.FindObject("DtRucClie") as DataBand;
-                        DtRucClie.Visible = false;
+                    DataBand DtRucClie = webReportValidar.Report.FindObject("DtRucClie") as DataBand;
+                    DtRucClie.Visible = false;
 
-                    }
-                    if (Docfact.FirstOrDefault().NotaCredito.Count > 0)
-                    {
-                        DataHeaderBand DHTituloNC = webReportValidar.Report.FindObject("DHTituloNC") as DataHeaderBand;
-                        DHTituloNC.Visible = true;
-                        DataBand dtNotaCreditoTipo = webReportValidar.Report.FindObject("dtNotaCreditoTipo") as DataBand;
-                        dtNotaCreditoTipo.Visible = true;
+                }
+                if (Docfact.FirstOrDefault().NotaCredito.Count > 0)
+                {
+                    DataHeaderBand DHTituloNC = webReportValidar.Report.FindObject("DHTituloNC") as DataHeaderBand;
+                    DHTituloNC.Visible = true;
+                    DataBand dtNotaCreditoTipo = webReportValidar.Report.FindObject("dtNotaCreditoTipo") as DataBand;
+                    dtNotaCreditoTipo.Visible = true;
 
-                        DataHeaderBand DhTitulAfecNC = webReportValidar.Report.FindObject("DhTitulAfecNC") as DataHeaderBand;
-                        DhTitulAfecNC.Visible = true;
-                        DataBand dtNotaCreditoDesc = webReportValidar.Report.FindObject("dtNotaCreditoDesc") as DataBand;
-                        dtNotaCreditoDesc.Visible = true;
+                    DataHeaderBand DhTitulAfecNC = webReportValidar.Report.FindObject("DhTitulAfecNC") as DataHeaderBand;
+                    DhTitulAfecNC.Visible = true;
+                    DataBand dtNotaCreditoDesc = webReportValidar.Report.FindObject("dtNotaCreditoDesc") as DataBand;
+                    dtNotaCreditoDesc.Visible = true;
 
-                        DataHeaderBand DhTitulMotivoNC = webReportValidar.Report.FindObject("DhTitulMotivoNC") as DataHeaderBand;
-                        DhTitulMotivoNC.Visible = true;
-                        DataBand dtNotaCreditoMot = webReportValidar.Report.FindObject("dtNotaCreditoMot") as DataBand;
-                        dtNotaCreditoMot.Visible = true;
+                    DataHeaderBand DhTitulMotivoNC = webReportValidar.Report.FindObject("DhTitulMotivoNC") as DataHeaderBand;
+                    DhTitulMotivoNC.Visible = true;
+                    DataBand dtNotaCreditoMot = webReportValidar.Report.FindObject("dtNotaCreditoMot") as DataBand;
+                    dtNotaCreditoMot.Visible = true;
 
-                    }
+                }
 
                 break;
             case "A5":
             case "A4":
                 //if (!String.IsNullOrWhiteSpace(Vobj.glosario))
-                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
+                if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad3))
                 {
-
-                }
-                else
-                {
-                    if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad3))
-                    {
-                        DataBand DescFood = webReportValidar.Report.FindObject("DescFood") as DataBand;
-                        DescFood.Visible = true;
-                    }
+                    DataBand DescFood = webReportValidar.Report.FindObject("DescFood") as DataBand;
+                    DescFood.Visible = true;
                 }
                 if (docV.AfectoDetracion)
                 {
@@ -4170,42 +4713,31 @@ public class Commons
                     PictureObject CodQRDes = webReportValidar.Report.FindObject("CodQRDes") as PictureObject;
                     CodQRDes.Visible = false;
                 }
-                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
+                if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
                 {
+                    ChildBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as ChildBand;
+                    dtNombreComercial.Visible = true;
+                }
+                if (!String.IsNullOrWhiteSpace(dt.Domicilio02))
+                {
+                    ChildBand dtAnexoEmpresa02 = webReportValidar.Report.FindObject("dtAnexoEmpresa02") as ChildBand;
+                    dtAnexoEmpresa02.Visible = true;
+                }
+
+                if (!String.IsNullOrWhiteSpace(dt.Telefeno))
+                {
+                    ChildBand dttelefonEmpresa02 = webReportValidar.Report.FindObject("dttelefonEmpresa02") as ChildBand;
+                    dttelefonEmpresa02.Visible = true;
 
                 }
-                else
+                //if (!String.IsNullOrWhiteSpace(Vobj.publicidad))
+                if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad2))
+
                 {
-                    if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
-                    {
-                        ChildBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as ChildBand;
-                        dtNombreComercial.Visible = true;
-                    }
-                    if (!String.IsNullOrWhiteSpace(dt.Domicilio02))
-                    {
-                        ChildBand dtAnexoEmpresa02 = webReportValidar.Report.FindObject("dtAnexoEmpresa02") as ChildBand;
-                        dtAnexoEmpresa02.Visible = true;
-                    }
-                    if (!String.IsNullOrWhiteSpace(dt.Telefeno))
-                    {
-                        ChildBand dttelefonEmpresa02 = webReportValidar.Report.FindObject("dttelefonEmpresa02") as ChildBand;
-                        dttelefonEmpresa02.Visible = true;
+                    ChildBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as ChildBand;
+                    dtPublicidad.Visible = true;
 
-                    }
-                    //if (!String.IsNullOrWhiteSpace(Vobj.publicidad))
-                    if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad2))
-
-                    {
-                        ChildBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as ChildBand;
-                        dtPublicidad.Visible = true;
-
-                    }
                 }
-                
-               
-
-             
-              
                 //if (!String.IsNullOrWhiteSpace(Vobj.formaLogo))
                 if (!String.IsNullOrWhiteSpace(docV.DatosGen.logoFooter))
                 {
@@ -4223,7 +4755,7 @@ public class Commons
             case "TK":
                 if (docV.tipoDocumento != "ORV")
                 {
-                    if(docV.PrintNegocio.formatoImpresion != "VEA5")
+                    if (docV.PrintNegocio.formatoImpresion != "VEA5")
                     {
                         //if (!String.IsNullOrWhiteSpace(Vobj.nroCuentaSoles) || !String.IsNullOrWhiteSpace(Vobj.nroCuentaSoles2))
                         if (!String.IsNullOrWhiteSpace(docV.DatosGen.nroCuentaEmpresaSoles) || !String.IsNullOrWhiteSpace(docV.DatosGen.nroCuentaEmpresaSoles2))
@@ -4246,7 +4778,7 @@ public class Commons
                     }
 
                 }
-                 
+
                 break;
             case "A4":
                 //if (!string.IsNullOrWhiteSpace(Vobj.DescripcionExchangeReturns))
@@ -4357,17 +4889,17 @@ public class Commons
 
                 break;
             case "A4":
-               
+
                 break;
         }
 
 
 
 
-}
+    }
 
 
-    public void ImprimirKardex(List<documentoCaja> ListKardex,ImpresorasNegocio PrintNegoc, PrintQueue ValidarF)
+    public void ImprimirKardex(List<documentoCaja> ListKardex, ImpresorasNegocio PrintNegoc, PrintQueue ValidarF)
     {
         var pathReport = "";
         var Report = new FastReport.Report();
@@ -4401,7 +4933,7 @@ public class Commons
             var otroT = listGeneral.FirstOrDefault().CobranzasDeudas;
             var SaldCaja = listGeneral.FirstOrDefault().FondoInicio;
 
-            
+
             Report.Report.SetParameterValue("TotalIngresos", INgreT);
             Report.Report.SetParameterValue("TotalEgresos", EgreT);
             Report.Report.SetParameterValue("TotalOtrosPagos", otroT);
@@ -4411,7 +4943,7 @@ public class Commons
             Report.RegisterData(listGeneral, "Cajas");
             Report.Prepare();
 
-            validarCajas(ValidarF,Report);
+            validarCajas(ValidarF, Report);
             var pdfExport = new FastReport.Export.Pdf.PDFExport();
 
             Report.Report.Report.Export(pdfExport, strm);
@@ -4443,8 +4975,8 @@ public class Commons
 
     private void validarCajas(PrintQueue valid, FastReport.Report webReportValidar)
     {
-       
-        if (valid.NombreDistribucion  =="Impresion")
+
+        if (valid.NombreDistribucion == "Impresion")
         {
 
             webReportValidar.Report.SetParameterValue("Titulocaja", "CIERRE DE CAJA");
@@ -4461,23 +4993,23 @@ public class Commons
             webReportValidar.Report.SetParameterValue("Titulocaja", "PRE VISUALIZAR");
         }
     }
-    public List<CajaReport> GetKardex(List<documentoCaja> ListaKard,PrintQueue Printq)
+    public List<CajaReport> GetKardex(List<documentoCaja> ListaKard, PrintQueue Printq)
     {
         var TotalEgresos = 0.0;
         var TotalIngresos = 0.0;
         var TotalOtros = 0.0;
         var caja = new CajaReport();
-        var cajaList= new List<CajaReport>();
-        var listInvoiceSalida = new List<CierreGeneralDetalleReportSalida>();     
+        var cajaList = new List<CajaReport>();
+        var listInvoiceSalida = new List<CierreGeneralDetalleReportSalida>();
         var listInvoiceEntrada = new List<CierreGeneralDetalleReport>();
         var listInvoiceOtros = new List<CierreGeneralDetalleReportOtros>();
-        var fechaApertura="";
-        var FechaCierre="";
+        var fechaApertura = "";
+        var FechaCierre = "";
         foreach (var item in ListaKard)
         {
             fechaApertura = item.FechaApertura;
             FechaCierre = item.FechaCierre;
-            if (item.entidadFinanciera=="EP")//efectivo
+            if (item.entidadFinanciera == "EP")//efectivo
             {
                 if (item.nombreCosto == "Salida")
                 {
@@ -4519,7 +5051,7 @@ public class Commons
             }
         }
 
-        caja.FechaApertura =fechaApertura;
+        caja.FechaApertura = fechaApertura;
         caja.FechaCierre = FechaCierre;
 
         var totalC = TotalEgresos - TotalIngresos;
@@ -4530,7 +5062,7 @@ public class Commons
 
         caja.OtrosEgresos = TotalEgresos.ToString("N2");
         caja.OtrosIngresos = TotalIngresos.ToString("N2");
-        caja.CobranzasDeudas= TotalOtros.ToString("N2");//total de otros pagos
+        caja.CobranzasDeudas = TotalOtros.ToString("N2");//total de otros pagos
         caja.FondoInicio = totalC.ToString("N2"); //total de egresos e ingresos
         caja.Total = GeneralTotal.ToString("N2");
         caja.Usuario = Printq.UsuarioEnvio;
@@ -4539,6 +5071,19 @@ public class Commons
 
 
         return cajaList;
+    }
+    public string GenerarQrBase64(string texto)
+    {
+        using (var qrGenerator = new QRCodeGenerator())
+        using (var qrData = qrGenerator.CreateQrCode(texto, QRCodeGenerator.ECCLevel.Q))
+        using (var qrCode = new QRCode(qrData))
+        using (var bitmap = qrCode.GetGraphic(20))
+        using (var ms = new MemoryStream())
+        {
+            bitmap.Save(ms, ImageFormat.Png);
+            string base64 = Convert.ToBase64String(ms.ToArray());
+            return $"data:image/png;base64,{base64}";
+        }
     }
 }
 

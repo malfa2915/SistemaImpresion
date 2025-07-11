@@ -47,7 +47,16 @@ public class DocumentoFactura
     public string DireccionDestino { get; set; }
     public string Servicio { get; set; }
     public string DescTerminos { get; set; }
+    public string color_print { get; set; }
+    public string tipo_documento { get; set; }
+    public string Montoletras { get; set; }
+    public string tasaIgv { get; set; }
+    public string simboloMoneda { get; set; }
+    public string QrImageBase64 { get; set; }
+    public string LogoBase64 { get; set; }
 
+
+    public List<Detraccion> Detraccion { get; set; }
     public List<DatosEmpresa> DatosEmpresa { get; set; }
     public List<DocumentoFacturaDetalle> DocumentoFacturaDetalle { get; set; }
     public List<CronogramaPagos> CronogramaPagos { get; set; }
@@ -58,7 +67,7 @@ public class DocumentoFactura
     public List<NotaCredito> NotaCredito { get; set; }
     public List<Cuentas_Cobrar> Cuentas_Cobrar { get; set; }
     public List<spkDocumentoCajaDetalle> DocumentoCajaDetalle { get; set; }
- 
+
 
 }
 
