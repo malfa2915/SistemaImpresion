@@ -50,7 +50,7 @@
                 minimoUltimaHoja = tieneObservacion ? 23 : 25;
             }
         }
-        //para nota de credito 
+        //para nota de credito
         if (Model[0].tipo_documento == "07")
         {
             var item = Model[0];
@@ -72,8 +72,12 @@
         {
             var item = Model[0];
             bool tieneObservacion = !string.IsNullOrWhiteSpace(item.Obsevaciones);
-            bool tieneCuentas = !string.IsNullOrWhiteSpace(item.CuentaSoles[0].DescripcionCuentaSoles) ||
-                                !string.IsNullOrWhiteSpace(item.CuentaDolares[0].DescripcionCuentaDolares);
+            bool tieneCuentas =
+                                (item.CuentaSoles != null && item.CuentaSoles.Count > 0 &&
+                                 !string.IsNullOrWhiteSpace(item.CuentaSoles[0].DescripcionCuentaSoles)) ||
+                                (item.CuentaDolares != null && item.CuentaDolares.Count > 0 &&
+                                 !string.IsNullOrWhiteSpace(item.CuentaDolares[0].DescripcionCuentaDolares));
+
             bool tieneMultiplesCreditos = item.CronogramaPagos.Count() > 1;
 
             if (tieneMultiplesCreditos)
@@ -1176,6 +1180,5 @@
     </body>
 
 </html>
-
 
 

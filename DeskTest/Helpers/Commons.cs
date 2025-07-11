@@ -3289,7 +3289,7 @@ public class Commons
             if (!File.Exists(exePath))
                 throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
 
-            string impresora =order.PrintNegocio.relacionImpresora; 
+            string impresora = order.PrintNegocio.relacionImpresora?.Trim();
 
             var psi = new ProcessStartInfo
             {
