@@ -570,15 +570,19 @@ namespace DeskTest
 
                             if (returdelete == true)
                             {
-                   
+
 
                                 var returConfigura = await ConfiguracionInicioAPI.Getconfiguration(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
                                 var venta = await DocumentoVentaAPI.GetOrderIdLitePrint(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
+                                foreach (var itemSer in venta.documentoventaAbarrotesDet)
+                                {
 
+                                }
                                 var idList = venta.documentoventaAbarrotesDet.Select(s => Int32.TryParse(s.idItem, out int n) ? n : (int)0).ToList();
                                 var orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
+
 
                                 var ImpresorasList = orderRecupeacion.Select(q => new
                                 {

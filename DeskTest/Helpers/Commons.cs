@@ -1829,7 +1829,8 @@ public class Commons
                         pdfExport.Dispose();
                         strm.Position = 0;
 
-                        Report.PrintSettings.Printer = p.relacionImpresora;
+                            Report.PrintSettings.Printer = p.relacionImpresora;
+                        
                         int printNr = (int)ImpresoraN.numImpresion;
                         if (ImpresoraN != null)
                         {
@@ -2773,14 +2774,30 @@ public class Commons
                             if (order.PrintNegocio.formatoImpresion == "HOA5" || order.PrintNegocio.formatoImpresion=="1")
                             {
                                 pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Horizontal.frx";
-                            }
+                            }    
                             else if (order.PrintNegocio.formatoImpresion == "VEA5")
                             {
                                 pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5.frx";
                             }
-              
-   
-                            break;                       
+
+                        if (address.Forma_Impresion!=null)
+                        {
+                            if (address.Forma_Impresion.Length > 0)
+                            {
+                                if (address.Forma_Impresion == "LX350VE")
+                                {
+                                    pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_VE.frx";
+                                }
+                                if (address.Forma_Impresion == "LX350HO")
+                                {
+                                    pathReport = @"formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_HO.frx";
+                                }
+                            }
+                        }
+                        
+                        
+
+                        break;                       
 
                         default:
                             break;
@@ -3011,19 +3028,26 @@ public class Commons
 
                 ValidarTrueFalse(order, Report, address, listGeneral, pathD);
 
+                if (order.DatosGen.anchoFormaHoja == "LX350VE" || order.DatosGen.anchoFormaHoja == "LX350HO")
+                    {
+                   
+                }
+                else
+                {
+                    var qr = "";
+                    PictureObject imageLogoCompany = (PictureObject)Report.Report.FindObject("CodQRDes");
+                    QRCodeGenerator gen = new QRCodeGenerator();
+                    //var dt = gen.CreateQrCode(codigoQr.Hash, QRCodeGenerator.ECCLevel.Q);
+                    qr = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
+                           order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
+                           order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
 
-                var qr = "";
-                PictureObject imageLogoCompany = (PictureObject)Report.Report.FindObject("CodQRDes");
-                QRCodeGenerator gen = new QRCodeGenerator();
-                //var dt = gen.CreateQrCode(codigoQr.Hash, QRCodeGenerator.ECCLevel.Q);
-                qr = order.idEmpresa + "|" + order.tipoDocumento + "|" + order.serieVenta + "|" + order.numero + "|" +
-                       order.importeTotal + "|" + order.fechaDoc.ToString("yyyy-MM-dd") + "|" +
-                       order.tipoDocumentoCliente + "|" + order.numeroDocumentoCliente;
 
-
-                var dt = gen.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
-                QRCode code = new QRCode(dt);
-                imageLogoCompany.Image = code.GetGraphic(6);
+                    var dt = gen.CreateQrCode(qr, QRCodeGenerator.ECCLevel.Q);
+                    QRCode code = new QRCode(dt);
+                    imageLogoCompany.Image = code.GetGraphic(6);
+                }
+               
 
                 var pdfExport = new FastReport.Export.Pdf.PDFExport();
                 //pdfExport.ShowProgress = false;
@@ -3285,6 +3309,15 @@ public class Commons
             objCuenta.SerieFact = p.serieVenta + " - " + String.Format("{0:00000000}", p.numero);
             //objCuenta.FechaEmision = p.fechaDoc.GetValueOrDefault().ToString("dd-MM-yyyy HH:mm");
             objCuenta.FechaEmision = p.fechaDoc.ToString("dd-MM-yyyy HH:mm");
+            if (address.Forma_Impresion== "LX350VE")
+            {
+                var diaL = p.fechaDoc.ToString("dd");
+                var MesL = p.fechaDoc.ToString("MM");
+                var AnioL = p.fechaDoc.ToString("yy");
+
+                objCuenta.FechaEmision = diaL + "      "+ MesL +"        "+ AnioL;
+            }
+  
             objCuenta.Obsevaciones = p.glosa;
             objCuenta.TipoMoneda = Moden;
             objCuenta.CondicionPago = p.terminos;
@@ -3722,8 +3755,16 @@ public class Commons
             case "07":
             case "03":
             case "01":
-                DataBand Monto = webReportValidar.Report.FindObject("Monto") as DataBand;
-                Monto.Visible = true;
+                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
+                {
+
+                }
+                else
+                {
+                    DataBand Monto = webReportValidar.Report.FindObject("Monto") as DataBand;
+                    Monto.Visible = true;
+
+                }
 
                 switch (docV.PrintNegocio.printOutput)
                 {
@@ -3809,19 +3850,26 @@ public class Commons
                                 ChildBand dtdireccionEmpresa02 = webReportValidar.Report.FindObject("dtdireccionEmpresa02") as ChildBand;
                                 dtdireccionEmpresa02.Visible = false;
                             }
-                            
-                        DataBand MontoTota = webReportValidar.Report.FindObject("MontoTota") as DataBand;
-                        MontoTota.Visible = true;
-                        TextObject txtFootMensaje02 = webReportValidar.Report.FindObject("txtFootMensaje02") as TextObject;
-                        txtFootMensaje02.Visible = true;
-
-                        if (docV.glosa.Trim().Length > 0 && docV.glosa.Trim() != "N/A" && docV.glosa.Trim() != "Observaciones:")
+                        if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
                         {
-  
-                            TextObject obdet = webReportValidar.Report.FindObject("txtObservacionesDesc") as TextObject;
-                            obdet.Visible = true;
-      
+
                         }
+                        else
+                        {
+                            DataBand MontoTota = webReportValidar.Report.FindObject("MontoTota") as DataBand;
+                            MontoTota.Visible = true;
+                            TextObject txtFootMensaje02 = webReportValidar.Report.FindObject("txtFootMensaje02") as TextObject;
+                            txtFootMensaje02.Visible = true;
+
+                            if (docV.glosa.Trim().Length > 0 && docV.glosa.Trim() != "N/A" && docV.glosa.Trim() != "Observaciones:")
+                            {
+
+                                TextObject obdet = webReportValidar.Report.FindObject("txtObservacionesDesc") as TextObject;
+                                obdet.Visible = true;
+
+                            }
+                        }
+                       
                         break;
                 }
 
@@ -4087,10 +4135,17 @@ public class Commons
             case "A5":
             case "A4":
                 //if (!String.IsNullOrWhiteSpace(Vobj.glosario))
-                if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad3))
+                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
                 {
-                    DataBand DescFood = webReportValidar.Report.FindObject("DescFood") as DataBand;
-                    DescFood.Visible = true;
+
+                }
+                else
+                {
+                    if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad3))
+                    {
+                        DataBand DescFood = webReportValidar.Report.FindObject("DescFood") as DataBand;
+                        DescFood.Visible = true;
+                    }
                 }
                 if (docV.AfectoDetracion)
                 {
@@ -4115,31 +4170,42 @@ public class Commons
                     PictureObject CodQRDes = webReportValidar.Report.FindObject("CodQRDes") as PictureObject;
                     CodQRDes.Visible = false;
                 }
-                if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
+                if (docV.DatosGen.anchoFormaHoja == "LX350VE" || docV.DatosGen.anchoFormaHoja == "LX350HO")
                 {
-                    ChildBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as ChildBand;
-                    dtNombreComercial.Visible = true;
-                }
-                if (!String.IsNullOrWhiteSpace(dt.Domicilio02))
-                {
-                    ChildBand dtAnexoEmpresa02 = webReportValidar.Report.FindObject("dtAnexoEmpresa02") as ChildBand;
-                    dtAnexoEmpresa02.Visible = true;
-                }
-
-                if (!String.IsNullOrWhiteSpace(dt.Telefeno))
-                {
-                    ChildBand dttelefonEmpresa02 = webReportValidar.Report.FindObject("dttelefonEmpresa02") as ChildBand;
-                    dttelefonEmpresa02.Visible = true;
 
                 }
-                //if (!String.IsNullOrWhiteSpace(Vobj.publicidad))
-                if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad2))
-
+                else
                 {
-                    ChildBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as ChildBand;
-                    dtPublicidad.Visible = true;
+                    if (!String.IsNullOrWhiteSpace(dt.NombreComercial))
+                    {
+                        ChildBand dtNombreComercial = webReportValidar.Report.FindObject("dtNombreComercial") as ChildBand;
+                        dtNombreComercial.Visible = true;
+                    }
+                    if (!String.IsNullOrWhiteSpace(dt.Domicilio02))
+                    {
+                        ChildBand dtAnexoEmpresa02 = webReportValidar.Report.FindObject("dtAnexoEmpresa02") as ChildBand;
+                        dtAnexoEmpresa02.Visible = true;
+                    }
+                    if (!String.IsNullOrWhiteSpace(dt.Telefeno))
+                    {
+                        ChildBand dttelefonEmpresa02 = webReportValidar.Report.FindObject("dttelefonEmpresa02") as ChildBand;
+                        dttelefonEmpresa02.Visible = true;
 
+                    }
+                    //if (!String.IsNullOrWhiteSpace(Vobj.publicidad))
+                    if (!String.IsNullOrWhiteSpace(docV.DatosGen.publicidad2))
+
+                    {
+                        ChildBand dtPublicidad = webReportValidar.Report.FindObject("dtPublicidad") as ChildBand;
+                        dtPublicidad.Visible = true;
+
+                    }
                 }
+                
+               
+
+             
+              
                 //if (!String.IsNullOrWhiteSpace(Vobj.formaLogo))
                 if (!String.IsNullOrWhiteSpace(docV.DatosGen.logoFooter))
                 {
