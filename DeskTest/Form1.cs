@@ -74,6 +74,7 @@ namespace DeskTest
                                 objPrint.tipoImpresora = "COMPROBANTE";
                                 objPrint.idEstablecimiento = obj.idEstablecimiento;
                                 objPrint.idEmpresa = obj.idEmpresa;
+                                
 
                                 var VentaPrintDirect = await DocumentoVentaAPI.directPrinting(obj.IdDocumento.GetValueOrDefault(), obj.FormatoTipo, obj.idEstablecimiento.GetValueOrDefault(), obj.idEmpresa);
                                 VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput==obj.Formato).FirstOrDefault();
@@ -109,8 +110,21 @@ namespace DeskTest
  
                                     if (VentaPrintDirect.PrintNegocio != null && DatosGen != null)
                                     {
-              
-                                        commons.ImprimirComprobanteFinal(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+                                        if (obj.Formato == "A4")
+                                        {
+                                            commons.ImprimirComprobanteA4(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
+                                        else if(obj.Formato == "A5")
+                                        {
+                                            commons.ImprimirComprobanteA5(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
+                                        else
+                                        {
+                                            commons.ImprimirComprobanteFinal(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
                                     }
                                     else
                                     {
@@ -570,19 +584,15 @@ namespace DeskTest
 
                             if (returdelete == true)
                             {
-
+                   
 
                                 var returConfigura = await ConfiguracionInicioAPI.Getconfiguration(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
                                 var venta = await DocumentoVentaAPI.GetOrderIdLitePrint(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
-                                foreach (var itemSer in venta.documentoventaAbarrotesDet)
-                                {
 
-                                }
                                 var idList = venta.documentoventaAbarrotesDet.Select(s => Int32.TryParse(s.idItem, out int n) ? n : (int)0).ToList();
                                 var orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
-
 
                                 var ImpresorasList = orderRecupeacion.Select(q => new
                                 {
@@ -1033,9 +1043,18 @@ namespace DeskTest
                                             break;
 
                                         default:
-                                            await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
+                                            if(obj.Tipo_Venta == "RAPIDA")
+                                            {
+                                                commons.ImprimirPeditoTicket(ordersSend, obj, Impresora, ventaData, returConfigura);
+                                            }
+                                            else
+                                            {
+                                                await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
 
-                                            commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
+                                                commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
+                                            }
+
+
 
                                             break;
                                     }

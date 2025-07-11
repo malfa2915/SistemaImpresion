@@ -20,6 +20,7 @@ public class SpPedidosRest
     public string TotalImporte { get; set; }
     public string Cliente { get; set; }
     public string DocCliente { get; set; }
+    public string NombreCliente { get; set; }
 
     public List<SpPedidosRestDet> PedidosRestDet { get; set; }
     public List<DatosEmpresa> DatosEmpresa { get; set; }
