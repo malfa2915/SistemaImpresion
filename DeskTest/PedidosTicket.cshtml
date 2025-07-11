@@ -1,0 +1,170 @@
+﻿@model List<SpPedidosRest>
+    @using Newtonsoft.Json
+    @{
+        var item = Model[0];
+
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>Ticket</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+              rel="stylesheet" />
+        <style>
+
+            * {
+                box-sizing: border-box;
+            }
+
+            html, body {
+                margin: 0;
+                padding: 0;
+                width: 80mm;
+                -webkit-print-color-adjust: exact;
+            }
+
+
+            .ticket {
+                width: 80mm;
+                padding: 2mm 3mm;
+                margin: 0;
+                overflow-wrap: break-word;
+            }
+
+            .name_company {
+                border-bottom: 2px dashed #000;
+                text-align: center;
+                font-weight: bold;
+                font-size: 1rem;
+            }
+
+            .type_voucher {
+                text-align: center;
+                font-weight: 600;
+                font-size: 0.8rem;
+                margin-top: 5px;
+            }
+
+            .general_data {
+                font-size: 0.6rem;
+                padding-bottom: 5px;
+            }
+
+                .general_data div span:first-child {
+                    display: inline-block;
+                    width: 20mm;
+                }
+
+            /* Estilos de la tabla */
+            .ticket-container-table {
+                width: 100%;
+                font-size: 0.6rem;
+            }
+
+            .ticket-table {
+                width: 100%;
+                border-collapse: collapse;
+                table-layout: fixed;
+            }
+
+            .producto-header-cantidad {
+                width: 12mm;
+                text-align: center;
+            }
+
+
+            .ticket-table th,
+            .ticket-table td {
+                padding: 1mm 0;
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+
+            .ticket-table .cantidad {
+                text-align: center;
+            }
+
+            .producto-header {
+                width: auto;
+                text-align: center;
+            }
+            .cantidad {
+                border-right: 1px dashed #000;
+                padding-right: 1mm;
+            }
+
+            .producto {
+                text-align: left;
+                font-weight: 800;
+                font-size: 0.7rem;
+            }
+
+            .precio-header,
+            .precio {
+                text-align: right;
+            }
+
+            .ticket-table thead th {
+                border-bottom: 1px dashed #000;
+                border-top: 1px dashed #000;
+                background-color: #f0f0f0;
+            }
+
+            .ticket-table tbody {
+                border-bottom: 1px dashed #000;
+                padding-bottom: 2mm;
+            }
+        </style>
+    </head>
+    <body>
+        @*<pre>
+            @Raw(JsonConvert.SerializeObject(Model[0], Formatting.Indented))
+            </pre>*@
+
+        <div class="ticket">
+            <div class="name_company">
+                <p><strong>PEDIDO - @item.DocCliente</strong></p>
+            </div>
+            <div class="type_voucher">
+                <p><strong>Venta Rapida </strong></p>
+            </div>
+            <div class="general_data">
+                <div><span><strong>Cliente:</strong></span><span>@item.NombreCliente</span></div>
+                <div>
+                    <span><strong>Fecha Pedido:</strong></span><span>
+                        @item.FechaPedido.TrimEnd(':')
+                    </span>
+                </div>
+                <div><span><strong>Vendedor:</strong></span><span>@item.CargoPedido.Replace(":", "")</span></div>
+            </div>
+
+            <div class="ticket-container-table">
+                <table class="ticket-table">
+                    <thead>
+                        <tr>
+                            <th class="producto-header-cantidad">Cant.</th>
+                            <th class="producto-header" style="padding-left:1mm;">Producto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @foreach (var product in @item.PedidosRestDet)
+                        {
+                            <tr>
+                                <td class="cantidad">@product.CantidadDet</td>
+                                <td class="producto"  style="padding-left:2mm;">@product.DescPediDet</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+            </div>
+
+
+        </div>
+    </body>
+</html>
