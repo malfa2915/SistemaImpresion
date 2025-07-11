@@ -334,6 +334,12 @@
     <Content Include="formatos\reports\printer\infPreVentaRestDelivey.frx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_HO.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_VE.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
