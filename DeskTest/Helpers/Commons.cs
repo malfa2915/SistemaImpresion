@@ -3583,7 +3583,7 @@ public class Commons
                         {
                             ColorMode = DinkToPdf.ColorMode.Color,
                             Orientation = DinkToPdf.Orientation.Portrait,
-                            PaperSize = new DinkToPdf.PechkinPaperSize("80mm", "1000mm"),
+                            PaperSize = new DinkToPdf.PechkinPaperSize("80mm", "250mm"),
                             DPI = 300,
                             ImageDPI = 300,
                             Margins = new MarginSettings
