@@ -3138,7 +3138,7 @@ public class Commons
                         case 3:
                             if (order.DatosGen.logo == "1")
                             {
-                                pathD = "C:\\logo\\establecimiento3\\logo.png";
+                                pathD = "C:\\logo\\establecimiento3\\logo.jpg";
 
                             }
                             else if (order.DatosGen.logo == "2")
@@ -3194,7 +3194,7 @@ public class Commons
 
             //Detraccion
 
-           
+
             if (listGeneral[0].Detraccion == null)
                 listGeneral[0].Detraccion = new List<Detraccion>();
 
@@ -3289,7 +3289,7 @@ public class Commons
             if (!File.Exists(exePath))
                 throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
 
-            string impresora =order.PrintNegocio.relacionImpresora; 
+            string impresora = order.PrintNegocio.relacionImpresora?.Trim();
 
             var psi = new ProcessStartInfo
             {
@@ -3302,11 +3302,11 @@ public class Commons
 
             using (var process = System.Diagnostics.Process.Start(psi))
             {
-                process?.WaitForExit(10000); 
+                process?.WaitForExit(10000);
                 process?.Close();
             }
 
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
 
             //  Eliminar archivo temporal
             if (File.Exists(pdfPath))
@@ -3314,7 +3314,7 @@ public class Commons
         }
         catch (Exception ex)
         {
-            File.WriteAllText("error_log.txt", ex.ToString()); 
+            File.WriteAllText("error_log.txt", ex.ToString());
             MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -3351,7 +3351,7 @@ public class Commons
                             else if (order.DatosGen.logo == "3")
                             {
                                 pathD = "C:\\logo\\logo3.jpg";
-                                
+
                             }
                             break;
                         case 2:
@@ -3374,7 +3374,7 @@ public class Commons
                         case 3:
                             if (order.DatosGen.logo == "1")
                             {
-                                pathD = "C:\\logo\\establecimiento3\\logo.png";
+                                pathD = "C:\\logo\\establecimiento3\\logo.jpg";
 
                             }
                             else if (order.DatosGen.logo == "2")
@@ -3415,7 +3415,7 @@ public class Commons
             if (File.Exists(pathD))
             {
                 byte[] imageBytes = File.ReadAllBytes(pathD);
-                string extension = Path.GetExtension(pathD).ToLower(); 
+                string extension = Path.GetExtension(pathD).ToLower();
                 string mimeType = extension == ".png" ? "image/png" : "image/jpeg";
 
                 string base64 = Convert.ToBase64String(imageBytes);
@@ -3426,11 +3426,9 @@ public class Commons
                 listGeneral[0].LogoBase64 = imageBase64;
             }
 
-
-
             //Detraccion
 
-            
+
             if (listGeneral[0].Detraccion == null)
                 listGeneral[0].Detraccion = new List<Detraccion>();
 
@@ -3481,8 +3479,8 @@ public class Commons
                 GlobalSettings = new GlobalSettings
                 {
                     ColorMode = DinkToPdf.ColorMode.Color,
-                    Orientation = DinkToPdf.Orientation.Landscape,     
-                    PaperSize = DinkToPdf.PaperKind.A5,        
+                    Orientation = DinkToPdf.Orientation.Landscape, // ← importante
+                    PaperSize = DinkToPdf.PaperKind.A5,            // ← usa A5 nativo
                     DPI = 300,
                     ImageDPI = 300,
                     Margins = new MarginSettings
@@ -3494,19 +3492,19 @@ public class Commons
                     }
                 },
                 Objects = {
-                    new ObjectSettings
-                    {
-                        HtmlContent = htmlResult,
-                        WebSettings = new WebSettings
-                        {
-                            DefaultEncoding = "utf-8",
-                            LoadImages = true,
-                            PrintMediaType = true,
-                            EnableIntelligentShrinking = false,
-                            MinimumFontSize = 12
-                        }
-                    }
+        new ObjectSettings
+        {
+            HtmlContent = htmlResult,
+            WebSettings = new WebSettings
+            {
+                DefaultEncoding = "utf-8",
+                LoadImages = true,
+                PrintMediaType = true,
+                EnableIntelligentShrinking = false,
+                MinimumFontSize = 12
+            }
                 }
+            }
             };
 
             //  Convertir a PDF en memoria
@@ -3529,7 +3527,7 @@ public class Commons
             var psi = new ProcessStartInfo
             {
                 FileName = exePath,
-                Arguments = $"-print-to \"{impresora}\" -silent \"{pdfPath}\"",
+                Arguments = $"-print-to \"{impresora}\" -print-settings \"paper=A5,landscape,fit\" -silent \"{pdfPath}\"",
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
                 UseShellExecute = false
@@ -3541,7 +3539,7 @@ public class Commons
                 process?.Close();
             }
 
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
 
             //  Eliminar archivo temporal
             if (File.Exists(pdfPath))
@@ -3549,7 +3547,7 @@ public class Commons
         }
         catch (Exception ex)
         {
-            File.WriteAllText("error_log.txt", ex.ToString()); 
+            File.WriteAllText("error_log.txt", ex.ToString());
             MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
@@ -3585,7 +3583,7 @@ public class Commons
                         {
                             ColorMode = DinkToPdf.ColorMode.Color,
                             Orientation = DinkToPdf.Orientation.Portrait,
-                            PaperSize = new DinkToPdf.PechkinPaperSize("80mm", "1000mm"),
+                            PaperSize = new DinkToPdf.PechkinPaperSize("80mm", "250mm"),
                             DPI = 300,
                             ImageDPI = 300,
                             Margins = new MarginSettings
@@ -3626,8 +3624,9 @@ public class Commons
                     string exePath = Path.Combine(Application.StartupPath, "Sumatra.exe");
                     if (!File.Exists(exePath))
                         throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
-
-                    string impresora = model[0].DocCliente;
+                    //string impresora = order.PrintNegocio.relacionImpresora?.Trim();
+                    string impresora = p.relacionImpresora;
+                    //string impresora ="COCINA";
 
                     var psi = new ProcessStartInfo
                     {
