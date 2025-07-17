@@ -4,6 +4,7 @@ using Fizzler;
 using Helios.Cont.Business.Entity;
 using Helios.Cont.Business.Logic;
 using Helios.Seguridad.Business.Entity;
+using Helios.Seguridad.Business.Logic;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,11 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using static Helios.Cont.Business.Entity.documentocompra;
 //using static Helios.General.Constantes;
@@ -578,607 +581,29 @@ namespace DeskTest
                         }
                         else
                         {
-                            var listObj = new List<documentoventaAbarrotesDet>();
+                           
 
-                            var DetImpresoAll = await ImpresorasNegocioAPI.GetDetalleImpresoras();
+                           
 
                             if (returdelete == true)
                             {
-                   
-
-                                var returConfigura = await ConfiguracionInicioAPI.Getconfiguration(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-
+                               
                                 var venta = await DocumentoVentaAPI.GetOrderIdLitePrint(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
-
-                                var idList = venta.documentoventaAbarrotesDet.Select(s => Int32.TryParse(s.idItem, out int n) ? n : (int)0).ToList();
-                                var orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
-
-                                var ImpresorasList = orderRecupeacion.Select(q => new
+                                var getventaProductos= venta.documentoventaAbarrotesDet.Where(s=> s.tipoExistencia!="GS").ToList();
+                                if (getventaProductos.Count>0)
                                 {
-                                    q.idImpresora,
-                                    q.aliasImpresora,
-                                    q.ipImpresoraCompartida,
-                                    q.cantidadPrint,
-                                    q.formatoImpresion,
-                                    q.relacionImpresora
-                                }).Distinct().ToList();
-
-
-                                List<detalleItemsImpresoras> ordersSend = new List<detalleItemsImpresoras>();
-                                List<documentoventaAbarrotesDet> detallePed = new List<documentoventaAbarrotesDet>();
-                                foreach (var pr in ImpresorasList)
-                                {
-
-                                    var objprint = new detalleItemsImpresoras()
-                                    {
-                                        aliasImpresora = pr.aliasImpresora,
-                                        idImpresora = pr.idImpresora,
-                                        ipImpresoraCompartida = pr.ipImpresoraCompartida,
-                                        cantidadPrint = pr.cantidadPrint,
-                                        formatoImpresion = pr.formatoImpresion,
-                                        relacionImpresora = pr.relacionImpresora
-                                    };
-
-
-                                    var items = orderRecupeacion.Where(w => w.idImpresora == pr.idImpresora).ToList();
-                                    var productsIDS = items.Select(q => q.codigodetalle.ToString()).ToList();
-                                    var detBenf = "NO_tienebeneficio";
-
-
-
-                                    switch (obj.TipoEnvioImpresion)
-                                    {
-                                        case "PEDIDOADD":
-                                            detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem) && s.estadoImpresion == "PI").ToList();
-                                            break;
-                                        case "Anulacion por item":
-                                            detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem) && s.estadoImpresion == "PA").ToList();
-                                            detBenf = obj.TipoEnvioImpresion;
-                                            break;
-                                        default:
-                                            detallePed = venta.documentoventaAbarrotesDet.Where(s => productsIDS.Contains(s.idItem)).ToList();
-                                            break;
-                                    }
-
-                                    //*****************************************************************
-                                    var DetalleVentaVeneficio = detallePed;
-                                    var lista = detallePed;
-                                    //codigo para agrupar productos**
-                                    var listaPro = (from dvd in detallePed
-                                                    group dvd by new
-                                                    {
-                                                        dvd.nombreItem,
-                                                        dvd.idItem,
-                                                        dvd.usuarioModificacion,
-                                                        dvd.detalleAdicional,
-                                                        dvd.delivery
-                                                    } into g
-                                                    select new
-                                                    {
-                                                        cantidad = g.Count(p => p.monto1 != null),
-                                                        g.Key.nombreItem,
-                                                        g.Key.idItem,
-                                                        g.Key.usuarioModificacion,
-                                                        g.Key.detalleAdicional,
-                                                        g.Key.delivery
-                                                    }).ToList();
-
-
-                                    var ObjDoc = new documentoventaAbarrotesDet();
-                                    var documenDetBLis = new List<documentoventaDetalleBeneficios>();
-                                    var ObjDocDet = new documentoventaAbarrotesDet();
-                                    var documenDetB = new documentoventaDetalleBeneficios();
-                                    objprint.listaProductos = new List<documentoventaAbarrotesDet>();
-                                    if (detBenf == "Anulacion por item")
-                                    {
-                                        objprint.listaProductos.AddRange(DetalleVentaVeneficio);
-                                    }
-                                    else
-                                    {
-                                        foreach (var item in listaPro)
-                                        {
-                                            listObj = new List<documentoventaAbarrotesDet>();
-                                            detallePed = new List<documentoventaAbarrotesDet>();
-                                            detBenf = "NO_tienebeneficio";
-
-
-                                            var newDet = DetalleVentaVeneficio.Where(s => s.nombreItem == item.nombreItem && s.detalleAdicional == item.detalleAdicional && s.delivery == item.delivery).ToList();
-                                            foreach (var itemP in newDet)
-                                            {
-                                                ObjDoc = new documentoventaAbarrotesDet();
-                                                ObjDoc.nombreItem = itemP.nombreItem;
-
-                                                ObjDoc.monto1 = item.cantidad;//cantidad agrupado
-
-                                                ObjDoc.usuarioModificacion = itemP.usuarioModificacion;
-                                                ObjDoc.detalleAdicional = itemP.detalleAdicional;
-                                                ObjDoc.delivery = itemP.delivery;
-
-                                                documenDetBLis = new List<documentoventaDetalleBeneficios>();
-                                                foreach (var itemDB in itemP.documentoventaDetalleBeneficios)
-                                                {
-                                                    ObjDoc.monto1 = itemP.monto1;//cantidad sin agrupar
-
-                                                    detBenf = "SI_tienebeneficio";
-                                                    var ReturnImpre = DetImpresoAll.Where(p => p.codigodetalle == itemDB.ReferenciaProducto && p.nombreimpresora.ToUpper() == items[0].nombreimpresora.ToUpper()).FirstOrDefault();
-                                                    if (ReturnImpre != null)
-                                                    {
-
-                                                        documenDetB = new documentoventaDetalleBeneficios();
-                                                        documenDetB.Nombre = itemDB.Nombre;
-                                                        documenDetB.Cantidad = itemDB.Cantidad;
-                                                        documenDetB.SegmentHeader = itemDB.SegmentHeader;
-                                                        documenDetBLis.Add(documenDetB);
-                                                    }
-
-                                                }
-                                                ObjDoc.documentoventaDetalleBeneficios = documenDetBLis;
-
-                                                //if (itemP.complementoVentaAbarrotes.Count > 0)
-                                                //{
-                                                //    ObjDoc.complementoVentaAbarrotes = itemP.complementoVentaAbarrotes;
-                                                //}
-
-                                                listObj.Add(ObjDoc);
-                                            }
-
-                                            if (detBenf == "SI_tienebeneficio")
-                                            {
-                                                objprint.listaProductos.AddRange(listObj);
-                                            }
-                                            else
-                                            {
-                                                detallePed.Add(ObjDoc);
-                                                objprint.listaProductos.AddRange(detallePed);
-                                            }
-
-
-                                        }
-                                    }
-
-
-                                    ordersSend.Add(objprint);
-                                    //*********************************************************
-
-
-                                    ////*************************COMPLEMENTOS************************************
-                                    //var DetalleVentaVeneficio = detallePed;
-                                    //var lista = detallePed;
-                                    ////codigo para agrupar productos**
-
-                                    //var newlistDocDet = new List<documentoventaAbarrotesDet>();
-                                    //var newDocDet = new documentoventaAbarrotesDet();
-
-                                    //foreach (var itemD in detallePed)
-                                    //{
-                                    //    var name = "";
-                                    //    var dely = "";
-                                    //    if (itemD.delivery == true)
-                                    //    {
-                                    //        dely = " (Para llevar) ";
-                                    //    }
-
-                                    //    foreach (var itemC in itemD.complementoVentaAbarrotes)
-                                    //    {
-
-                                    //        var namec = itemC.cantidadComplemento + "-" + itemC.nombreComplemento + " ";
-                                    //        name += namec;
-
-                                    //    }
-                                    //    newDocDet = new documentoventaAbarrotesDet();
-                                    //    newDocDet.nombreItem = itemD.nombreItem;
-                                    //    newDocDet.idItem = itemD.idItem;
-                                    //    newDocDet.monto1 = itemD.monto1;
-                                    //    newDocDet.usuarioModificacion = itemD.usuarioModificacion;
-                                    //    newDocDet.detalleAdicional = itemD.detalleAdicional;
-                                    //    newDocDet.delivery = itemD.delivery;
-                                    //    newDocDet.nombreComercial = name + dely + " " + itemD.detalleAdicional;
-                                    //    newDocDet.complementoVentaAbarrotes = itemD.complementoVentaAbarrotes;
-                                    //    newlistDocDet.Add(newDocDet);
-
-                                    //}
-
-
-                                    //var listaPro = (from dvd in newlistDocDet
-                                    //                group dvd by new
-                                    //                {
-                                    //                    dvd.nombreItem,
-                                    //                    dvd.idItem,
-                                    //                    dvd.usuarioModificacion,
-                                    //                    dvd.nombreComercial
-                                    //                } into g
-                                    //                select new
-                                    //                {
-                                    //                    cantidad = g.Count(p => p.monto1 != null),
-                                    //                    g.Key.nombreItem,
-                                    //                    g.Key.idItem,
-                                    //                    g.Key.usuarioModificacion,
-                                    //                    g.Key.nombreComercial
-                                    //                }).ToList();
-
-
-                                    //var ObjDoc = new documentoventaAbarrotesDet();
-                                    //var documenDetBLis = new List<documentoventaDetalleBeneficios>();
-                                    //var ObjDocDet = new documentoventaAbarrotesDet();
-                                    //var docuCompleList = new List<complementoVentaAbarrotes>();
-                                    //var docuComple = new complementoVentaAbarrotes();
-
-                                    //var documenDetB = new documentoventaDetalleBeneficios();
-                                    //objprint.listaProductos = new List<documentoventaAbarrotesDet>();
-                                    //if (detBenf == "Anulacion por item")
-                                    //{
-                                    //    objprint.listaProductos.AddRange(DetalleVentaVeneficio);
-                                    //}
-                                    //else
-                                    //{
-                                    //    foreach (var item in listaPro)
-                                    //    {
-                                    //        //listObj = new List<documentoventaAbarrotesDet>();
-                                    //        detallePed = new List<documentoventaAbarrotesDet>();
-                                    //        detBenf = "NO_tienebeneficio";
-
-
-                                    //        var newDet = newlistDocDet.Where(s => s.nombreComercial==item.nombreComercial && s.nombreItem== item.nombreItem).FirstOrDefault();
-
-
-                                    //        ObjDoc = new documentoventaAbarrotesDet();
-                                    //        ObjDoc.nombreItem = newDet.nombreItem;
-
-                                    //        ObjDoc.monto1 = item.cantidad;//cantidad agrupado
-
-                                    //        ObjDoc.usuarioModificacion = newDet.usuarioModificacion;
-                                    //        ObjDoc.detalleAdicional = newDet.detalleAdicional;
-                                    //        ObjDoc.delivery = newDet.delivery;
-
-                                    //        docuCompleList = new List<complementoVentaAbarrotes>();
-                                    //        if (newDet.complementoVentaAbarrotes.Count > 0)
-                                    //        {
-                                    //            foreach (var itemC in newDet.complementoVentaAbarrotes)
-                                    //            {
-                                    //                 docuComple = new complementoVentaAbarrotes();
-                                    //                docuComple.cantidadComplemento = itemC.cantidadComplemento * item.cantidad;
-                                    //                docuComple.nombreComplemento = itemC.nombreComplemento;
-
-                                    //                docuCompleList.Add(docuComple);
-                                    //            }
-
-                                    //        }
-                                    //        ObjDoc.complementoVentaAbarrotes = docuCompleList;
-                                    //        listObj.Add(ObjDoc);
-
-                                    //        //foreach (var itemP in newDet)
-                                    //        //{
-                                    //        //    ObjDoc = new documentoventaAbarrotesDet();
-                                    //        //    ObjDoc.nombreItem = itemP.nombreItem;
-
-                                    //        //    ObjDoc.monto1 = item.cantidad;//cantidad agrupado
-
-                                    //        //    ObjDoc.usuarioModificacion = itemP.usuarioModificacion;
-                                    //        //    ObjDoc.detalleAdicional = itemP.detalleAdicional;
-                                    //        //    ObjDoc.delivery = itemP.delivery;
-
-                                    //        //    documenDetBLis = new List<documentoventaDetalleBeneficios>();
-                                    //        //    foreach (var itemDB in itemP.documentoventaDetalleBeneficios)
-                                    //        //    {
-                                    //        //        ObjDoc.monto1 = itemP.monto1;//cantidad sin agrupar
-
-                                    //        //        detBenf = "SI_tienebeneficio";
-                                    //        //        var ReturnImpre = DetImpresoAll.Where(p => p.codigodetalle == itemDB.ReferenciaProducto && p.nombreimpresora.ToUpper() == items[0].nombreimpresora.ToUpper()).FirstOrDefault();
-                                    //        //        if (ReturnImpre != null)
-                                    //        //        {
-
-                                    //        //            documenDetB = new documentoventaDetalleBeneficios();
-                                    //        //            documenDetB.Nombre = itemDB.Nombre;
-                                    //        //            documenDetB.Cantidad = itemDB.Cantidad;
-                                    //        //            documenDetB.SegmentHeader = itemDB.SegmentHeader;
-                                    //        //            documenDetBLis.Add(documenDetB);
-                                    //        //        }
-
-                                    //        //    }
-                                    //        //    ObjDoc.documentoventaDetalleBeneficios = documenDetBLis;
-
-                                    //        //    if (itemP.complementoVentaAbarrotes.Count > 0)
-                                    //        //    {
-                                    //        //        ObjDoc.complementoVentaAbarrotes = itemP.complementoVentaAbarrotes;
-                                    //        //    }
-
-
-
-                                    //        //}
-
-                                    //        //if (detBenf == "SI_tienebeneficio")
-                                    //        //    {
-                                    //        //        objprint.listaProductos.AddRange(listObj);
-                                    //        //    }
-                                    //        //    else
-                                    //        //    {
-                                    //        //        detallePed.Add(ObjDoc);
-                                    //        //        objprint.listaProductos.AddRange(detallePed);
-                                    //        //    }
-
-
-                                    //    }
-                                    //    objprint.listaProductos.AddRange(listObj);
-                                    //}
-
-
-                                    //ordersSend.Add(objprint);
-                                    //********************************************************************************
+                                    var TipoServicio = "PRODUCTO";
+                                    var getPediddo = Printpedidos(venta, obj, commons, getventaProductos, TipoServicio);
                                 }
+                           
 
-
-
-                                //Envio para imprimir
-                                if (ordersSend.Any())
+                                var getventaServicios = venta.documentoventaAbarrotesDet.Where(s => s.tipoExistencia == "GS").ToList();
+                                if (getventaServicios.Count > 0)
                                 {
-                                    var ventaData = venta;//await DocumentoVentaAPI.GetOrderIdLite(venta.idDocumento);
-
-                                    var listDete = new List<documentoventaAbarrotesDet>();
-
-
-                                    var objPrint = new ImpresorasNegocio();
-                                    var Impresora = new ImpresorasNegocio();
-                                    if (obj.TipoEnvioImpresion != "PRECUENTA")
-                                    {
-                                        objPrint.estadoImpresora = "A";
-                                        objPrint.tipoImpresora = "PEDIDO";
-                                        objPrint.idEstablecimiento = obj.idEstablecimiento;
-                                        objPrint.idEmpresa = obj.idEmpresa;
-
-                                        var PEDIDO = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-                                        if (PEDIDO.Count > 0)
-                                        {
-                                            Impresora = PEDIDO.Where(o => o.idImpresora == ordersSend.FirstOrDefault().idImpresora && o.idEstablecimiento == obj.idEstablecimiento && o.idEmpresa == obj.idEmpresa).FirstOrDefault();
-                                        }
-
-                                    }
-                                    var LisUsu = await UserAPI.GetUsersSecurityAll();
-                                    if (obj.IdUsuario != null)
-                                    {
-                                        venta.usuarioActualizacion = obj.IdUsuario.ToString();
-                                    }
-
-
-                                    var consultaNombre = LisUsu.Where(s => s.IDUsuario == int.Parse(venta.usuarioActualizacion)).FirstOrDefault();
-                                    ventaData.cargoOperacion = consultaNombre.UsuarioRol[0].nombrePerfil;
-                                    ventaData.usuarioOperacion = consultaNombre.Nombres;
-                                    var listprod = ordersSend[0].listaProductos;
-
-
-                                    foreach (var p in ordersSend[0].listaProductos)
-                                    {
-                                        var consulta = LisUsu.Where(s => s.IDUsuario == int.Parse(p.usuarioModificacion)).FirstOrDefault();
-                                        if (consulta != null)
-                                        {
-                                            p.usuarioModificacion = consulta.codigo;
-                                        }
-
-                                    }
-
-                                    switch (obj.TipoEnvioImpresion)
-                                    {
-                                        case "PNPI":
-                                        case "Anulacion por item":
-
-
-                                            await DocumentoVentaAPI.AnulacionPrintOrderDetItem(venta);
-
-                                            commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
-                                            break;
-
-                                        case "PNPR":
-                                        case "Reimpresion":
-                                        case "PNPA":
-                                        case "Anulacion":
-                                   
-                                            commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
-
-
-                                            break;
-
-                                        case "PREC":
-                                        case "PRECUENTA":
-                                            objPrint = new ImpresorasNegocio();
-
-                                            objPrint.estadoImpresora = "A";
-                                            objPrint.tipoImpresora = "PRECUENTA";
-                                            objPrint.idEmpresa = obj.idEmpresa;
-                                            objPrint.idEstablecimiento = obj.idEstablecimiento;
-                                            var impresoraPreCuenta = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-
-                                            if (impresoraPreCuenta != null)
-                                            {
-                                                var impresoraPreCuentaObj =  impresoraPreCuenta.Where(s => s.tipoImpresora == "PRECUENTA").FirstOrDefault(); ;
-                                                //var Consulta = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
-                                                if (obj.idPreCuenta > 0) {
-                                                    impresoraPreCuentaObj = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta).FirstOrDefault();
-
-                                                }
-                                               
-                                               
-                                                     //if (Consulta != null)
-                                                     //{
-                                                     //Retudel = await ValidarDelete(obj);
-
-                                                //Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                                                //await DocumentoVentaAPI.ConfirmPrintOrder(venta);
-
-                                                     var impresionLista = venta.documentoventaAbarrotesDet.Where(s => s.estadoPago != "ANUP" && s.estadoDistribucion == "A").ToList();
-                                                listObj = new List<documentoventaAbarrotesDet>();
-                                                var listaPreCuenta = (from dvd in impresionLista
-                                                                      group dvd by new
-                                                                      {
-                                                                          dvd.nombreItem,
-                                                                          dvd.idItem,
-                                                                          dvd.precioUnitario,
-                                                                          dvd.importeMN
-                                                                      } into g
-                                                                      select new
-                                                                      {
-                                                                          cantidad = g.Count(p => p.monto1 != null),
-                                                                          g.Key.nombreItem,
-                                                                          g.Key.idItem,
-                                                                          g.Key.precioUnitario,
-                                                                          g.Key.importeMN
-                                                                      }).ToList();
-
-                                                foreach (var item in listaPreCuenta)
-                                                {
-                                                    var ObjDoc = new documentoventaAbarrotesDet();
-                                                    ObjDoc.nombreItem = item.nombreItem;
-                                                    ObjDoc.monto1 = item.cantidad;
-                                                    ObjDoc.precioUnitario = item.precioUnitario;
-                                                    ObjDoc.importeMN = item.importeMN * item.cantidad;
-
-                                                    listObj.Add(ObjDoc);
-                                                }
-
-
-
-                                                commons.ImprimirPrecuentaFastReport(listObj, impresoraPreCuentaObj, venta.nombreDistribucion, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), "", ventaData, ordersSend, returConfigura);
-                                                //}
-                                            }
-
-                                            break;
-
-                                        default:
-                                            if(obj.Tipo_Venta == "RAPIDA")
-                                            {
-                                                commons.ImprimirPeditoTicket(ordersSend, obj, Impresora, ventaData, returConfigura);
-                                            }
-                                            else
-                                            {
-                                                await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
-
-                                                commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
-                                            }
-
-
-
-                                            break;
-                                    }
-
-                                    //switch (obj.TipoEnvioImpresion)
-                                    //{
-                                    //    case "PNP":
-                                    //    case "Impresion":
-                                    //    case "PEDIDO":
-
-                                    //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
-
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Impresion", Impresora, ventaData, returConfigura);
-
-
-                                    //        break;
-
-                                    //    case "PEDIDOADD":
-
-                                    //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Impresion", Impresora, ventaData, returConfigura);
-
-                                    //        break;
-
-                                    //    case "PNPR":
-                                    //    case "Reimpresion":
-
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Reimpresion", Impresora, ventaData, returConfigura);
-
-                                    //        break;
-
-                                    //    case "PNPA":
-                                    //    case "Anulacion":
-
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Anulacion", Impresora, ventaData, returConfigura);
-
-                                    //        break;
-
-                                    //    case "PNPU":
-                                    //    case "nuevo item":
-
-                                    //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);
-
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "nuevo item", Impresora, ventaData, returConfigura);
-
-                                    //        break;
-
-                                    //    case "PNPI":
-                                    //    case "Anulacion por item":
-
-
-                                    //        await DocumentoVentaAPI.AnulacionPrintOrderDetItem(venta);
-
-                                    //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Anulacion por item", Impresora, ventaData, returConfigura);
-
-                                    //        break;
-
-
-                                    //    case "PREC":
-                                    //    case "PRECUENTA":
-                                    //        objPrint = new ImpresorasNegocio();
-
-                                    //        objPrint.estadoImpresora = "A";
-                                    //        objPrint.tipoImpresora = "PRECUENTA";
-                                    //        objPrint.idEmpresa = obj.idEmpresa;
-                                    //        objPrint.idEstablecimiento = obj.idEstablecimiento;
-                                    //        var impresoraPreCuenta = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-
-                                    //        if (impresoraPreCuenta != null)
-                                    //        {
-                                    //            //var Consulta = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
-
-                                    //            //if (Consulta != null)
-                                    //            //{
-                                    //                //Retudel = await ValidarDelete(obj);
-
-                                    //                //Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                                    //                //await DocumentoVentaAPI.ConfirmPrintOrder(venta);
-
-                                    //                var impresionLista = venta.documentoventaAbarrotesDet.Where(s => s.estadoPago != "ANUP" && s.estadoDistribucion == "A").ToList();
-                                    //                listObj = new List<documentoventaAbarrotesDet>();
-                                    //                var listaPreCuenta = (from dvd in impresionLista
-                                    //                                      group dvd by new
-                                    //                                      {
-                                    //                                          dvd.nombreItem,
-                                    //                                          dvd.idItem,
-                                    //                                          dvd.precioUnitario,
-                                    //                                          dvd.importeMN
-                                    //                                      } into g
-                                    //                                      select new
-                                    //                                      {
-                                    //                                          cantidad = g.Count(p => p.monto1 != null),
-                                    //                                          g.Key.nombreItem,
-                                    //                                          g.Key.idItem,
-                                    //                                          g.Key.precioUnitario,
-                                    //                                          g.Key.importeMN
-                                    //                                      }).ToList();
-
-                                    //                foreach (var item in listaPreCuenta)
-                                    //                {
-                                    //                    var ObjDoc = new documentoventaAbarrotesDet();
-                                    //                    ObjDoc.nombreItem = item.nombreItem;
-                                    //                    ObjDoc.monto1 = item.cantidad;
-                                    //                    ObjDoc.precioUnitario = item.precioUnitario;
-                                    //                    ObjDoc.importeMN = item.importeMN * item.cantidad;
-
-                                    //                    listObj.Add(ObjDoc);
-                                    //                }
-
-
-
-                                    //                commons.ImprimirPrecuentaFastReport(listObj, impresoraPreCuenta.FirstOrDefault(), venta.nombreDistribucion, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), "", ventaData, ordersSend, returConfigura);
-                                    //            //}
-                                    //        }
-
-                                    //        break;
-
-                                    //    default:
-                                    //        break;
-                                    //}
-
-
+                                    var TipoServicio = "SERVICIO";
+                                    var getPediddo = Printpedidos(venta, obj, commons, getventaServicios, TipoServicio);
                                 }
-
                             }
                         }
 
@@ -1193,7 +618,641 @@ namespace DeskTest
            
         }
 
+        public static async Task Printpedidos(documentoventaAbarrotes venta, PrintQueue obj, Commons commons,List<documentoventaAbarrotesDet> GetProductos,string TipoServicio)
+        {
+            var returConfigura = await ConfiguracionInicioAPI.Getconfiguration(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+            var DetImpresoAll = await ImpresorasNegocioAPI.GetDetalleImpresoras();
+            var listObj = new List<documentoventaAbarrotesDet>();
+            var orderRecupeacion = new List<detalleItemsImpresoras>();
+            var idList = new List<int>();
+           
+            if (TipoServicio == "PRODUCTO")
+            {
+                idList = GetProductos.Select(s => Int32.TryParse(s.idItem, out int n) ? n : (int)0).ToList();
+                orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
+            }
+            else
+            {
+                idList = GetProductos.Select(s => Int32.TryParse(s.idImpresora.ToString(), out int n) ? n : (int)0).ToList();
+                orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXIdImpresora(idList);
+            }
 
+
+
+            var ImpresorasList = orderRecupeacion.Select(q => new
+            {
+                q.idImpresora,
+                q.aliasImpresora,
+                q.ipImpresoraCompartida,
+                q.cantidadPrint,
+                q.formatoImpresion,
+                q.relacionImpresora
+            }).Distinct().ToList();
+
+
+
+
+            List<detalleItemsImpresoras> ordersSend = new List<detalleItemsImpresoras>();
+            List<documentoventaAbarrotesDet> detallePed = new List<documentoventaAbarrotesDet>();
+            foreach (var pr in ImpresorasList)
+            {
+
+                var objprint = new detalleItemsImpresoras()
+                {
+                    aliasImpresora = pr.aliasImpresora,
+                    idImpresora = pr.idImpresora,
+                    ipImpresoraCompartida = pr.ipImpresoraCompartida,
+                    cantidadPrint = pr.cantidadPrint,
+                    formatoImpresion = pr.formatoImpresion,
+                    relacionImpresora = pr.relacionImpresora
+                };
+
+
+                var items = orderRecupeacion.Where(w => w.idImpresora == pr.idImpresora).ToList();
+                var productsIDS = new List<string>();
+                var detBenf = "NO_tienebeneficio";
+                if (TipoServicio == "PRODUCTO")
+                {
+                    productsIDS = items.Select(q => q.codigodetalle.ToString()).ToList();
+                    switch (obj.TipoEnvioImpresion)
+                    {
+                        case "PEDIDOADD":
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idItem) && s.estadoImpresion == "PI").ToList();
+                            break;
+                        case "Anulacion por item":
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idItem) && s.estadoImpresion == "PA").ToList();
+                            detBenf = obj.TipoEnvioImpresion;
+                            break;
+                        default:
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idItem)).ToList();
+
+                            break;
+                    }
+                }
+                else
+                {
+                    productsIDS = items.Select(q => q.idImpresora.ToString()).ToList();
+
+                    switch (obj.TipoEnvioImpresion)
+                    {
+                        case "PEDIDOADD":
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idImpresora.ToString()) && s.estadoImpresion == "PI").ToList();
+                            break;
+                        case "Anulacion por item":
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idImpresora.ToString()) && s.estadoImpresion == "PA").ToList();
+                            detBenf = obj.TipoEnvioImpresion;
+                            break;
+                        default:
+                            detallePed = GetProductos.Where(s => productsIDS.Contains(s.idImpresora.ToString())).ToList();
+                            break;
+                    }
+                }
+
+
+
+
+
+
+                //*****************************************************************
+                var DetalleVentaVeneficio = detallePed;
+                var lista = detallePed;
+                //codigo para agrupar productos**
+                var listaPro = (from dvd in detallePed
+                                group dvd by new
+                                {
+                                    dvd.nombreItem,
+                                    dvd.idItem,
+                                    dvd.usuarioModificacion,
+                                    dvd.detalleAdicional,
+                                    dvd.delivery
+                                } into g
+                                select new
+                                {
+                                    cantidad = g.Count(p => p.monto1 != null),
+                                    g.Key.nombreItem,
+                                    g.Key.idItem,
+                                    g.Key.usuarioModificacion,
+                                    g.Key.detalleAdicional,
+                                    g.Key.delivery
+                                }).ToList();
+
+
+                var ObjDoc = new documentoventaAbarrotesDet();
+                var documenDetBLis = new List<documentoventaDetalleBeneficios>();
+                var ObjDocDet = new documentoventaAbarrotesDet();
+                var documenDetB = new documentoventaDetalleBeneficios();
+                objprint.listaProductos = new List<documentoventaAbarrotesDet>();
+                if (detBenf == "Anulacion por item")
+                {
+                    objprint.listaProductos.AddRange(DetalleVentaVeneficio);
+                }
+                else
+                {
+                    foreach (var item in listaPro)
+                    {
+                        listObj = new List<documentoventaAbarrotesDet>();
+                        detallePed = new List<documentoventaAbarrotesDet>();
+                        detBenf = "NO_tienebeneficio";
+
+
+                        var newDet = DetalleVentaVeneficio.Where(s => s.nombreItem == item.nombreItem && s.detalleAdicional == item.detalleAdicional && s.delivery == item.delivery).ToList();
+                        foreach (var itemP in newDet)
+                        {
+                            ObjDoc = new documentoventaAbarrotesDet();
+                            ObjDoc.nombreItem = itemP.nombreItem;
+
+                            ObjDoc.monto1 = item.cantidad;//cantidad agrupado
+
+                            ObjDoc.usuarioModificacion = itemP.usuarioModificacion;
+                            ObjDoc.detalleAdicional = itemP.detalleAdicional;
+                            ObjDoc.delivery = itemP.delivery;
+
+                            documenDetBLis = new List<documentoventaDetalleBeneficios>();
+                            foreach (var itemDB in itemP.documentoventaDetalleBeneficios)
+                            {
+                                ObjDoc.monto1 = itemP.monto1;//cantidad sin agrupar
+
+                                detBenf = "SI_tienebeneficio";
+                                var ReturnImpre = DetImpresoAll.Where(p => p.codigodetalle == itemDB.ReferenciaProducto && p.nombreimpresora.ToUpper() == items[0].nombreimpresora.ToUpper()).FirstOrDefault();
+                                if (ReturnImpre != null)
+                                {
+
+                                    documenDetB = new documentoventaDetalleBeneficios();
+                                    documenDetB.Nombre = itemDB.Nombre;
+                                    documenDetB.Cantidad = itemDB.Cantidad;
+                                    documenDetB.SegmentHeader = itemDB.SegmentHeader;
+                                    documenDetBLis.Add(documenDetB);
+                                }
+
+                            }
+                            ObjDoc.documentoventaDetalleBeneficios = documenDetBLis;
+
+                            //if (itemP.complementoVentaAbarrotes.Count > 0)
+                            //{
+                            //    ObjDoc.complementoVentaAbarrotes = itemP.complementoVentaAbarrotes;
+                            //}
+
+                            listObj.Add(ObjDoc);
+                        }
+
+                        if (detBenf == "SI_tienebeneficio")
+                        {
+                            objprint.listaProductos.AddRange(listObj);
+                        }
+                        else
+                        {
+                            detallePed.Add(ObjDoc);
+                            objprint.listaProductos.AddRange(detallePed);
+                        }
+
+
+                    }
+                }
+
+
+                ordersSend.Add(objprint);
+                //*********************************************************
+
+
+                ////*************************COMPLEMENTOS************************************
+                //var DetalleVentaVeneficio = detallePed;
+                //var lista = detallePed;
+                ////codigo para agrupar productos**
+
+                //var newlistDocDet = new List<documentoventaAbarrotesDet>();
+                //var newDocDet = new documentoventaAbarrotesDet();
+
+                //foreach (var itemD in detallePed)
+                //{
+                //    var name = "";
+                //    var dely = "";
+                //    if (itemD.delivery == true)
+                //    {
+                //        dely = " (Para llevar) ";
+                //    }
+
+                //    foreach (var itemC in itemD.complementoVentaAbarrotes)
+                //    {
+
+                //        var namec = itemC.cantidadComplemento + "-" + itemC.nombreComplemento + " ";
+                //        name += namec;
+
+                //    }
+                //    newDocDet = new documentoventaAbarrotesDet();
+                //    newDocDet.nombreItem = itemD.nombreItem;
+                //    newDocDet.idItem = itemD.idItem;
+                //    newDocDet.monto1 = itemD.monto1;
+                //    newDocDet.usuarioModificacion = itemD.usuarioModificacion;
+                //    newDocDet.detalleAdicional = itemD.detalleAdicional;
+                //    newDocDet.delivery = itemD.delivery;
+                //    newDocDet.nombreComercial = name + dely + " " + itemD.detalleAdicional;
+                //    newDocDet.complementoVentaAbarrotes = itemD.complementoVentaAbarrotes;
+                //    newlistDocDet.Add(newDocDet);
+
+                //}
+
+
+                //var listaPro = (from dvd in newlistDocDet
+                //                group dvd by new
+                //                {
+                //                    dvd.nombreItem,
+                //                    dvd.idItem,
+                //                    dvd.usuarioModificacion,
+                //                    dvd.nombreComercial
+                //                } into g
+                //                select new
+                //                {
+                //                    cantidad = g.Count(p => p.monto1 != null),
+                //                    g.Key.nombreItem,
+                //                    g.Key.idItem,
+                //                    g.Key.usuarioModificacion,
+                //                    g.Key.nombreComercial
+                //                }).ToList();
+
+
+                //var ObjDoc = new documentoventaAbarrotesDet();
+                //var documenDetBLis = new List<documentoventaDetalleBeneficios>();
+                //var ObjDocDet = new documentoventaAbarrotesDet();
+                //var docuCompleList = new List<complementoVentaAbarrotes>();
+                //var docuComple = new complementoVentaAbarrotes();
+
+                //var documenDetB = new documentoventaDetalleBeneficios();
+                //objprint.listaProductos = new List<documentoventaAbarrotesDet>();
+                //if (detBenf == "Anulacion por item")
+                //{
+                //    objprint.listaProductos.AddRange(DetalleVentaVeneficio);
+                //}
+                //else
+                //{
+                //    foreach (var item in listaPro)
+                //    {
+                //        //listObj = new List<documentoventaAbarrotesDet>();
+                //        detallePed = new List<documentoventaAbarrotesDet>();
+                //        detBenf = "NO_tienebeneficio";
+
+
+                //        var newDet = newlistDocDet.Where(s => s.nombreComercial==item.nombreComercial && s.nombreItem== item.nombreItem).FirstOrDefault();
+
+
+                //        ObjDoc = new documentoventaAbarrotesDet();
+                //        ObjDoc.nombreItem = newDet.nombreItem;
+
+                //        ObjDoc.monto1 = item.cantidad;//cantidad agrupado
+
+                //        ObjDoc.usuarioModificacion = newDet.usuarioModificacion;
+                //        ObjDoc.detalleAdicional = newDet.detalleAdicional;
+                //        ObjDoc.delivery = newDet.delivery;
+
+                //        docuCompleList = new List<complementoVentaAbarrotes>();
+                //        if (newDet.complementoVentaAbarrotes.Count > 0)
+                //        {
+                //            foreach (var itemC in newDet.complementoVentaAbarrotes)
+                //            {
+                //                 docuComple = new complementoVentaAbarrotes();
+                //                docuComple.cantidadComplemento = itemC.cantidadComplemento * item.cantidad;
+                //                docuComple.nombreComplemento = itemC.nombreComplemento;
+
+                //                docuCompleList.Add(docuComple);
+                //            }
+
+                //        }
+                //        ObjDoc.complementoVentaAbarrotes = docuCompleList;
+                //        listObj.Add(ObjDoc);
+
+                //        //foreach (var itemP in newDet)
+                //        //{
+                //        //    ObjDoc = new documentoventaAbarrotesDet();
+                //        //    ObjDoc.nombreItem = itemP.nombreItem;
+
+                //        //    ObjDoc.monto1 = item.cantidad;//cantidad agrupado
+
+                //        //    ObjDoc.usuarioModificacion = itemP.usuarioModificacion;
+                //        //    ObjDoc.detalleAdicional = itemP.detalleAdicional;
+                //        //    ObjDoc.delivery = itemP.delivery;
+
+                //        //    documenDetBLis = new List<documentoventaDetalleBeneficios>();
+                //        //    foreach (var itemDB in itemP.documentoventaDetalleBeneficios)
+                //        //    {
+                //        //        ObjDoc.monto1 = itemP.monto1;//cantidad sin agrupar
+
+                //        //        detBenf = "SI_tienebeneficio";
+                //        //        var ReturnImpre = DetImpresoAll.Where(p => p.codigodetalle == itemDB.ReferenciaProducto && p.nombreimpresora.ToUpper() == items[0].nombreimpresora.ToUpper()).FirstOrDefault();
+                //        //        if (ReturnImpre != null)
+                //        //        {
+
+                //        //            documenDetB = new documentoventaDetalleBeneficios();
+                //        //            documenDetB.Nombre = itemDB.Nombre;
+                //        //            documenDetB.Cantidad = itemDB.Cantidad;
+                //        //            documenDetB.SegmentHeader = itemDB.SegmentHeader;
+                //        //            documenDetBLis.Add(documenDetB);
+                //        //        }
+
+                //        //    }
+                //        //    ObjDoc.documentoventaDetalleBeneficios = documenDetBLis;
+
+                //        //    if (itemP.complementoVentaAbarrotes.Count > 0)
+                //        //    {
+                //        //        ObjDoc.complementoVentaAbarrotes = itemP.complementoVentaAbarrotes;
+                //        //    }
+
+
+
+                //        //}
+
+                //        //if (detBenf == "SI_tienebeneficio")
+                //        //    {
+                //        //        objprint.listaProductos.AddRange(listObj);
+                //        //    }
+                //        //    else
+                //        //    {
+                //        //        detallePed.Add(ObjDoc);
+                //        //        objprint.listaProductos.AddRange(detallePed);
+                //        //    }
+
+
+                //    }
+                //    objprint.listaProductos.AddRange(listObj);
+                //}
+
+
+                //ordersSend.Add(objprint);
+                //********************************************************************************
+            }
+
+
+
+            //Envio para imprimir
+            if (ordersSend.Any())
+            {
+                venta.documentoventaAbarrotesDet = GetProductos;
+                var ventaData = venta;//await DocumentoVentaAPI.GetOrderIdLite(venta.idDocumento);
+
+                var listDete = new List<documentoventaAbarrotesDet>();
+
+
+                var objPrint = new ImpresorasNegocio();
+                var Impresora = new ImpresorasNegocio();
+                if (obj.TipoEnvioImpresion != "PRECUENTA")
+                {
+                    objPrint.estadoImpresora = "A";
+                    objPrint.tipoImpresora = "PEDIDO";
+                    objPrint.idEstablecimiento = obj.idEstablecimiento;
+                    objPrint.idEmpresa = obj.idEmpresa;
+
+                    var PEDIDO = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+                    if (PEDIDO.Count > 0)
+                    {
+                        Impresora = PEDIDO.Where(o => o.idImpresora == ordersSend.FirstOrDefault().idImpresora && o.idEstablecimiento == obj.idEstablecimiento && o.idEmpresa == obj.idEmpresa).FirstOrDefault();
+                    }
+
+                }
+                var LisUsu = await UserAPI.GetUsersSecurityAll();
+                if (obj.IdUsuario != null)
+                {
+                    venta.usuarioActualizacion = obj.IdUsuario.ToString();
+                }
+
+
+                var consultaNombre = LisUsu.Where(s => s.IDUsuario == int.Parse(venta.usuarioActualizacion)).FirstOrDefault();
+                ventaData.cargoOperacion = consultaNombre.UsuarioRol[0].nombrePerfil;
+                ventaData.usuarioOperacion = consultaNombre.Nombres;
+                var listprod = ordersSend[0].listaProductos;
+
+
+                foreach (var p in ordersSend[0].listaProductos)
+                {
+                    var consulta = LisUsu.Where(s => s.IDUsuario == int.Parse(p.usuarioModificacion)).FirstOrDefault();
+                    if (consulta != null)
+                    {
+                        p.usuarioModificacion = consulta.codigo;
+                    }
+
+                }
+
+                switch (obj.TipoEnvioImpresion)
+                {
+                    case "PNPI":
+                    case "Anulacion por item":
+
+
+                        await DocumentoVentaAPI.AnulacionPrintOrderDetItem(venta);
+
+                        commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
+                        break;
+
+                    case "PNPR":
+                    case "Reimpresion":
+                    case "PNPA":
+                    case "Anulacion":
+
+                        commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
+
+
+                        break;
+
+                    case "PREC":
+                    case "PRECUENTA":
+                        objPrint = new ImpresorasNegocio();
+
+                        objPrint.estadoImpresora = "A";
+                        objPrint.tipoImpresora = "PRECUENTA";
+                        objPrint.idEmpresa = obj.idEmpresa;
+                        objPrint.idEstablecimiento = obj.idEstablecimiento;
+                        var impresoraPreCuenta = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+
+                        if (impresoraPreCuenta != null)
+                        {
+                            var impresoraPreCuentaObj = impresoraPreCuenta.Where(s => s.tipoImpresora == "PRECUENTA").FirstOrDefault(); ;
+                            //var Consulta = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
+                            if (obj.idPreCuenta > 0)
+                            {
+                                impresoraPreCuentaObj = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta).FirstOrDefault();
+
+                            }
+
+
+                            //if (Consulta != null)
+                            //{
+                            //Retudel = await ValidarDelete(obj);
+
+                            //Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                            //await DocumentoVentaAPI.ConfirmPrintOrder(venta);
+
+                            var impresionLista = venta.documentoventaAbarrotesDet.Where(s => s.estadoPago != "ANUP" && s.estadoDistribucion == "A").ToList();
+                            listObj = new List<documentoventaAbarrotesDet>();
+                            var listaPreCuenta = (from dvd in impresionLista
+                                                  group dvd by new
+                                                  {
+                                                      dvd.nombreItem,
+                                                      dvd.idItem,
+                                                      dvd.precioUnitario,
+                                                      dvd.importeMN
+                                                  } into g
+                                                  select new
+                                                  {
+                                                      cantidad = g.Count(p => p.monto1 != null),
+                                                      g.Key.nombreItem,
+                                                      g.Key.idItem,
+                                                      g.Key.precioUnitario,
+                                                      g.Key.importeMN
+                                                  }).ToList();
+
+                            foreach (var item in listaPreCuenta)
+                            {
+                                var ObjDoc = new documentoventaAbarrotesDet();
+                                ObjDoc.nombreItem = item.nombreItem;
+                                ObjDoc.monto1 = item.cantidad;
+                                ObjDoc.precioUnitario = item.precioUnitario;
+                                ObjDoc.importeMN = item.importeMN * item.cantidad;
+
+                                listObj.Add(ObjDoc);
+                            }
+
+
+
+                            commons.ImprimirPrecuentaFastReport(listObj, impresoraPreCuentaObj, venta.nombreDistribucion, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), "", ventaData, ordersSend, returConfigura);
+                            //}
+                        }
+
+                        break;
+
+                    default:
+                        if (obj.Tipo_Venta == "RAPIDA")
+                        {
+                            commons.ImprimirPeditoTicket(ordersSend, obj, Impresora, ventaData, returConfigura);
+                        }
+                        else
+                        {
+                            await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
+
+                            commons.ImprimirPedidoReImpersionFastReport(ordersSend, obj, Impresora, ventaData, returConfigura);
+                        }
+
+
+
+                        break;
+                }
+
+                //switch (obj.TipoEnvioImpresion)
+                //{
+                //    case "PNP":
+                //    case "Impresion":
+                //    case "PEDIDO":
+
+                //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);//Para actualizar el estado de la impresion
+
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Impresion", Impresora, ventaData, returConfigura);
+
+
+                //        break;
+
+                //    case "PEDIDOADD":
+
+                //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Impresion", Impresora, ventaData, returConfigura);
+
+                //        break;
+
+                //    case "PNPR":
+                //    case "Reimpresion":
+
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Reimpresion", Impresora, ventaData, returConfigura);
+
+                //        break;
+
+                //    case "PNPA":
+                //    case "Anulacion":
+
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Anulacion", Impresora, ventaData, returConfigura);
+
+                //        break;
+
+                //    case "PNPU":
+                //    case "nuevo item":
+
+                //        await DocumentoVentaAPI.ConfirmPrintOrderDet(venta);
+
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "nuevo item", Impresora, ventaData, returConfigura);
+
+                //        break;
+
+                //    case "PNPI":
+                //    case "Anulacion por item":
+
+
+                //        await DocumentoVentaAPI.AnulacionPrintOrderDetItem(venta);
+
+                //        commons.ImprimirPedidoReImpersionFastReport(ordersSend, "", "", "Anulacion por item", Impresora, ventaData, returConfigura);
+
+                //        break;
+
+
+                //    case "PREC":
+                //    case "PRECUENTA":
+                //        objPrint = new ImpresorasNegocio();
+
+                //        objPrint.estadoImpresora = "A";
+                //        objPrint.tipoImpresora = "PRECUENTA";
+                //        objPrint.idEmpresa = obj.idEmpresa;
+                //        objPrint.idEstablecimiento = obj.idEstablecimiento;
+                //        var impresoraPreCuenta = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+
+                //        if (impresoraPreCuenta != null)
+                //        {
+                //            //var Consulta = impresoraPreCuenta.Where(s => s.idImpresora == obj.idPreCuenta && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
+
+                //            //if (Consulta != null)
+                //            //{
+                //                //Retudel = await ValidarDelete(obj);
+
+                //                //Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                //                //await DocumentoVentaAPI.ConfirmPrintOrder(venta);
+
+                //                var impresionLista = venta.documentoventaAbarrotesDet.Where(s => s.estadoPago != "ANUP" && s.estadoDistribucion == "A").ToList();
+                //                listObj = new List<documentoventaAbarrotesDet>();
+                //                var listaPreCuenta = (from dvd in impresionLista
+                //                                      group dvd by new
+                //                                      {
+                //                                          dvd.nombreItem,
+                //                                          dvd.idItem,
+                //                                          dvd.precioUnitario,
+                //                                          dvd.importeMN
+                //                                      } into g
+                //                                      select new
+                //                                      {
+                //                                          cantidad = g.Count(p => p.monto1 != null),
+                //                                          g.Key.nombreItem,
+                //                                          g.Key.idItem,
+                //                                          g.Key.precioUnitario,
+                //                                          g.Key.importeMN
+                //                                      }).ToList();
+
+                //                foreach (var item in listaPreCuenta)
+                //                {
+                //                    var ObjDoc = new documentoventaAbarrotesDet();
+                //                    ObjDoc.nombreItem = item.nombreItem;
+                //                    ObjDoc.monto1 = item.cantidad;
+                //                    ObjDoc.precioUnitario = item.precioUnitario;
+                //                    ObjDoc.importeMN = item.importeMN * item.cantidad;
+
+                //                    listObj.Add(ObjDoc);
+                //                }
+
+
+
+                //                commons.ImprimirPrecuentaFastReport(listObj, impresoraPreCuenta.FirstOrDefault(), venta.nombreDistribucion, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), "", ventaData, ordersSend, returConfigura);
+                //            //}
+                //        }
+
+                //        break;
+
+                //    default:
+                //        break;
+                //}
+
+
+            }
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
