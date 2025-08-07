@@ -4241,6 +4241,7 @@ public class Commons
             objCuenta.DocumentoFacturaDetalle = listInvoiceDet;
             objCuenta.DatosEmpresa = ListEmpresa;
             objCuenta.color_print = p.ConfInicio.color_print;
+            objCuenta.SalesCode = p.ConfInicio.SalesCode;
             objCuenta.tipo_documento = p.tipoDocumento;
 
             listInvoice.Add(objCuenta);
