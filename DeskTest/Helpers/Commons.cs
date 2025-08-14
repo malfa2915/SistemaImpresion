@@ -3007,6 +3007,13 @@ public class Commons
                 Report.Report.SetParameterValue("PorcentrajeDetraccion", order.PorcentajeDetraccion);
                 Report.Report.SetParameterValue("MontoDetraccion", order.MontoDetraccion);
 
+                if (address.TipoNegocio== "HOTEL")
+                {
+                    Report.Report.SetParameterValue("CatHabitacion", address.TipoHabitacion_Hotel);
+                    Report.Report.SetParameterValue("HABITACION", address.TipoCama_Hotel);
+                    Report.Report.SetParameterValue("CHECKIN", address.FechaIngreso_Hotel);
+                    Report.Report.SetParameterValue("CHECKOUT", address.FechaSalida_Hotel);
+                }
                 //PictureObject imagen = Report.Report.FindObject("Logo02") as PictureObject;
                 //imagen.Image = System.Drawing.Image.FromFile(pathD);
 
@@ -4365,6 +4372,18 @@ public class Commons
                 switch (docV.PrintNegocio.printOutput)
                 {
                     case "TK":
+
+                        if (address.TipoNegocio== "HOTEL")
+                        {
+                            DataBand Habitacion = webReportValidar.Report.FindObject("Habitacion") as DataBand;
+                            Habitacion.Visible = true;
+                            DataBand Cathabitacion = webReportValidar.Report.FindObject("Cathabitacion") as DataBand;
+                            Cathabitacion.Visible = true;
+                            DataBand CheckIN = webReportValidar.Report.FindObject("CheckIN") as DataBand;
+                            CheckIN.Visible = true;
+                            DataBand CheckOut = webReportValidar.Report.FindObject("CheckOut") as DataBand;
+                            CheckOut.Visible = true;
+                        }
 
                         if (!string.IsNullOrWhiteSpace(docV.DatosGen.DescripcionExchangeReturns))
                         {
