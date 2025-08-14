@@ -13,6 +13,7 @@ public static class helpers
 
     //public static string url = "http://192.168.1.50:8095/";
     //public static string url = "https://10454403547donayreapi.spk.com.pe/";
+    //demo
     public static string url = "https://spkdemoapi.spk.com.pe/";
 
 

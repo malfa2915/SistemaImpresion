@@ -3,6 +3,9 @@
 
     @{
         var color = Model[0].color_print;
+
+        var codigoitem = Model[0].SalesCode;
+
         var datos = Model[0].DocumentoFacturaDetalle;
         var filasPorPagina = 15;
         int minimoUltimaHoja = 11;
@@ -808,11 +811,10 @@
                                 <thead class="tabla-encabezado">
                                     <tr>
 
-                                        @*@if (Model.ConfInicio.SalesCode == true)
-                                            {
-                                                <th class="celda-encabezado">COD.</th>
-                                            }*@
-                                        @*<th class="celda-encabezado" style="max-width:15px !important;">COD.</th>*@
+                                        @if (@codigoitem == true)
+                                        {
+                                            <th class="celda-encabezado">COD.</th>
+                                        }
 
                                         <th class="celda-encabezado">DESCRIPCIÓN</th>
                                         <th class="celda-encabezado">UNIDAD</th>
@@ -828,10 +830,10 @@
                                         var item = datos[i];
                                         <tr>
 
-                                            @*@if (Model.ConfInicio.SalesCode == true)
-                                                {
-                                                    <td class="celda-dato">@((string.IsNullOrWhiteSpace(item.CodigoBI) ? "" : item.CodigoBI))</td>
-                                                }*@
+                                            @if (@codigoitem == true)
+                                            {
+                                                <td class="celda-dato">@item.Codigo</td>
+                                            }
                                             @*<td class="celda-dato primera-columna" style="max-width:15px !important;">@(i + 1)</td>*@
 
                                             <td class="celda-dato primera-columna">@item.Descripcion</td>

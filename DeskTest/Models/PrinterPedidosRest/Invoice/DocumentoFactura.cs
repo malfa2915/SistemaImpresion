@@ -48,6 +48,7 @@ public class DocumentoFactura
     public string Servicio { get; set; }
     public string DescTerminos { get; set; }
     public string color_print { get; set; }
+    public bool? SalesCode { get; set; }
     public string tipo_documento { get; set; }
     public string Montoletras { get; set; }
     public string tasaIgv { get; set; }
