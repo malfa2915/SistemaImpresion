@@ -484,6 +484,9 @@
     <Content Include="impresionA5.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="formatos\reports\printer\infCantidadProductosCategoriasWeb.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <Content Include="PedidosTicket.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

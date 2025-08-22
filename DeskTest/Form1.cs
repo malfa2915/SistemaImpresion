@@ -160,6 +160,26 @@ namespace DeskTest
                             }
 
                         }
+                        else if (obj.TipoEnvioImpresion == "kardex")
+                        {
+                            var Documnentp= new documentoventaAbarrotes();
+                            Documnentp.idEmpresa = obj.idEmpresa;
+                            Documnentp.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
+                            Documnentp.usuarioActualizacion = obj.IdUsuario.ToString();
+                            Documnentp.idRol = obj.IdRol.GetValueOrDefault();
+                            var VentaPrintDirect = await CajasAPI.ProductosCategoria(Documnentp);
+
+                            var objPrint = new ImpresorasNegocio();
+                            objPrint.estadoImpresora = "A";
+                            objPrint.tipoImpresora = "Comprobante";//para directo con el comprobante
+                            objPrint.idEstablecimiento = obj.idEstablecimiento;
+                            objPrint.idEmpresa = obj.idEmpresa;
+
+                            var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+                            var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
+
+                            commons.ImprimirProductosCategoria(VentaPrintDirect, ImpreNego);
+                        }
                         else if (obj.TipoEnvioImpresion == "Cuentas_Cobrar")
                         {
 

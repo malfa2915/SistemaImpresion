@@ -23,6 +23,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static RazorEngine.Compilation.CrossAppDomainCleanUp;
 using Font = System.Drawing.Font;
 
 
@@ -1796,8 +1797,8 @@ public class Commons
                         Report.RegisterData(listGeneral, "RestPedidos");
                         Report.Prepare();
 
-                        if (ventaData.descripAdicinalPedido != null)
-                        {
+                            if (!String.IsNullOrWhiteSpace(ventaData.descripAdicinalPedido))
+                            {
 
                             DataBand dtClie = Report.Report.FindObject("dtClie") as DataBand;
                             dtClie.Visible = true;
@@ -1810,11 +1811,11 @@ public class Commons
                             DataBand dtMoviliario = Report.Report.FindObject("dtMoviliario") as DataBand;
                             dtMoviliario.Visible = true;
                         }
-                        if (String.IsNullOrWhiteSpace(ventaData.descripAdicinalPedido))
-                        {
-                            DataBand dtClie = Report.Report.FindObject("dtClie") as DataBand;
-                            dtClie.Visible = false;
-                        }
+                        //if (String.IsNullOrWhiteSpace(ventaData.descripAdicinalPedido))
+                        //{
+                        //    DataBand dtClie = Report.Report.FindObject("dtClie") as DataBand;
+                        //    dtClie.Visible = false;
+                        //}
                         if (ConfigInicio.InicioVenta != null)
                         {
                             DataBand dtubicacion = Report.Report.FindObject("dtubicacion") as DataBand;
@@ -4992,6 +4993,62 @@ public class Commons
 
     }
 
+    public void ImprimirProductosCategoria(List<documentoventaAbarrotesDet> ListProduCategoria, ImpresorasNegocio PrintNegoc)
+    {
+        var pathReport = "";
+        var Report = new FastReport.Report();
+        MemoryStream strm = new MemoryStream();
+        try
+        {
+
+            var listGeneral = new List<documentoventaAbarrotesDet>();
+
+
+            //TITULO
+
+
+                    pathReport = @"formatos\reports\printer\infCantidadProductosCategoriasWeb.frx";
+      
+
+
+            //listGeneral.AddRange(GetProductCate(ListProduCategoria));
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+            Report.Load(path);
+
+
+            Report.RegisterData(ListProduCategoria, "RestPedidos");
+            Report.Prepare();
+
+            var pdfExport = new FastReport.Export.Pdf.PDFExport();
+
+            Report.Report.Report.Export(pdfExport, strm);
+
+            pdfExport.Dispose();
+            strm.Position = 0;
+
+
+
+            Report.PrintSettings.Printer = PrintNegoc.relacionImpresora;
+            int numeroPr = (int)PrintNegoc.numImpresion;
+            if (PrintNegoc != null)
+            {
+                for (int i = 0; i < numeroPr; i++)
+                {
+                    Report.Report.PrintSettings.ShowDialog = false;
+                    Report.Print();
+                }
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("No se Pudo imrimir.");
+        }
+
+    }
+
     private void validarCajas(PrintQueue valid, FastReport.Report webReportValidar)
     {
 
@@ -5090,6 +5147,19 @@ public class Commons
 
 
         return cajaList;
+    }
+
+    public List<documentoventaAbarrotesDet> GetProductCate(List<documentoventaAbarrotesDet> ListaProdCat)
+    {
+      
+       
+        foreach (var det in ListaProdCat)
+        {
+          
+        }
+    
+
+        return ListaProdCat;
     }
     public string GenerarQrBase64(string texto)
     {

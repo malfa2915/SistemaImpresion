@@ -1,4 +1,5 @@
-﻿using Helios.Cont.Business.Entity;
+﻿using FastReport;
+using Helios.Cont.Business.Entity;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -49,6 +50,22 @@ namespace DeskTest.Api
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
                 var result = JsonConvert.DeserializeObject<cajaUsuario>(jsonResult);
+                return result;
+            }
+
+            return null;
+        }
+
+        public static async Task<List<documentoventaAbarrotesDet>> ProductosCategoria(documentoventaAbarrotes venta)
+        {
+            var httpClient = new HttpClient();
+            var json = JsonConvert.SerializeObject(venta);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(helpers.url + "api/Sale/ProductosCategoria", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<List<documentoventaAbarrotesDet>>(jsonResult);
                 return result;
             }
 

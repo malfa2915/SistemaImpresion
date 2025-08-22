@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="10/10/2023 11:03:52" ReportInfo.Modified="12/20/2024 17:07:13" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="RestPedidos" ReferenceName="RestPedidos" DataType="null" Enabled="true">
+      <Column Name="FechaPedido" DataType="System.String"/>
+      <Column Name="CargoPedido" DataType="System.String"/>
+      <Column Name="Usuario" DataType="System.String"/>
+      <Column Name="Moviliario" DataType="System.String"/>
+      <Column Name="TotalImporte" DataType="System.String"/>
+      <Column Name="Cliente" DataType="System.String"/>
+      <Column Name="DocCliente" DataType="System.String"/>
+      <BusinessObjectDataSource Name="PedidosRestDet" DataType="null" Enabled="true">
+        <Column Name="DescPediDet" DataType="System.String"/>
+        <Column Name="CantidadDet" DataType="System.String"/>
+        <Column Name="Importe" DataType="System.String"/>
+        <Column Name="Precio" DataType="System.String"/>
+        <Column Name="UnidadMedida" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Parameter Name="Cant" DataType="System.String"/>
+    <Parameter Name="ImporteT" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" PaperWidth="74" PaperHeight="200" LeftMargin="0" TopMargin="0" RightMargin="0" BottomMargin="0" FirstPageSource="15" OtherPagesSource="15" LastPageSource="15" Watermark.Font="Arial, 60pt" UnlimitedHeight="true">
+    <PageHeaderBand Name="PageHeader1" Width="279.72"/>
+    <DataBand Name="Data1" Top="3.2" Width="279.72" Height="38.56">
+      <TextObject Name="Text17" Left="22.68" Top="28.35" Width="56.7" Height="10.21" Text="FECHA:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+      <TextObject Name="Text18" Left="82.78" Top="28.35" Width="194.67" Height="10.21" Text="[RestPedidos.FechaPedido]" VertAlign="Center" Font="Arial, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text21" Left="9.45" Width="264.6" Height="19.66" Text="CANTIDAD PRODUCTOS" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 11pt, style=Bold, Underline"/>
+    </DataBand>
+    <DataBand Name="Data2" Top="44.96" Width="279.72" Height="13.23" CanGrow="true" CanShrink="true" CanBreak="true">
+      <TextObject Name="Text16" Left="82.78" Width="194.67" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.Usuario]" Font="Arial, 7pt, style=Bold" Trimming="Word"/>
+      <TextObject Name="Text12" Left="22.68" Width="56.7" Height="10.21" CanGrow="true" CanShrink="true" Text="VENDEDOR:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+    </DataBand>
+    <DataBand Name="Data3" Top="61.39" Width="279.72" Height="14.36">
+      <TableObject Name="TEncabezadoDet" Left="9.45" Width="253.14" Height="14.36">
+        <TableColumn Name="Column7" Width="44.06"/>
+        <TableColumn Name="Column8" Width="44.1"/>
+        <TableColumn Name="Column9" Width="34.6"/>
+        <TableColumn Name="Column10" Width="44.06"/>
+        <TableColumn Name="Column11" Width="44.06"/>
+        <TableColumn Name="Column12" Width="42.26"/>
+        <TableRow Name="Row6" Height="14.36">
+          <TableCell Name="CellDescrip" Border.Lines="Top" Border.Width="0.5" Text="DESCRIPCION" VertAlign="Center" Font="Arial, 6pt, style=Bold" ColSpan="3"/>
+          <TableCell Name="Cell49" Border.Lines="Top" Border.Width="0.5" VertAlign="Center" Font="Arial, 6pt"/>
+          <TableCell Name="Cell50" Border.Lines="Top" Border.Width="0.5" Font="Arial, 5pt"/>
+          <TableCell Name="Cell51" Border.Lines="Top" Border.Width="0.5" Font="Arial, 10pt"/>
+          <TableCell Name="Cell52" Border.Lines="Top" Border.Width="0.5" Text="CANT." HorzAlign="Center" VertAlign="Center" Font="Arial, 6pt, style=Bold"/>
+          <TableCell Name="Cell53" Border.Lines="Top" Border.Width="0.5" Text="IMPORTE" HorzAlign="Center" VertAlign="Center" Font="Arial, 5.5pt, style=Bold"/>
+        </TableRow>
+      </TableObject>
+    </DataBand>
+    <DataBand Name="Data5" Top="78.95" Width="279.72" Height="13.23" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="PedidosRestDet">
+      <TextObject Name="Text23" Left="173.88" Width="35.91" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.CantidadDet]" HorzAlign="Center" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+      <TextObject Name="Text22" Left="9.45" Width="164.43" Height="13.23" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[RestPedidos.PedidosRestDet.DescPediDet]" Font="Arial, 8.8pt, style=Bold"/>
+      <TextObject Name="Text24" Left="213.57" Width="58.59" Height="13.23" CanGrow="true" CanShrink="true" Text="[RestPedidos.PedidosRestDet.Importe]" VertAlign="Center" Font="Arial, 9pt, style=Bold"/>
+    </DataBand>
+    <DataBand Name="Data4" Top="95.38" Width="279.72" Height="41.58">
+      <TextObject Name="Text25" Left="9.45" Top="17.01" Width="75.6" Height="10.21" Text="CANTIDAD TOTAL:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+      <TextObject Name="Text26" Left="85.05" Top="15.12" Width="75.6" Height="12.47" Text="[Cant]" VertAlign="Center" Font="Segoe UI, 9pt, style=Bold"/>
+      <TextObject Name="Text27" Left="85.05" Top="29.11" Width="75.6" Height="12.47" Text="[ImporteT]" VertAlign="Center" Font="Segoe UI, 9pt, style=Bold"/>
+      <TextObject Name="Text28" Left="9.45" Top="29.86" Width="75.6" Height="10.21" Text="IMPORTE TOTAL:" VertAlign="Center" Font="Segoe UI, 6pt"/>
+    </DataBand>
+  </ReportPage>
+</Report>
