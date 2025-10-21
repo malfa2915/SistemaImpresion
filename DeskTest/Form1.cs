@@ -140,6 +140,53 @@ namespace DeskTest
                      
 
                             }
+                            else if (obj.TipoEnvioImpresion == "ComprobanteNew")
+                            {
+                                if (returdelete == true)
+                                {
+                                    var objPrint = new ImpresorasNegocio();
+                                    objPrint.estadoImpresora = "A";
+                                    objPrint.tipoImpresora = "COMPROBANTE";
+                                    objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrint.idEmpresa = obj.idEmpresa;
+
+                                    var id_documento = obj.IdDocumento.GetValueOrDefault();
+                                    var tipo_documento = obj.TipoDocumento;
+                                    var idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
+                                    var idEmpresa = obj.idEmpresa;
+                                    var condicion_pago = obj.FormatoTipo;
+                                    var formato = obj.Formato;
+                                    var tipo_impresora = "COMPROBANTE";
+
+                                    var VentaPrintDirect = await DocumentoVentaAPI.directPrintingNew(
+                                        id_documento, 
+                                        tipo_documento, 
+                                        condicion_pago, 
+                                        formato,
+                                        tipo_impresora,
+                                        idEstablecimiento, 
+                                        idEmpresa
+                                        );
+                                    return;
+                                    //VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput == obj.Formato).FirstOrDefault();
+                                    //if (VentaPrintDirect.PrintNegocio != null)
+                                    //{
+                                    //    var venta = new documentoventaAbarrotes();
+                                    //    venta.idEmpresa = VentaPrintDirect.idEmpresa;
+                                    //    venta.idEstablecimiento = VentaPrintDirect.idEstablecimiento;
+                                    //    var DatosGen = VentaPrintDirect.DatosGenLis.Where(s => s.tipoImpresion == obj.Formato).FirstOrDefault();
+                                    //    VentaPrintDirect.DatosGen = DatosGen;
+                                    //    if (VentaPrintDirect.PrintNegocio != null && DatosGen != null)
+                                    //    {
+                                    //        commons.ImprimirComprobanteFinalNew(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+                                    //    }
+                                    //    else
+                                    //    {
+                                    //        MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    //    }
+                                    //}
+                                }
+                            }
                             else if (obj.TipoEnvioImpresion == "PrintComprobante")
                             {
 

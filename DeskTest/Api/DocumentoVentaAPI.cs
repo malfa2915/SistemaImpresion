@@ -275,6 +275,34 @@ public static class DocumentoVentaAPI
         }
     }
 
+    #region "Darwin new print"
+    public static async Task<rePrintResponse> directPrintingNew(
+        int id_documento,
+        string tipo_documento,
+        string condicion_pago,
+        string formato,
+        string tipo_impresora,
+        int idEstablecimiento,
+        string idEmpresa
+        )
+    {
+        var httpClient = new HttpClient();
+
+        var response = await httpClient.GetStringAsync(
+            helpers.url +
+            "api/ImpresionPdf/DataRePrint?" +
+            "id_documento=" + id_documento +
+            "&tipo_documento=" + tipo_documento +
+            "&condicion_pago=" + condicion_pago +
+            "&formato=" + formato +
+            "&tipo_impresora=" + tipo_impresora +
+            "&idEstablecimiento=" + idEstablecimiento +
+            "&idEmpresa=" + idEmpresa
+            );
+        return JsonConvert.DeserializeObject<rePrintResponse>(response);
+    }
+    #endregion
+
 }
 
 
