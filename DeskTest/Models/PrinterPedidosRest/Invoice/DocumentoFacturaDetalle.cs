@@ -16,7 +16,8 @@ using System.Threading.Tasks;
         public string Descuento { get; set; }
         public string DescuentoImporte { get; set; }
         public string Importe { get; set; }
-
+        public string tipoExistencia { get; set; }
+        public string Idcatalogo { get; set; }
     public List<DocumentoFacturaDetalleDescuentos> DocumentoFacturaDetalleDescuentos { get; set; }
 
 }

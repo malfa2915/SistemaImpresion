@@ -5,6 +5,7 @@ using Helios.Cont.Business.Entity;
 using Helios.Cont.Business.Logic;
 using Helios.Seguridad.Business.Entity;
 using Helios.Seguridad.Business.Logic;
+using Helios.Web.Core.Models.Order.PrinterPedidosRest.BaseCaja;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,7 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using static Helios.Cont.Business.Entity.documentocompra;
+using static Helios.Cont.Business.Entity.ordenCompras;
 //using static Helios.General.Constantes;
 
 namespace DeskTest
@@ -49,7 +51,6 @@ namespace DeskTest
             //listar todo
             var ordersList = await PrintQueueAPI.GetAllV2();
             var returdelete = false;
-
             //listar por establecimiento
             //var ordersList = await PrintQueueAPI.GetAllVEstEmp("10765867679", 2);
 
@@ -63,576 +64,753 @@ namespace DeskTest
 
                     foreach (var obj in ordersList)
                     {
-                        returdelete = await ValidarDelete(obj);
+             
+                            returdelete = await ValidarDelete(obj);
 
-
-                        if (obj.TipoEnvioImpresion == "Comprobante")
+                        if (returdelete == true)
                         {
-
-                            if (returdelete == true)
+                            if (obj.TipoEnvioImpresion == "Comprobante")
                             {
 
-                                var objPrint = new ImpresorasNegocio();
-                                objPrint.estadoImpresora = "A";
-                                objPrint.tipoImpresora = "COMPROBANTE";
-                                objPrint.idEstablecimiento = obj.idEstablecimiento;
-                                objPrint.idEmpresa = obj.idEmpresa;
-                                
 
-                                var VentaPrintDirect = await DocumentoVentaAPI.directPrinting(obj.IdDocumento.GetValueOrDefault(), obj.FormatoTipo, obj.idEstablecimiento.GetValueOrDefault(), obj.idEmpresa);
-                                VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput==obj.Formato).FirstOrDefault();
-           
-                                if (VentaPrintDirect.PrintNegocio != null)
-
-                                {
-
-                                    var venta = new documentoventaAbarrotes();
-
-                                    venta.idEmpresa = VentaPrintDirect.idEmpresa;
-                                    venta.idEstablecimiento = VentaPrintDirect.idEstablecimiento;
+                                    var objPrint = new ImpresorasNegocio();
+                                    objPrint.estadoImpresora = "A";
+                                    objPrint.tipoImpresora = "COMPROBANTE";
+                                    objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrint.idEmpresa = obj.idEmpresa;
 
 
-                                    //var detallepagos = await DocumentoVentaAPI.GetDocumentoCajaDetalle(obj.IdDocumento.GetValueOrDefault());
-                                    //if (detallepagos.Count > 0)
-                                    //{
-                                    //    VentaPrintDirect.Pagos = new List<rePrintResponse.mediosDePago>();
-                                    //    foreach (var item in detallepagos)
-                                    //    {
-                                    //        var det = new rePrintResponse.mediosDePago();
-                                    //        det.medioDePago = item.DescripcionBE;
-                                    //        det.nombreEntidad = item.DescripcionfinacieraBE;
-                                    //        det.importePago = (decimal)item.montoSoles;
-                                    //        VentaPrintDirect.Pagos.Add(det);
-                                    //    }
-                                    //}
+                                    var VentaPrintDirect = await DocumentoVentaAPI.directPrinting(obj.IdDocumento.GetValueOrDefault(), obj.FormatoTipo, obj.idEstablecimiento.GetValueOrDefault(), obj.idEmpresa);
+                                    VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput == obj.Formato).FirstOrDefault();
 
+                                    if (VentaPrintDirect.PrintNegocio != null)
 
-                                    var DatosGen = VentaPrintDirect.DatosGenLis.Where(s => s.tipoImpresion == obj.Formato).FirstOrDefault();
-                                    VentaPrintDirect.DatosGen = DatosGen;
-
- 
-                                    if (VentaPrintDirect.PrintNegocio != null && DatosGen != null)
                                     {
-                                        if (obj.Formato == "A4")
-                                        {
-                                            commons.ImprimirComprobanteA4(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
 
-                                        }
-                                        else if(obj.Formato == "A5")
-                                        {
-                                            commons.ImprimirComprobanteA5(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+                                        var venta = new documentoventaAbarrotes();
 
+                                        venta.idEmpresa = VentaPrintDirect.idEmpresa;
+                                        venta.idEstablecimiento = VentaPrintDirect.idEstablecimiento;
+
+
+                                        //var detallepagos = await DocumentoVentaAPI.GetDocumentoCajaDetalle(obj.IdDocumento.GetValueOrDefault());
+                                        //if (detallepagos.Count > 0)
+                                        //{
+                                        //    VentaPrintDirect.Pagos = new List<rePrintResponse.mediosDePago>();
+                                        //    foreach (var item in detallepagos)
+                                        //    {
+                                        //        var det = new rePrintResponse.mediosDePago();
+                                        //        det.medioDePago = item.DescripcionBE;
+                                        //        det.nombreEntidad = item.DescripcionfinacieraBE;
+                                        //        det.importePago = (decimal)item.montoSoles;
+                                        //        VentaPrintDirect.Pagos.Add(det);
+                                        //    }
+                                        //}
+
+
+                                        var DatosGen = VentaPrintDirect.DatosGenLis.Where(s => s.tipoImpresion == obj.Formato).FirstOrDefault();
+                                        VentaPrintDirect.DatosGen = DatosGen;
+
+
+                                        if (VentaPrintDirect.PrintNegocio != null && DatosGen != null)
+                                        {
+                                            if (obj.Formato == "A4")
+                                            {
+                                                commons.ImprimirComprobanteA4(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                            }
+                                            else if (obj.Formato == "A5")
+                                            {
+                                                commons.ImprimirComprobanteA5(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                            }
+                                            else
+                                            {
+                                                commons.ImprimirComprobanteFinal(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                            }
                                         }
                                         else
                                         {
-                                            commons.ImprimirComprobanteFinal(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
-
+                                            MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         }
+
+                                    }
+
+                     
+
+                            }
+                            else if (obj.TipoEnvioImpresion == "PrintComprobante")
+                            {
+
+
+                                var objPrint = new documentoventaAbarrotes();
+                                objPrint.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
+                                objPrint.idEmpresa = obj.idEmpresa;
+                                objPrint.fechaDoc = obj.FechaEnvio;
+                                objPrint.fechaVcto = obj.FechaVencimiento;
+
+                                var PrintDirectComprobantes = await DocumentoVentaAPI.PrintDocumentos(objPrint);
+                            
+
+
+                                    if (PrintDirectComprobantes != null)
+                                    {
+                                    var objPrintNegocio = new ImpresorasNegocio();
+                                    objPrintNegocio.estadoImpresora = "A";
+                                    objPrintNegocio.tipoImpresora = "Comprobante";//para directo con el comprobante
+                                    objPrintNegocio.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrintNegocio.idEmpresa = obj.idEmpresa;
+
+                                    var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrintNegocio);
+                                    var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
+
+                                    commons.ImprimirComprobanteReportes(PrintDirectComprobantes, ImpreNego);
+                                      
                                     }
                                     else
                                     {
                                         MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                     }
 
-                                }
-             
+                    
+
+
+
                             }
-
-                        }
-
-                        else if (obj.TipoEnvioImpresion == "Compra")
-                        {
-                            //var returdelete = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                            //returdelete = await ValidarDelete(obj);
-                            if (returdelete == true)
+                            else if (obj.TipoEnvioImpresion == "ComprobanteXCategoria")
                             {
-                                var VentaPrintDirect = await DocumentoCompraAPI.PrintCompra(obj.IdDocumento.GetValueOrDefault());
 
-                                var objPrint = new ImpresorasNegocio();
-                                objPrint.estadoImpresora = "A";
-                                objPrint.tipoImpresora = "Comprobante";
-                                objPrint.idEstablecimiento = obj.idEstablecimiento;
+
+                                var objPrint = new documentoventaAbarrotes();
+                                objPrint.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
                                 objPrint.idEmpresa = obj.idEmpresa;
+                                objPrint.fechaDoc = obj.FechaEnvio;
+                                objPrint.fechaVcto = obj.FechaVencimiento;
+                                objPrint.idDistribucion = obj.idInfraestructura.GetValueOrDefault();
 
-                                var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-                                var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == obj.Formato && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
-                                commons.ImprimirCompra(VentaPrintDirect, obj.Formato, ImpreNego);
-                            }
-
-                        }
-                        else if (obj.TipoEnvioImpresion == "kardex")
-                        {
-                            var Documnentp= new documentoventaAbarrotes();
-                            Documnentp.idEmpresa = obj.idEmpresa;
-                            Documnentp.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
-                            Documnentp.usuarioActualizacion = obj.IdUsuario.ToString();
-                            Documnentp.idRol = obj.IdRol.GetValueOrDefault();
-                            var VentaPrintDirect = await CajasAPI.ProductosCategoria(Documnentp);
-
-                            var objPrint = new ImpresorasNegocio();
-                            objPrint.estadoImpresora = "A";
-                            objPrint.tipoImpresora = "Comprobante";//para directo con el comprobante
-                            objPrint.idEstablecimiento = obj.idEstablecimiento;
-                            objPrint.idEmpresa = obj.idEmpresa;
-
-                            var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-                            var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
-
-                            commons.ImprimirProductosCategoria(VentaPrintDirect, ImpreNego);
-                        }
-                        else if (obj.TipoEnvioImpresion == "Cuentas_Cobrar")
-                        {
-
-
-                        }
-                        else if (obj.TipoEnvioImpresion == "CIERRECAJA")
-                        {
-
-                            var query= new cajaUsuario();
-
-                            var objPrint = new ImpresorasNegocio();
-                            objPrint.estadoImpresora = "A";
-                            objPrint.tipoImpresora = "Comprobante";
-                            objPrint.idEstablecimiento = obj.idEstablecimiento;
-                            objPrint.idEmpresa = obj.idEmpresa;
-
-                            var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
-                            var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
-
-
-                            if (obj.NombreDistribucion=="Impresion")
-                            {
-                                var cierre = new cajaUsuario();
-                                cierre.idEmpresa = obj.idEmpresa;
-                                cierre.idEstablecimiento = obj.idEstablecimiento;
-                                cierre.idPersona = obj.IdUsuario.GetValueOrDefault().ToString();
-                                cierre.estadoCaja ="C";
-                                cierre.IDRol = obj.IdRol;
-                                cierre.tipoCaja = "POS";
-
-                                query = await CajasAPI.ReportCierre(cierre);
-
-                            }
-                            else {
-                                var listBoxActives = await CajasAPI.GetUsers(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-
-                                 query = (from i in listBoxActives
-                                             where i.idPersona == obj.IdUsuario.ToString() & i.estadoCaja == "A" & i.IDRol == int.Parse(obj.IdRol.ToString())
-                                                && i.tipoCaja == "POS" && i.idEstablecimiento == obj.idEstablecimiento.GetValueOrDefault()
-                                             select i).SingleOrDefault();
-                            }
-
-
-                            List<documentoCaja> ListaFiltrada = new List<documentoCaja>();
-
-                            if (query != null)
-                            {
-
-                                documentoCaja box = new documentoCaja();
-                                box.idEmpresa = obj.idEmpresa;
-                                box.idEstablecimiento = obj.idEstablecimiento;
-                                box.idCajaUsuario = query.idcajaUsuario;
-                                box.fechaCobro = DateTime.Now;
-
-                                var cjasReport = await CajasAPI.GetKardexReport(box);
-
-
-                                var usersall = await UserAPI.GetUsersSecurityAll2();
-
-
-                                var producto = "";
-                                Decimal cantidadDeficit = 0;
-                                Decimal importeDeficit = 0;
-                                Decimal importeDeficitme = 0;
-                                var productoCache = "";
-
-                                Decimal ImporteSaldo = 0;
-                                Decimal ImporteSaldoME = 0;
-
-                                Decimal saldoImporteAnual = 0;
-                                Decimal saldoImporteAnualME = 0;
+                                var PrintDirectComprobantes = await DocumentoVentaAPI.PrintDocumentosXCategoria(objPrint);
 
 
 
-                                foreach (var i in cjasReport)
+                                if (PrintDirectComprobantes != null)
                                 {
-                                    documentoCaja myitem = new documentoCaja();
+                                    var objPrintNegocio = new ImpresorasNegocio();
+                                    objPrintNegocio.estadoImpresora = "A";
+                                    objPrintNegocio.tipoImpresora = "Comprobante";//para directo con el comprobante
+                                    objPrintNegocio.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrintNegocio.idEmpresa = obj.idEmpresa;
 
-                                    importeDeficit = 0;
-                                    importeDeficitme = 0;
+                                    var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrintNegocio);
+                                    var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
 
-                                    myitem.idDocumento = i.idDocumento;
-                                    myitem.fechaCobro = i.fechaCobro;
-                                    myitem.dni = i.dni;
-                                    myitem.tipousuario = i.tipousuario;
-                                    myitem.formapago = i.formapago;
+                                    commons.ImprimirComprobanteReportesXcategoria(PrintDirectComprobantes, ImpreNego);
 
-                                    myitem.idUserOrder = i.idUserOrder;
+                                }
+                                else
+                                {
+                                    MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
 
-                                    var vendedor = (from h in usersall where h.IDUsuario == i.idUserOrder select h).FirstOrDefault();
 
-                                    if (vendedor != null)
+
+
+
+                            }
+                            else if (obj.TipoEnvioImpresion == "PromedioXMesa")
+                            {
+
+
+                                var objPrint = new documentoventaAbarrotes();
+                                objPrint.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
+                                objPrint.idEmpresa = obj.idEmpresa;
+                                objPrint.fechaDoc = obj.FechaEnvio;
+                                objPrint.fechaVcto = obj.FechaVencimiento;
+                                objPrint.idDistribucion = obj.idInfraestructura.GetValueOrDefault();
+                                objPrint.moneda = obj.moneda == "0" ? "Todos" : obj.moneda;
+
+                                var PrintDirectComprobantes = await DocumentoVentaAPI.PrintPromedioXmesa(objPrint);
+
+
+
+                                if (PrintDirectComprobantes != null)
+                                {
+                                    var objPrintNegocio = new ImpresorasNegocio();
+                                    objPrintNegocio.estadoImpresora = "A";
+                                    objPrintNegocio.tipoImpresora = "Comprobante";//para directo con el comprobante
+                                    objPrintNegocio.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrintNegocio.idEmpresa = obj.idEmpresa;
+
+                                    var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrintNegocio);
+                                    var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
+
+                                    commons.ImprimirPromedioXMesa(PrintDirectComprobantes, ImpreNego);
+
+                                }
+                                else
+                                {
+                                    MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+
+
+
+
+
+                            }
+                            else if (obj.TipoEnvioImpresion == "Compra")
+                            {
+                                //var returdelete = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                                //returdelete = await ValidarDelete(obj);
+                             
+                                    var VentaPrintDirect = await DocumentoCompraAPI.PrintCompra(obj.IdDocumento.GetValueOrDefault());
+
+                                    var objPrint = new ImpresorasNegocio();
+                                    objPrint.estadoImpresora = "A";
+                                    objPrint.tipoImpresora = "Comprobante";
+                                    objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                    objPrint.idEmpresa = obj.idEmpresa;
+
+                                    var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+                                    var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == obj.Formato && s.idEstablecimiento == obj.idEstablecimiento && s.idEmpresa == obj.idEmpresa).FirstOrDefault();
+                                    commons.ImprimirCompra(VentaPrintDirect, obj.Formato, ImpreNego);
+                           
+
+                            }
+                            else if (obj.TipoEnvioImpresion == "kardex")
+                            {
+
+                               
+                                    var Documnentp = new documentoventaAbarrotes();
+                                    Documnentp.idEmpresa = obj.idEmpresa;
+                                    Documnentp.idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault();
+                                    Documnentp.usuarioActualizacion = obj.IdUsuario.ToString();
+                                    Documnentp.idRol = obj.IdRol.GetValueOrDefault();
+                                    var VentaPrintDirect = await CajasAPI.ProductosCategoria(Documnentp);
+
+                                    if (VentaPrintDirect.Count > 0)
                                     {
-                                        myitem.nameVendedor = vendedor.Full_Name;
+                                        var objPrint = new ImpresorasNegocio();
+                                        objPrint.estadoImpresora = "A";
+                                        objPrint.tipoImpresora = "Comprobante";//para directo con el comprobante
+                                        objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                        objPrint.idEmpresa = obj.idEmpresa;
+
+                                        var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+                                        var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
+
+                                        commons.ImprimirProductosCategoria(VentaPrintDirect, ImpreNego, obj);
                                     }
+                                else
+                                {
+                                    MessageBox.Show("No existe ventas con productos", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
 
-                                    myitem.idUserPayment = i.idUserPayment;
 
-                                    var cajero = (from h in usersall where h.IDUsuario == i.idUserPayment select h).FirstOrDefault();
-                                    if (cajero != null)
+                            }
+                            else if (obj.TipoEnvioImpresion == "Cuentas_Cobrar")
+                            {
+
+
+                            }
+                            else if (obj.TipoEnvioImpresion == "CIERRECAJA")
+                            {
+                               
+                                    var query = new cajaUsuario();
+
+                                //var objPrint = new ImpresorasNegocio();
+                                //objPrint.estadoImpresora = "A";
+                                //objPrint.tipoImpresora = "Comprobante";
+                                //objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                //objPrint.idEmpresa = obj.idEmpresa;
+
+                                //var impresoraCombrobanteFinal = await ImpresorasNegocioAPI.GetListaImpresoraPreCuenta(objPrint);
+                                //var ImpreNego = impresoraCombrobanteFinal.Where(s => s.PrintOutput == "TK").FirstOrDefault();
+
+
+                                if (obj.NombreDistribucion == "Impresion")
                                     {
-                                        myitem.nameCajero = cajero.Full_Name;
-                                    }
+                                        var cierre = new cajaUsuario();
+                                        cierre.idEmpresa = obj.idEmpresa;
+                                        cierre.idEstablecimiento = obj.idEstablecimiento;
+                                        cierre.idPersona = obj.IdUsuario.GetValueOrDefault().ToString();
+                                        cierre.estadoCaja = "C";
+                                        cierre.IDRol = obj.IdRol;
+                                        cierre.tipoCaja = "POS";
 
-                                    switch (i.tipoMovimiento)
-                                    {
-                                        case "DC":
-                                            if (producto == i.IdEntidadFinanciera.ToString())
-                                            {
-                                                productoCache = i.NombreCaja;
-                                                ImporteSaldo += i.montoSoles.GetValueOrDefault();
-                                                ImporteSaldoME += i.montoUsd.GetValueOrDefault();
-                                            }
-                                            else
-                                            {
-                                                importeDeficit = ImporteSaldo;
-                                                importeDeficitme = ImporteSaldoME;
-                                                ImporteSaldo = 0;
-                                                ImporteSaldoME = 0;
+                                        query = await CajasAPI.ReportCierre(cierre);
 
-                                                ImporteSaldo = saldoImporteAnual;
-                                                ImporteSaldoME = saldoImporteAnualME;
-                                                ImporteSaldo = i.montoSoles.GetValueOrDefault() + ImporteSaldo;
-                                                ImporteSaldoME = i.montoUsd.GetValueOrDefault() + ImporteSaldoME;
-                                            }
-
-                                            myitem.MontoIngresosMN = i.montoSoles.GetValueOrDefault();
-                                            myitem.MontoIngresosME = i.montoUsd.GetValueOrDefault();
-                                            myitem.MontoEgresosMN = 0;
-                                            myitem.MontoEgresosME = 0;
-                                            myitem.MontoSaldoMN = ImporteSaldo;
-                                            myitem.MontoSaldoME = ImporteSaldoME;
-                                            myitem.idCajaUsuario = i.idCajaUsuario;
-                                            myitem.NombreOperacion = i.NombreOperacion;
-                                            myitem.nombreCosto = "Entrada";
-                                            break;
-                                        case "PG":
-
-                                            Decimal co = 0;
-                                            Decimal come = 0;
-                                            co = i.montoSoles.GetValueOrDefault();
-                                            come = i.montoUsd.GetValueOrDefault();
-
-                                            if (producto == i.IdEntidadFinanciera.ToString())
-                                            {
-                                                productoCache = i.NombreCaja;
-                                                ImporteSaldo -= co;
-                                                ImporteSaldoME -= come;
-                                            }
-                                            else
-                                            {
-                                                importeDeficit = ImporteSaldo;
-                                                importeDeficitme = ImporteSaldoME;
-
-                                                ImporteSaldo = 0;
-                                                ImporteSaldoME = 0;
-
-                                                ImporteSaldo = saldoImporteAnual;
-                                                ImporteSaldoME = saldoImporteAnualME;
-
-                                                ImporteSaldo -= i.montoSoles.GetValueOrDefault();
-                                                ImporteSaldoME -= i.montoUsd.GetValueOrDefault();
-
-                                            }
-                                            myitem.MontoIngresosMN = 0;
-                                            myitem.MontoIngresosME = 0;
-                                            myitem.MontoEgresosMN = i.montoSoles.GetValueOrDefault();
-                                            myitem.MontoEgresosME = i.montoUsd.GetValueOrDefault();
-                                            myitem.MontoSaldoMN = ImporteSaldo;
-                                            myitem.MontoSaldoME = ImporteSaldoME;
-                                            myitem.idCajaUsuario = i.idCajaUsuario;
-                                            myitem.NombreOperacion = i.NombreOperacion;
-                                            myitem.nombreCosto = "Salida";
-                                            break;
-                                        default:
-                                            break;
-                                    }
-
-
-
-                                    myitem.DetalleItem = i.DetalleItem;
-                                    myitem.tipoDocPago = i.tipoDocPago;
-                                    myitem.NumeroDocumento = i.NumeroDocumento;
-                                    myitem.moneda = i.moneda;
-                                    myitem.Operacion = i.Operacion;
-                                    myitem.Docsalidas = i.Docsalidas;
-                                    myitem.entidadFinanciera = i.entidadFinanciera;
-                                    if (i.tipoCambio != null) //If(Not IsNothing(i.tipoCambio)) Then
-                                    {
-                                        myitem.tipoCambio = i.tipoCambio;
                                     }
                                     else
                                     {
-                                        myitem.tipoCambio = i.difTipoCambio;
+                                        var listBoxActives = await CajasAPI.GetUsers(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+
+                                        query = (from i in listBoxActives
+                                                 where i.idPersona == obj.IdUsuario.ToString() & i.estadoCaja == "A" & i.IDRol == int.Parse(obj.IdRol.ToString())
+                                                    && i.tipoCaja == "POS" && i.idEstablecimiento == obj.idEstablecimiento.GetValueOrDefault()
+                                                 select i).SingleOrDefault();
                                     }
 
-                                    producto = i.IdEntidadFinanciera.ToString();
-                                    productoCache = i.NombreCaja;
 
-                                    ListaFiltrada.Add(myitem);
-                                }
-
-
-                            }
-
-
-                            var listaStock = (from dvd in ListaFiltrada
-                                              group dvd by new
-                                              {
-                                                  dvd.NombreOperacion,
-                                                  dvd.nombreCosto,
-                                                  dvd.Operacion,
-                                                  dvd.formapago,
-                                                  dvd.entidadFinanciera
-                                              } into g
-                                              select new
-                                              {
-                                                  cantidadI = g.Sum(t => t.MontoIngresosMN),
-                                                  cantidadE = g.Sum(S => S.MontoEgresosMN),
-                                                  cantidadIMP = g.Sum(t => t.MontoIngresosMN),
-                                                  g.Key.NombreOperacion,
-                                                  g.Key.nombreCosto,
-                                                  g.Key.Operacion,
-                                                  g.Key.formapago,
-                                                  g.Key.entidadFinanciera
-                                              }).ToList();
-
-                            List<documentoCaja> Lista = new List<documentoCaja>();
-                            documentoCaja ObjetC = new documentoCaja();
-                            var operDesc = "";
-                            var FormaP = "";
-                            foreach (var item in listaStock)
-                            {
-                                ObjetC = new documentoCaja();
-                                ObjetC.NombreOperacion = item.NombreOperacion;
-                                ObjetC.montoSoles = item.cantidadI;
-                                ObjetC.montoMNSalida = item.cantidadE;
-                                ObjetC.montoUsdTransacc = item.cantidadIMP;
-                                ObjetC.nombreCosto = item.nombreCosto;
-                                ObjetC.Operacion = item.Operacion;
-                                ObjetC.entidadFinanciera = item.entidadFinanciera;
-                                switch (item.Operacion)
-                                {
-                                    case "OTRS":
-                                        operDesc = "OTROS";
-                                        break;
-                                    case "MOVS":
-                                        operDesc = "MOVILIDAD";
-                                        break;
-                                    case "ALS":
-                                        operDesc = "ALMUERZO";
-                                        break;
-                                    case "PPROS":
-                                        operDesc = "PAGO PROVEEDORES";
-                                        break;
-                                    case "PTRS":
-                                        operDesc = "PAGO TRABAJADORES";
-                                        break;
-                                    case "CIMS":
-                                        operDesc = "COMPRA DE INSUMOS/MERCADERIA";
-                                        break;
-                                    case "INI":
-                                        operDesc = "FONDO DE INICIO";
-                                        break;
-                                    case "OTR":
-                                        operDesc = "OTRO";
-                                        break;
-                                    default:
-                                        break;
-                                }
-
-                                switch (item.formapago)
-                                {
-                                    case "001":
-                                        FormaP = "Deposito en Cuenta";
-                                        break;
-                                    case "003":
-                                        FormaP = "Transferencia de Fondos";
-                                        break;
-                                    case "005":
-                                        FormaP = "Tarjeta de Débito";
-                                        break;
-                                    case "006":
-                                        FormaP = "Tarjeta de Crédito";
-                                        break;
-                                    case "109":
-                                        FormaP = "Efectivo";
-                                        break;
-                                    case "200":
-                                        FormaP = "Yape";
-                                        break;
-                                    case "201":
-                                        FormaP = "Plin";
-                                        break;
-                                    case "202":
-                                        FormaP = "IziPay";
-                                        break;
-                                    case "203":
-                                        FormaP = "Culqui";
-                                        break;
-                                    case "204":
-                                        FormaP = "OpenPay";
-                                        break;
-                                    case "205":
-                                        FormaP = "NiuBiz";
-                                        break;
-                                    case "206":
-                                        FormaP = "Pasarela";
-                                        break;
-                                    default:
-                                        FormaP = item.formapago;
-                                        break;
-                                }
-
-                                ObjetC.destino = operDesc;
-                                ObjetC.estado = FormaP;
-                                ObjetC.FechaApertura = obj.FechaEnvio.ToString();
-                                ObjetC.FechaCierre = Convert.ToString(DateTime.Now);
-                                Lista.Add(ObjetC);
-                            }
-
-
- 
-                            commons.ImprimirKardex(Lista, ImpreNego,obj);
-
-                        }
-                        else if (obj.TipoEnvioImpresion == "PEDIDOSCOMERCIAL")
-                        {
-
-
-                            //var RetudelP = false;         
-                            //var  RetudelP = await ValidarDelete(obj);                      
-
-                            //RetudelP = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-
-
-                            if (returdelete == true)
-                            {
-
-                                var venta = await documentoventaDetalleBeneficiosAPI.PrintDirectProducto(obj.IdDocumento.GetValueOrDefault());
-
-                                var idList = venta.DetProductos.Select(s => Int32.TryParse(s.idProdcuto.ToString(), out int n) ? n : (int)0).ToList();
-                                var orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
-
-                                if (orderRecupeacion.Count == 0)
-                                {
-
-                                    //var RetudelPC = await ValidarDelete(obj);
-
-
-                                    //await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-
-
-
-
-                                }
-                                var ImpresorasList = orderRecupeacion.Select(q => new
-                                {
-                                    q.idImpresora,
-                                    q.aliasImpresora,
-                                    q.ipImpresoraCompartida,
-                                    q.cantidadPrint,
-                                    q.formatoImpresion,
-                                    q.relacionImpresora
-                                }).Distinct().ToList();
-
-
-                                List<printProductComercial> ordersSend = new List<printProductComercial>();
-                                List<printProductComercial.DetalleProductos> detallePed = new List<printProductComercial.DetalleProductos>();
-
-                                foreach (var pr in ImpresorasList)
-                                {
-
-                                    var objprint = new printProductComercial()
+                                    List<documentoCaja> ListaFiltrada = new List<documentoCaja>();
+                                    List<documentoCaja> cjasReport = new List<documentoCaja>();
+                                    if (query != null)
                                     {
-                                        aliasImpresora = pr.aliasImpresora,
-                                        idImpresora = pr.idImpresora,
-                                        ipImpresoraCompartida = pr.ipImpresoraCompartida,
-                                        cantidadPrint = pr.cantidadPrint,
-                                        formatoImpresion = pr.formatoImpresion,
-                                        relacionImpresora = pr.relacionImpresora
-                                    };
-                                    objprint.fecha = venta.fecha;
-                                    objprint.usuario = venta.usuario;
-                                    objprint.cargoUsuario = venta.cargoUsuario;
 
-                                    objprint.DetProductos = new List<printProductComercial.DetalleProductos>();
-                                    var items = orderRecupeacion.Where(w => w.idImpresora == pr.idImpresora).ToList();
-                                    var productsIDS = items.Select(q => q.codigodetalle.ToString()).ToList();
+                                        documentoCaja box = new documentoCaja();
+                                        box.idEmpresa = obj.idEmpresa;
+                                        box.idEstablecimiento = obj.idEstablecimiento;
+                                        box.idCajaUsuario = query.idcajaUsuario;
+                                        box.fechaCobro = DateTime.Now;
 
 
-                                    detallePed = venta.DetProductos.Where(s => productsIDS.Contains(s.idProdcuto.ToString())).ToList();
-                                    objprint.DetProductos.AddRange(detallePed);
-                                    objprint.DetaBeneficios = venta.DetaBeneficios;
-                                    objprint.grupoDescrip = venta.grupoDescrip;
-                                    ordersSend.Add(objprint);
+                                        if (obj.NombreDistribucion == "PreImpresion")
+                                        {
+                                            cjasReport = await CajasAPI.GetKardexReport(box);
+                                        }
+                                        else
+                                        {
+                                            cjasReport = await CajasAPI.GetKardexReportResumen(box);
+                                        }
 
 
-                                }
-                                commons.ImprimirPromociones(ordersSend);
+                                        if (cjasReport.Count > 0)
+                                        {
+                                            var usersall = await UserAPI.GetUsersSecurityAll2();
+
+
+                                            var producto = "";
+                                            //Decimal cantidadDeficit = 0;
+                                            Decimal importeDeficit = 0;
+                                            Decimal importeDeficitme = 0;
+                                            var productoCache = "";
+
+                                            Decimal ImporteSaldo = 0;
+                                            Decimal ImporteSaldoME = 0;
+
+                                            Decimal saldoImporteAnual = 0;
+                                            Decimal saldoImporteAnualME = 0;
+
+
+
+                                            foreach (var i in cjasReport)
+                                            {
+                                                documentoCaja myitem = new documentoCaja();
+
+                                                importeDeficit = 0;
+                                                importeDeficitme = 0;
+
+                                                myitem.idDocumento = i.idDocumento;
+                                                myitem.fechaCobro = i.fechaCobro;
+                                                myitem.dni = i.dni;
+                                                myitem.tipousuario = i.tipousuario;
+                                                myitem.formapago = i.formapago;
+
+                                                myitem.idUserOrder = i.idUserOrder;
+
+                                                var vendedor = (from h in usersall where h.IDUsuario == i.idUserOrder select h).FirstOrDefault();
+
+                                                if (vendedor != null)
+                                                {
+                                                    myitem.nameVendedor = vendedor.Full_Name;
+                                                }
+
+                                                myitem.idUserPayment = i.idUserPayment;
+
+                                                var cajero = (from h in usersall where h.IDUsuario == i.idUserPayment select h).FirstOrDefault();
+                                                if (cajero != null)
+                                                {
+                                                    myitem.nameCajero = cajero.Full_Name;
+                                                }
+
+                                                switch (i.tipoMovimiento)
+                                                {
+                                                    case "DC":
+                                                        if (producto == i.IdEntidadFinanciera.ToString())
+                                                        {
+                                                            productoCache = i.NombreCaja;
+                                                            ImporteSaldo += i.montoSoles.GetValueOrDefault();
+                                                            ImporteSaldoME += i.montoUsd.GetValueOrDefault();
+                                                        }
+                                                        else
+                                                        {
+                                                            importeDeficit = ImporteSaldo;
+                                                            importeDeficitme = ImporteSaldoME;
+                                                            ImporteSaldo = 0;
+                                                            ImporteSaldoME = 0;
+
+                                                            ImporteSaldo = saldoImporteAnual;
+                                                            ImporteSaldoME = saldoImporteAnualME;
+                                                            ImporteSaldo = i.montoSoles.GetValueOrDefault() + ImporteSaldo;
+                                                            ImporteSaldoME = i.montoUsd.GetValueOrDefault() + ImporteSaldoME;
+                                                        }
+
+                                                        myitem.MontoIngresosMN = i.montoSoles.GetValueOrDefault();
+                                                        myitem.MontoIngresosME = i.montoUsd.GetValueOrDefault();
+                                                        myitem.MontoEgresosMN = 0;
+                                                        myitem.MontoEgresosME = 0;
+                                                        myitem.MontoSaldoMN = ImporteSaldo;
+                                                        myitem.MontoSaldoME = ImporteSaldoME;
+                                                        myitem.idCajaUsuario = i.idCajaUsuario;
+                                                        myitem.NombreOperacion = i.NombreOperacion;
+                                                        myitem.nombreCosto = "Entrada";
+                                                        break;
+                                                    case "PG":
+
+                                                        Decimal co = 0;
+                                                        Decimal come = 0;
+                                                        co = i.montoSoles.GetValueOrDefault();
+                                                        come = i.montoUsd.GetValueOrDefault();
+
+                                                        if (producto == i.IdEntidadFinanciera.ToString())
+                                                        {
+                                                            productoCache = i.NombreCaja;
+                                                            ImporteSaldo -= co;
+                                                            ImporteSaldoME -= come;
+                                                        }
+                                                        else
+                                                        {
+                                                            importeDeficit = ImporteSaldo;
+                                                            importeDeficitme = ImporteSaldoME;
+
+                                                            ImporteSaldo = 0;
+                                                            ImporteSaldoME = 0;
+
+                                                            ImporteSaldo = saldoImporteAnual;
+                                                            ImporteSaldoME = saldoImporteAnualME;
+
+                                                            ImporteSaldo -= i.montoSoles.GetValueOrDefault();
+                                                            ImporteSaldoME -= i.montoUsd.GetValueOrDefault();
+
+                                                        }
+                                                        myitem.MontoIngresosMN = 0;
+                                                        myitem.MontoIngresosME = 0;
+                                                        myitem.MontoEgresosMN = i.montoSoles.GetValueOrDefault();
+                                                        myitem.MontoEgresosME = i.montoUsd.GetValueOrDefault();
+                                                        myitem.MontoSaldoMN = ImporteSaldo;
+                                                        myitem.MontoSaldoME = ImporteSaldoME;
+                                                        myitem.idCajaUsuario = i.idCajaUsuario;
+                                                        myitem.NombreOperacion = i.NombreOperacion;
+                                                        myitem.nombreCosto = "Salida";
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+
+
+
+                                                myitem.DetalleItem = i.DetalleItem;
+                                                myitem.tipoDocPago = i.tipoDocPago;
+                                                myitem.NumeroDocumento = i.NumeroDocumento;
+                                                myitem.moneda = i.moneda;
+                                                myitem.Operacion = i.Operacion;
+                                                myitem.Docsalidas = i.Docsalidas;
+                                                myitem.entidadFinanciera = i.entidadFinanciera;
+                                                if (i.tipoCambio != null) //If(Not IsNothing(i.tipoCambio)) Then
+                                                {
+                                                    myitem.tipoCambio = i.tipoCambio;
+                                                }
+                                                else
+                                                {
+                                                    myitem.tipoCambio = i.difTipoCambio;
+                                                }
+
+                                                producto = i.IdEntidadFinanciera.ToString();
+                                                productoCache = i.NombreCaja;
+
+                                                ListaFiltrada.Add(myitem);
+                                            }
+
+
+                                        }
+
+
+                                        var listaStock = (from dvd in ListaFiltrada
+                                                          group dvd by new
+                                                          {
+                                                              dvd.NombreOperacion,
+                                                              dvd.nombreCosto,
+                                                              dvd.Operacion,
+                                                              dvd.formapago,
+                                                              dvd.entidadFinanciera
+                                                          } into g
+                                                          select new
+                                                          {
+                                                              cantidadI = g.Sum(t => t.MontoIngresosMN),
+                                                              cantidadE = g.Sum(S => S.MontoEgresosMN),
+                                                              cantidadIMP = g.Sum(t => t.MontoIngresosMN),
+                                                              g.Key.NombreOperacion,
+                                                              g.Key.nombreCosto,
+                                                              g.Key.Operacion,
+                                                              g.Key.formapago,
+                                                              g.Key.entidadFinanciera
+                                                          }).ToList();
+
+                                        List<documentoCaja> Lista = new List<documentoCaja>();
+                                        documentoCaja ObjetC = new documentoCaja();
+                                        var operDesc = "";
+                                        var FormaP = "";
+
+                                        var DocumentoCajdet = new documentoCajaDetalle();
+                                        var DocumentoCajdetLis = new List<documentoCajaDetalle>();
+
+                                        foreach (var item in listaStock)
+                                        {
+                                            ObjetC = new documentoCaja();
+                                            ObjetC.NombreOperacion = item.NombreOperacion;
+                                            ObjetC.montoSoles = item.cantidadI;
+                                            ObjetC.montoMNSalida = item.cantidadE;
+                                            ObjetC.montoUsdTransacc = item.cantidadIMP;
+                                            ObjetC.nombreCosto = item.nombreCosto;
+                                            ObjetC.Operacion = item.Operacion;
+                                            ObjetC.entidadFinanciera = item.entidadFinanciera;
+                                            switch (item.Operacion)
+                                            {
+                                                case "OTRS":
+                                                    operDesc = "OTROS";
+                                                    break;
+                                                case "MOVS":
+                                                    operDesc = "MOVILIDAD";
+                                                    break;
+                                                case "ALS":
+                                                    operDesc = "ALMUERZO";
+                                                    break;
+                                                case "PPROS":
+                                                    operDesc = "PAGO PROVEEDORES";
+                                                    break;
+                                                case "PTRS":
+                                                    operDesc = "PAGO TRABAJADORES";
+                                                    break;
+                                                case "CIMS":
+                                                    operDesc = "COMPRA DE INSUMOS/MERCADERIA";
+                                                    break;
+                                                case "INI":
+                                                    operDesc = "FONDO DE INICIO";
+                                                    break;
+                                                case "OTR":
+                                                    operDesc = "OTRO";
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+
+                                            switch (item.formapago)
+                                            {
+                                                case "001":
+                                                    FormaP = "Deposito en Cuenta";
+                                                    break;
+                                                case "003":
+                                                    FormaP = "Transferencia de Fondos";
+                                                    break;
+                                                case "005":
+                                                    FormaP = "Tarjeta de Débito";
+                                                    break;
+                                                case "006":
+                                                    FormaP = "Tarjeta de Crédito";
+                                                    break;
+                                                case "109":
+                                                    FormaP = "Efectivo";
+                                                    break;
+                                                case "200":
+                                                    FormaP = "Yape";
+                                                    break;
+                                                case "201":
+                                                    FormaP = "Plin";
+                                                    break;
+                                                case "202":
+                                                    FormaP = "IziPay";
+                                                    break;
+                                                case "203":
+                                                    FormaP = "Culqui";
+                                                    break;
+                                                case "204":
+                                                    FormaP = "OpenPay";
+                                                    break;
+                                                case "205":
+                                                    FormaP = "NiuBiz";
+                                                    break;
+                                                case "206":
+                                                    FormaP = "Pasarela";
+                                                    break;
+                                                default:
+                                                    FormaP = item.formapago;
+                                                    break;
+                                            }
+
+                                            ObjetC.destino = operDesc;
+                                            ObjetC.estado = FormaP;
+                                            ObjetC.FechaApertura = obj.FechaEnvio.ToString();
+                                            ObjetC.FechaCierre = Convert.ToString(DateTime.Now);
+
+
+
+
+
+                                            var ListDEt = ListaFiltrada.Where(s => s.Operacion == item.Operacion).ToList();
+                                            if (item.Operacion != null)
+                                            {
+                                                if (ListDEt.Count > 0)
+                                                {
+                                                    DocumentoCajdetLis = new List<documentoCajaDetalle>();
+                                                    foreach (var itemDet in ListDEt)
+                                                    {
+                                                        DocumentoCajdet = new documentoCajaDetalle();
+                                                        DocumentoCajdet.DescripcionBE = itemDet.DetalleItem;
+                                                        var MontoS = itemDet.MontoIngresosMN;
+                                                        if (itemDet.MontoIngresosMN == 0)
+                                                        {
+                                                            MontoS = itemDet.MontoEgresosMN;
+                                                        }
+                                                        DocumentoCajdet.montoSoles = MontoS;
+                                                        DocumentoCajdetLis.Add(DocumentoCajdet);
+                                                    }
+                                                    ObjetC.documentoCajaDetalle = DocumentoCajdetLis;
+
+                                                }
+                                            }
+
+
+
+                                            Lista.Add(ObjetC);
+                                        }
+
+                                        if (obj.NombreDistribucion == "PreImpresion")
+                                        {
+                                            commons.ImprimirKardex(Lista, cjasReport.FirstOrDefault().PrintImpresoraNegocio, obj);
+                                        }
+                                        else
+                                        {
+                                            commons.ImprimirKardexResumen(Lista, cjasReport.FirstOrDefault().PrintImpresoraNegocio, obj, cjasReport.FirstOrDefault());
+                                        }
+
+                                    }
+                              
+
+
                             }
-
-                        }
-                        else if (obj.TipoEnvioImpresion == "voucher")
-                        {
-
-                            //var Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                            //var Retudel = await ValidarDelete(obj);
-                            if (returdelete == true)
+                            else if (obj.TipoEnvioImpresion == "PEDIDOSCOMERCIAL")
                             {
-                                var ventaVoucher = await DocumentoVentaAPI.GetVentaIDVoucher(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                                var orderRecupeacion = await ImpresorasNegocioAPI.GetINServicio(true, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
-                                var datosgenerales = await DatosGeneralesAPI.GetFormats(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
-                                var DatosGen = datosgenerales.Where(s => s.NombreFormato == "TK").FirstOrDefault();
-                                commons.ImprimirVoucher(ventaVoucher, orderRecupeacion, DatosGen);
-                            }
 
-                        }
-                        else
-                        {
-                           
+                                //var RetudelP = false;         
+                                //var  RetudelP = await ValidarDelete(obj);                      
 
-                           
+                                //RetudelP = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
-                            if (returdelete == true)
-                            {
+
+                            
+
+                                    var venta = await documentoventaDetalleBeneficiosAPI.PrintDirectProducto(obj.IdDocumento.GetValueOrDefault());
+
+                                    var idList = venta.DetProductos.Select(s => Int32.TryParse(s.idProdcuto.ToString(), out int n) ? n : (int)0).ToList();
+                                    var orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXCodigoDetalle(idList);
+
+                                    if (orderRecupeacion.Count == 0)
+                                    {
+
+                                        //var RetudelPC = await ValidarDelete(obj);
+
+
+                                        //await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+
+
+
+
+                                    }
+                                    var ImpresorasList = orderRecupeacion.Select(q => new
+                                    {
+                                        q.idImpresora,
+                                        q.aliasImpresora,
+                                        q.ipImpresoraCompartida,
+                                        q.cantidadPrint,
+                                        q.formatoImpresion,
+                                        q.relacionImpresora
+                                    }).Distinct().ToList();
+
+
+                                    List<printProductComercial> ordersSend = new List<printProductComercial>();
+                                    List<printProductComercial.DetalleProductos> detallePed = new List<printProductComercial.DetalleProductos>();
+
+                                    foreach (var pr in ImpresorasList)
+                                    {
+
+                                        var objprint = new printProductComercial()
+                                        {
+                                            aliasImpresora = pr.aliasImpresora,
+                                            idImpresora = pr.idImpresora,
+                                            ipImpresoraCompartida = pr.ipImpresoraCompartida,
+                                            cantidadPrint = pr.cantidadPrint,
+                                            formatoImpresion = pr.formatoImpresion,
+                                            relacionImpresora = pr.relacionImpresora
+                                        };
+                                        objprint.fecha = venta.fecha;
+                                        objprint.usuario = venta.usuario;
+                                        objprint.cargoUsuario = venta.cargoUsuario;
+
+                                        objprint.DetProductos = new List<printProductComercial.DetalleProductos>();
+                                        var items = orderRecupeacion.Where(w => w.idImpresora == pr.idImpresora).ToList();
+                                        var productsIDS = items.Select(q => q.codigodetalle.ToString()).ToList();
+
+
+                                        detallePed = venta.DetProductos.Where(s => productsIDS.Contains(s.idProdcuto.ToString())).ToList();
+                                        objprint.DetProductos.AddRange(detallePed);
+                                        objprint.DetaBeneficios = venta.DetaBeneficios;
+                                        objprint.grupoDescrip = venta.grupoDescrip;
+                                        ordersSend.Add(objprint);
+
+
+                                    }
+                                    commons.ImprimirPromociones(ordersSend);
                                
-                                var venta = await DocumentoVentaAPI.GetOrderIdLitePrint(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
 
-                                var getventaProductos= venta.documentoventaAbarrotesDet.Where(s=> s.tipoExistencia!="GS").ToList();
-                                if (getventaProductos.Count>0)
-                                {
-                                    var TipoServicio = "PRODUCTO";
-                                    var getPediddo = Printpedidos(venta, obj, commons, getventaProductos, TipoServicio);
-                                }
-                           
-
-                                var getventaServicios = venta.documentoventaAbarrotesDet.Where(s => s.tipoExistencia == "GS").ToList();
-                                if (getventaServicios.Count > 0)
-                                {
-                                    var TipoServicio = "SERVICIO";
-                                    var getPediddo = Printpedidos(venta, obj, commons, getventaServicios, TipoServicio);
-                                }
                             }
-                        }
+                            else if (obj.TipoEnvioImpresion == "voucher")
+                            {
 
+                                //var Retudel = await PrintQueueAPI.DeleteV2(obj.Id, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                                //var Retudel = await ValidarDelete(obj);
+                             
+                                    var ventaVoucher = await DocumentoVentaAPI.GetVentaIDVoucher(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                                    var orderRecupeacion = await ImpresorasNegocioAPI.GetINServicio(true, obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+                                    var datosgenerales = await DatosGeneralesAPI.GetFormats(obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+
+                                    var DatosGen = datosgenerales.Where(s => s.NombreFormato == "TK").FirstOrDefault();
+                                    commons.ImprimirVoucher(ventaVoucher, orderRecupeacion, DatosGen);
+                               
+
+                            }
+                            else
+                            {
+
+
+
+                                    var venta = await DocumentoVentaAPI.GetOrderIdLitePrint(obj.IdDocumento.GetValueOrDefault(), obj.idEmpresa, obj.idEstablecimiento.GetValueOrDefault());
+
+                                    var getventaProductos = venta.documentoventaAbarrotesDet.Where(s => s.tipoExistencia != "GS").ToList();
+                                    if (getventaProductos.Count > 0)
+                                    {
+                                        var TipoServicio = "PRODUCTO";
+                                        var getPediddo = Printpedidos(venta, obj, commons, getventaProductos, TipoServicio);
+                                    }
+
+
+                                    var getventaServicios = venta.documentoventaAbarrotesDet.Where(s => s.tipoExistencia == "GS").ToList();
+                                    if (getventaServicios.Count > 0)
+                                    {
+                                        var TipoServicio = "SERVICIO";
+                                        var getPediddo = Printpedidos(venta, obj, commons, getventaServicios, TipoServicio);
+                                    }
+                               
+                            }
+
+
+                        }
 
 
 
                     }
                     ordersList = new List<PrintQueue>();
                 }
+                
             }
 
            
@@ -644,8 +822,9 @@ namespace DeskTest
             var DetImpresoAll = await ImpresorasNegocioAPI.GetDetalleImpresoras();
             var listObj = new List<documentoventaAbarrotesDet>();
             var orderRecupeacion = new List<detalleItemsImpresoras>();
+            var recupreacionusuario = new List<ImpresorasNegocioDet>();
             var idList = new List<int>();
-           
+
             if (TipoServicio == "PRODUCTO")
             {
                 idList = GetProductos.Select(s => Int32.TryParse(s.idItem, out int n) ? n : (int)0).ToList();
@@ -657,8 +836,6 @@ namespace DeskTest
                 orderRecupeacion = await ImpresorasNegocioAPI.getListImpresorasXIdImpresora(idList);
             }
 
-
-
             var ImpresorasList = orderRecupeacion.Select(q => new
             {
                 q.idImpresora,
@@ -669,6 +846,23 @@ namespace DeskTest
                 q.relacionImpresora
             }).Distinct().ToList();
 
+            //recupreacionusuario= await ImpresorasNegocioDetAPI.getImpresoraNegocioDet(new ImpresorasNegocio
+            //{
+            //    idEmpresa = obj.idEmpresa,
+            //    idEstablecimiento = obj.idEstablecimiento.GetValueOrDefault(),
+            //});
+
+            //recupreacionusuario = recupreacionusuario.Where(s => s.tipoImpresoraBE == "PEDIDO").ToList();
+            //var ImpresorasList = recupreacionusuario.Select(q => new
+            //{
+            //    q.idImpresora,
+            //    q.aliasImpresora,
+            //    q.ipImpresoraCompartida,
+            //    q.cantidadPrint,
+            //    q.formatoImpresion,
+            //    q.relacionImpresora
+            //}).Distinct().ToList();
+
 
 
 
@@ -677,6 +871,15 @@ namespace DeskTest
             foreach (var pr in ImpresorasList)
             {
 
+                //var objprint = new detalleItemsImpresoras()
+                //{
+                //    aliasImpresora = pr.aliasImpresora,
+                //    idImpresora = pr.idImpresora.GetValueOrDefault(),
+                //    ipImpresoraCompartida = pr.ipImpresoraCompartida,
+                //    cantidadPrint = int.Parse(pr.cantidadPrint),
+                //    formatoImpresion = pr.formatoImpresion,
+                //    relacionImpresora = pr.relacionImpresora
+                //};
                 var objprint = new detalleItemsImpresoras()
                 {
                     aliasImpresora = pr.aliasImpresora,
@@ -687,8 +890,8 @@ namespace DeskTest
                     relacionImpresora = pr.relacionImpresora
                 };
 
-
                 var items = orderRecupeacion.Where(w => w.idImpresora == pr.idImpresora).ToList();
+                //var items = recupreacionusuario.Where(w => w.idImpresora == pr.idImpresora).ToList();
                 var productsIDS = new List<string>();
                 var detBenf = "NO_tienebeneficio";
                 if (TipoServicio == "PRODUCTO")

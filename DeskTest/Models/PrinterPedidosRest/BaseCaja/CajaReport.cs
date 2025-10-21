@@ -21,8 +21,10 @@ namespace Helios.Web.Core.Models.Order.PrinterPedidosRest.BaseCaja
         public string Usuario { get; set; }
         public string FechaActualizacion { get; set; }
         public string FechaApertura { get; set; }
-
-
+        public string VentaEfectivo { get; set; }
+        public string FondInicialTotal { get; set; }
+        public string OtrosEgresosTotal { get; set; }
+        public string VentageneralTotal { get; set; }
         public List<DatosEmpresa> DatosEmpresa { get; set; }
         public List<CierreGeneralDetalleReport> CierreGeneralDetalle { get; set; }
         public List<CierreGeneralDetalleReportSalida> CierreGeneralDetalleSalida { get; set; }

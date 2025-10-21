@@ -51,11 +51,11 @@ public class ImpresorasNegocioAPI
         }
         else
         {
-            var responseError = new HttpResponseMessage(HttpStatusCode.NotFound)
-            {
-                Content = new StringContent(string.Format("Verificar los campos")),
-                ReasonPhrase = "Verificar los compos"
-            };
+            //var responseError = new HttpResponseMessage(HttpStatusCode.NotFound)
+            //{
+            //    Content = new StringContent(string.Format("Verificar los campos")),
+            //    ReasonPhrase = "Verificar los compos"
+            //};
 
             return null;// throw new HttpResponseException(responseError);
         }

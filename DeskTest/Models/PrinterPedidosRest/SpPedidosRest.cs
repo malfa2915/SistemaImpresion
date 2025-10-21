@@ -21,7 +21,9 @@ public class SpPedidosRest
     public string Cliente { get; set; }
     public string DocCliente { get; set; }
     public string NombreCliente { get; set; }
-
+    public string FechaApertura { get; set; }
+    public string FechaCierre { get; set; }
+    
     public List<SpPedidosRestDet> PedidosRestDet { get; set; }
     public List<DatosEmpresa> DatosEmpresa { get; set; }
 }

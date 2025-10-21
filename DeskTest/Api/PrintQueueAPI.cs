@@ -47,9 +47,10 @@ namespace DeskTest.Api
             var response = await httpClient.PostAsync(helpers.url + "api/PrintQueue/DeletePrintQueuev2?id=" + id + "&empresa=" + empresa + "&IdCentro=" + IdCentro, content);
             if (response.IsSuccessStatusCode)
             {
-                var jsonResult = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<bool>(jsonResult);
-                return result;
+                //var jsonResult = await response.Content.ReadAsStringAsync();
+                //var result = JsonConvert.DeserializeObject<bool>(jsonResult);
+                //return result;
+                return true;
             }
 
             return false;

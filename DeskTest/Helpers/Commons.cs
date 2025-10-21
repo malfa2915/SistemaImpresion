@@ -22,7 +22,10 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Media.Media3D;
+using static Helios.Cont.Business.Entity.documentocompra;
 using static RazorEngine.Compilation.CrossAppDomainCleanUp;
 using Font = System.Drawing.Font;
 
@@ -2702,6 +2705,634 @@ public class Commons
         return listInvoice;
     }
 
+    public List<DocumentoFactura> GetComprobanteReportesDetalle(List<documentoventaAbarrotes> docs,datosGenerales TipoImre)
+    {
+
+
+        var listInvoice = new List<DocumentoFactura>();
+        var objCuenta = new DocumentoFactura();
+
+        var listInvoiceDet = new List<DocumentoFacturaDetalle>();
+        var InvoiceDet = new DocumentoFacturaDetalle();
+
+        var Empresa = new DatosEmpresa();
+        var ListEmpresa = new List<DatosEmpresa>();
+
+
+        Empresa.Ruc = TipoImre.ruc;
+        Empresa.RazonSocial = TipoImre.razonSocial;
+        Empresa.NombreComercial = TipoImre.nombreCorto;
+
+        ListEmpresa.Add(Empresa);
+
+        var DesFactura = "";
+        var DescrionPrint = "";
+
+        foreach (var docLis in docs)
+        {
+            objCuenta = new DocumentoFactura();
+            objCuenta.FechaEmision= docLis.fechaDoc.GetValueOrDefault().ToString("dd-MM-yyyy HH:mm");
+            objCuenta.NroSerieFact = docLis.serieVenta + " - " + docLis.numeroVenta;
+
+
+            objCuenta.DatosEmpresa = ListEmpresa;
+
+            switch (docLis.tipoDocumento)
+            {
+                case "07":
+                    DesFactura = "Nota de Crédito Electrónico";
+                    break;
+                case "08":
+                    DesFactura = "Nota de Dédito";
+                    break;
+                case "09":
+                    DesFactura = "Guía de remisión";
+                    break;
+                case "03":
+                    DesFactura = "Boleta de Venta Electrónica";
+                    break;
+                case "01":
+                    DesFactura = "Factura Electrónica";
+                    break;
+                case "9907":
+                    DesFactura = "Nota de Venta";
+                    break;
+                case "9903":
+                    DesFactura = "Cotización";
+                    break;
+                default:
+                    DesFactura = "Otro";
+                    break;
+            }
+
+      
+
+            objCuenta.OrdenCompra = DesFactura;
+            objCuenta.RucCliente = docLis.nroDocCliente;
+            objCuenta.Cliente = docLis.nombrePedido;
+            objCuenta.TipoMoneda = docLis.moneda == "1" ? "SOLES" : "DOLARES";
+            objCuenta.OpGravada = String.Format("{0:0.00}", docLis.bi01);
+            objCuenta.OpExonerada = String.Format("{0:0.00}", docLis.bi02);
+            objCuenta.IGV = String.Format("{0:0.00}", docLis.igv01);
+            objCuenta.TotalDescuento = String.Format("{0:0.00}", docLis.ImporteDescGlobal!=null ? 0: docLis.ImporteDescGlobal);
+            objCuenta.ImporteTotal = String.Format("{0:0.00}", docLis.ImporteNacional - docLis.ImporteDescGlobal);
+            objCuenta.Origen = docLis.EnvioSunat;
+
+
+            listInvoiceDet = new List<DocumentoFacturaDetalle>();
+            foreach (var det in docLis.documentoventaAbarrotesDet)
+            {
+                 InvoiceDet = new DocumentoFacturaDetalle();
+                InvoiceDet.Descripcion = det.DescripcioProdDetBE;
+                InvoiceDet.Cantidad = String.Format("{0:0}", det.monto1);
+                InvoiceDet.PrecioUnitario = String.Format("{0:0.00}", det.precioUnitario);
+                InvoiceDet.Importe = String.Format("{0:0.00}", det.precioUnitario * det.monto1);
+
+                listInvoiceDet.Add(InvoiceDet);
+            }
+
+            objCuenta.DocumentoFacturaDetalle= listInvoiceDet;
+
+            listInvoice.Add(objCuenta);
+        }
+
+
+
+            return listInvoice;
+
+      
+
+
+    }
+
+
+    public List<DocumentoFacturaXCategoria> GetComprobanteReportesDetallexCategoria(List<documentoventaAbarrotes> docs, datosGenerales TipoImre)
+    {
+
+
+        var listInvoice = new List<DocumentoFacturaXCategoria>();
+        var objCuenta = new DocumentoFacturaXCategoria();
+
+        var listInvoiceDet = new List<DocumentoFacturaDetalle>();
+        var InvoiceDet = new DocumentoFacturaDetalle();
+
+        var Empresa = new DatosEmpresa();
+        var ListEmpresa = new List<DatosEmpresa>();
+
+        var objcat = new Categorias();
+        var objcatLis = new List<Categorias>();
+
+        Empresa.Ruc = TipoImre.ruc;
+        Empresa.RazonSocial = TipoImre.razonSocial;
+        Empresa.NombreComercial = TipoImre.nombreCorto;
+        Empresa.Domicilio = TipoImre.direccionPrincipal;
+        ListEmpresa.Add(Empresa);
+
+        var DesFactura = "";
+        var DescrionPrint = "";
+        var sumaImporteTotal = 0.00;
+        foreach (var docLis in docs)
+        {
+            objCuenta = new DocumentoFacturaXCategoria();
+            objCuenta.FechaEmision = docLis.fechaDoc.GetValueOrDefault().ToString("dd-MM-yyyy HH:mm");
+            objCuenta.NroSerieFact = docLis.serieVenta + " - " + docLis.numeroVenta;
+
+
+            objCuenta.DatosEmpresa = ListEmpresa;
+
+            switch (docLis.tipoDocumento)
+            {
+                case "07":
+                    DesFactura = "Nota de Crédito Electrónico";
+                    break;
+                case "08":
+                    DesFactura = "Nota de Dédito";
+                    break;
+                case "09":
+                    DesFactura = "Guía de remisión";
+                    break;
+                case "03":
+                    DesFactura = "Boleta de Venta Electrónica";
+                    break;
+                case "01":
+                    DesFactura = "Factura Electrónica";
+                    break;
+                case "9907":
+                    DesFactura = "Nota de Venta";
+                    break;
+                case "9903":
+                    DesFactura = "Cotización";
+                    break;
+                default:
+                    DesFactura = "Otro";
+                    break;
+            }
+
+
+ 
+
+            objCuenta.OrdenCompra = DesFactura;
+            objCuenta.RucCliente = docLis.nroDocCliente;
+            objCuenta.Cliente = docLis.nombrePedido;
+            objCuenta.TipoMoneda = docLis.moneda == "1" ? "SOLES" : "DOLARES";
+            objCuenta.OpGravada = String.Format("{0:0.00}", docLis.bi01);
+            objCuenta.OpExonerada = String.Format("{0:0.00}", docLis.bi02);
+            objCuenta.IGV = String.Format("{0:0.00}", docLis.igv01);
+            objCuenta.TotalDescuento = String.Format("{0:0.00}", docLis.ImporteDescGlobal != null ? 0 : docLis.ImporteDescGlobal);
+            objCuenta.ImporteTotal = String.Format("{0:0.00}", docLis.ImporteNacional - docLis.ImporteDescGlobal);
+            objCuenta.Origen = docLis.nombreDistribucion;
+            objCuenta.Servicio = docLis.CantComensales.ToString();
+
+            sumaImporteTotal = sumaImporteTotal + double.Parse(objCuenta.ImporteTotal);
+
+            objcatLis = new  List<Categorias>();
+            foreach (var cat in docLis.customCatalogosList)
+            {
+                objcat = new Categorias();
+                objcat.IdItem = cat.idItem.ToString();
+                objcat.Descripcion = "-- " + cat.descripcion.ToUpper() +" -- ";
+
+                listInvoiceDet = new List<DocumentoFacturaDetalle>();
+                foreach (var det in cat.ListProductos)
+                {
+                 
+                    InvoiceDet = new DocumentoFacturaDetalle();
+                    InvoiceDet.Descripcion = det.nombreItem;
+                    InvoiceDet.Cantidad = String.Format("{0:0}", det.monto1);
+                    InvoiceDet.PrecioUnitario = String.Format("{0:0.00}", det.precioUnitario);
+                    InvoiceDet.Importe = String.Format("{0:0.00}", det.importeMN);
+                    //InvoiceDet.Importe = String.Format("{0:0.00}", det.precioUnitario * det.monto1);
+
+                    listInvoiceDet.Add(InvoiceDet);
+
+                    objcat.DocumentoFacturaDetalle = listInvoiceDet;
+                }
+
+                objcatLis.Add(objcat);
+            }
+
+            objCuenta.CategoriasDoc = objcatLis;
+
+ 
+
+            listInvoice.Add(objCuenta);
+        }
+
+
+        listInvoice.FirstOrDefault().TotalVentaReport = String.Format("{0:0.00}", sumaImporteTotal);
+        return listInvoice;
+
+
+
+
+    }
+    public void ImprimirComprobanteReportesXcategoria(List<documentoventaAbarrotes> order, ImpresorasNegocio PrintNeg)
+    {
+        var pathReport = "";
+        var conver = "";
+        var Report = new FastReport.Report();
+        MemoryStream strm = new MemoryStream();
+        try
+        {
+
+            var listGeneral = new List<DocumentoFacturaXCategoria>();
+
+            //var consultaNombre = userdata;// await UserAPI.GetId(new Helios.Seguridad.Business.Entity.Usuario() { IDUsuario = iduser });
+            //var consultaNombre = "";
+
+
+            //TITULO
+            if (order.Count > 0)
+            {
+
+                var tipoImpresion = order.FirstOrDefault().CustomDatosGenerales.Where(s => s.formatoImpresion == "TK").FirstOrDefault();
+                //pathReport = @"formatos\reports\printer\InfDocXCategoria.frx";
+                pathReport = @"formatos\reports\printerSales\InfDocXCategoriaA4.frx";
+
+
+
+                listGeneral.AddRange(GetComprobanteReportesDetallexCategoria(order, (datosGenerales)tipoImpresion));
+
+                //zona report
+
+
+
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+                Report.Load(path);
+
+
+
+
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.razonSocial))
+                {
+                    ChildBand CBRasonSocial = Report.Report.FindObject("CBRasonSocial") as ChildBand;
+                    CBRasonSocial.Visible = true;
+
+                }
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.nombreCorto))
+                {
+                    ChildBand CbNombreComercial = Report.Report.FindObject("CbNombreComercial") as ChildBand;
+                    CbNombreComercial.Visible = true;
+
+                }
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.direccionPrincipal))
+                {
+                    ChildBand CbDireccion = Report.Report.FindObject("CbDireccion") as ChildBand;
+                    CbDireccion.Visible = true;
+
+                }
+                //if (order.tipoOperacion == "PRF")
+                //{
+                //    DesFactura = "PROFORMA";
+                //}
+                //else if (order.tipoOperacion == "ORV")
+                //{
+                //    DesFactura = "PEDIDO";
+                //}
+                //Report.Report.SetParameterValue("Descfactura", DesFactura);
+                //Report.Report.SetParameterValue("IGV", " (" + PorIgv + " %)");
+                //Report.Report.SetParameterValue("SimboloMoneda", simboloMoneda);
+                Report.Report.SetParameterValue("TotalVenta", listGeneral[0].TotalVentaReport);
+
+                Report.Report.SetParameterValue("SimboloMoneda", "S/.");
+
+                Report.RegisterData(listGeneral, "DocumentoFacturasXCategoria");
+                Report.Prepare();
+
+                //ValidarTrueFalse(order);
+
+
+
+
+                var pdfExport = new FastReport.Export.Pdf.PDFExport();
+                //pdfExport.ShowProgress = false;
+                //pdfExport.Subject = "Subject";
+                //pdfExport.Title = "xxxxxxx";
+                //pdfExport.Compressed = true;
+                //pdfExport.AllowPrint = true;
+                //pdfExport.EmbeddingFonts = true;
+                Report.Report.Report.Export(pdfExport, strm);
+
+                pdfExport.Dispose();
+                strm.Position = 0;
+
+                //Report.PrintSettings.Printer = ISPRINTER.nombreimpresora;
+
+                //Report.PrintSettings.Printer = ImpreNego.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                //if (ImpreNego != null)
+                Report.PrintSettings.Printer = PrintNeg.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                int numeroPr = (int)PrintNeg.numImpresion;
+                if (PrintNeg != null)
+                {
+                    for (int i = 0; i < numeroPr; i++)
+                    {
+                        Report.Report.PrintSettings.ShowDialog = false;
+                        Report.Print();
+                    }
+                }
+
+
+
+
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("No se Pudo imrimir.");
+        }
+
+    }
+
+    public List<DocumentoFacturaXCategoria> GetPromedioXmesa(List<documentoventaAbarrotes> docs, datosGenerales TipoImre)
+    {
+
+        var TotalPromTicket = 0.00;
+        var TotalPromAtencion = 0.00;
+        var listInvoice = new List<DocumentoFacturaXCategoria>();
+        var objCuenta = new DocumentoFacturaXCategoria();
+
+        //var listInvoiceDet = new List<DocumentoFacturaDetalle>();
+        //var InvoiceDet = new DocumentoFacturaDetalle();
+
+        var Empresa = new DatosEmpresa();
+        var ListEmpresa = new List<DatosEmpresa>();
+
+        Empresa.Ruc = TipoImre.ruc;
+        Empresa.RazonSocial = TipoImre.razonSocial;
+        Empresa.NombreComercial = TipoImre.nombreCorto;
+        Empresa.Domicilio = TipoImre.direccionPrincipal;
+        ListEmpresa.Add(Empresa);
+
+
+        foreach (var docLis in docs)
+        {
+            objCuenta = new DocumentoFacturaXCategoria();
+
+            objCuenta.DatosEmpresa = ListEmpresa;
+            objCuenta.Origen = docLis.nombreDistribucion;
+            objCuenta.ImporteTotal = String.Format("{0:0.00}", docLis.ImporteNacional);
+            objCuenta.Vendedor = docLis.CantComensales == null? "0" : docLis.CantComensales.ToString();
+            objCuenta.NumeroPedido = docLis.NroAtencionesBE.ToString();
+            objCuenta.Efectivo = String.Format("{0:0.00}", docLis.promedioTicketBE);
+            objCuenta.Vuelto = String.Format("{0:0.00}", docLis.promedioAtencionBE);
+
+             TotalPromTicket = Convert.ToDouble(TotalPromTicket) + Convert.ToDouble(objCuenta.Efectivo);
+             TotalPromAtencion = Convert.ToDouble(TotalPromAtencion) + Convert.ToDouble(objCuenta.Vuelto);
+
+            listInvoice.Add(objCuenta);
+        }
+
+        listInvoice.FirstOrDefault().TotalpromedioTicket = String.Format("{0:0.00}", TotalPromTicket);
+        listInvoice.FirstOrDefault().TotalpromedioAtencion = String.Format("{0:0.00}", TotalPromAtencion) ;
+
+        return listInvoice;
+
+
+
+
+    }
+    public void ImprimirPromedioXMesa(List<documentoventaAbarrotes> order, ImpresorasNegocio PrintNeg)
+    {
+        var pathReport = "";
+        var conver = "";
+        var Report = new FastReport.Report();
+        MemoryStream strm = new MemoryStream();
+        try
+        {
+
+            var listGeneral = new List<DocumentoFacturaXCategoria>();
+
+            //var consultaNombre = userdata;// await UserAPI.GetId(new Helios.Seguridad.Business.Entity.Usuario() { IDUsuario = iduser });
+            //var consultaNombre = "";
+
+
+            //TITULO
+            if (order.Count > 0)
+            {
+
+                var tipoImpresion = order.FirstOrDefault().CustomDatosGenerales.Where(s => s.formatoImpresion == "TK").FirstOrDefault();
+                //pathReport = @"formatos\reports\printer\InfDocXCategoria.frx";
+                pathReport = @"formatos\reports\printerSales\InfDocCategoriaPromedioXMesaA4.frx";
+
+
+
+                listGeneral.AddRange(GetPromedioXmesa(order, (datosGenerales)tipoImpresion));
+
+                //zona report
+
+
+
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+                Report.Load(path);
+
+
+
+
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.razonSocial))
+                {
+                    ChildBand CBRasonSocial = Report.Report.FindObject("CBRasonSocial") as ChildBand;
+                    CBRasonSocial.Visible = true;
+
+                }
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.nombreCorto))
+                {
+                    ChildBand CbNombreComercial = Report.Report.FindObject("CbNombreComercial") as ChildBand;
+                    CbNombreComercial.Visible = true;
+
+                }
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.direccionPrincipal))
+                {
+                    ChildBand CbDireccion = Report.Report.FindObject("CbDireccion") as ChildBand;
+                    CbDireccion.Visible = true;
+
+                }
+                //if (order.tipoOperacion == "PRF")
+                //{
+                //    DesFactura = "PROFORMA";
+                //}
+                //else if (order.tipoOperacion == "ORV")
+                //{
+                //    DesFactura = "PEDIDO";
+                //}
+                //Report.Report.SetParameterValue("Descfactura", DesFactura);
+                //Report.Report.SetParameterValue("IGV", " (" + PorIgv + " %)");
+                Report.Report.SetParameterValue("TotalTPromedio", listGeneral[0].TotalpromedioTicket);
+                Report.Report.SetParameterValue("TotalPAtencion", listGeneral[0].TotalpromedioAtencion);
+
+                Report.Report.SetParameterValue("SimboloMoneda", "S/.");
+
+                Report.RegisterData(listGeneral, "DocumentoFacturasXCategoria");
+                Report.Prepare();
+
+                //ValidarTrueFalse(order);
+
+
+
+
+                var pdfExport = new FastReport.Export.Pdf.PDFExport();
+                //pdfExport.ShowProgress = false;
+                //pdfExport.Subject = "Subject";
+                //pdfExport.Title = "xxxxxxx";
+                //pdfExport.Compressed = true;
+                //pdfExport.AllowPrint = true;
+                //pdfExport.EmbeddingFonts = true;
+                Report.Report.Report.Export(pdfExport, strm);
+
+                pdfExport.Dispose();
+                strm.Position = 0;
+
+                //Report.PrintSettings.Printer = ISPRINTER.nombreimpresora;
+
+                //Report.PrintSettings.Printer = ImpreNego.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                //if (ImpreNego != null)
+                Report.PrintSettings.Printer = PrintNeg.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                int numeroPr = (int)PrintNeg.numImpresion;
+                if (PrintNeg != null)
+                {
+                    for (int i = 0; i < numeroPr; i++)
+                    {
+                        Report.Report.PrintSettings.ShowDialog = false;
+                        Report.Print();
+                    }
+                }
+
+
+
+
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("No se Pudo imrimir.");
+        }
+
+    }
+
+    public void ImprimirComprobanteReportes(List< documentoventaAbarrotes> order, ImpresorasNegocio PrintNeg)
+    {
+        var pathReport = "";
+        var conver = "";
+        var Report = new FastReport.Report();
+        MemoryStream strm = new MemoryStream();
+        try
+        {
+
+            var listGeneral = new List<DocumentoFactura>();
+
+            //var consultaNombre = userdata;// await UserAPI.GetId(new Helios.Seguridad.Business.Entity.Usuario() { IDUsuario = iduser });
+            //var consultaNombre = "";
+
+
+            //TITULO
+            if (order.Count > 0)
+            {
+
+                var tipoImpresion = order.FirstOrDefault().CustomDatosGenerales.Where(s=> s.formatoImpresion=="A4").FirstOrDefault();
+                //pathReport = @"formatos\reports\printer\InfReporteFactutrasWeb.frx";
+                pathReport = @"formatos\reports\printerSales\InfReporteFactutrasWebA4.frx";
+
+
+
+
+                listGeneral.AddRange(GetComprobanteReportesDetalle(order, (datosGenerales) tipoImpresion));
+
+                //zona report
+         
+
+
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+                Report.Load(path);
+
+
+
+
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.razonSocial))
+                {
+                    ChildBand CBRasonSocial = Report.Report.FindObject("CBRasonSocial") as ChildBand;
+                    CBRasonSocial.Visible = true;
+
+                }
+                if (!String.IsNullOrWhiteSpace(tipoImpresion.nombreCorto))
+                {
+                    ChildBand CbNombreComercial = Report.Report.FindObject("CbNombreComercial") as ChildBand;
+                    CbNombreComercial.Visible = true;
+
+                }
+                //if (order.tipoOperacion == "PRF")
+                //{
+                //    DesFactura = "PROFORMA";
+                //}
+                //else if (order.tipoOperacion == "ORV")
+                //{
+                //    DesFactura = "PEDIDO";
+                //}
+                //Report.Report.SetParameterValue("Descfactura", DesFactura);
+                //Report.Report.SetParameterValue("IGV", " (" + PorIgv + " %)");
+                //Report.Report.SetParameterValue("SimboloMoneda", simboloMoneda);
+                //Report.Report.SetParameterValue("DescripcionMonto", conver);
+
+                Report.Report.SetParameterValue("SimboloMoneda", "S/.");
+
+                Report.RegisterData(listGeneral, "DocumentoFacturas");
+                Report.Prepare();
+
+                //ValidarTrueFalse(order);
+
+
+            
+
+                var pdfExport = new FastReport.Export.Pdf.PDFExport();
+                //pdfExport.ShowProgress = false;
+                //pdfExport.Subject = "Subject";
+                //pdfExport.Title = "xxxxxxx";
+                //pdfExport.Compressed = true;
+                //pdfExport.AllowPrint = true;
+                //pdfExport.EmbeddingFonts = true;
+                Report.Report.Report.Export(pdfExport, strm);
+
+                pdfExport.Dispose();
+                strm.Position = 0;
+
+                //Report.PrintSettings.Printer = ISPRINTER.nombreimpresora;
+
+                //Report.PrintSettings.Printer = ImpreNego.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                //if (ImpreNego != null)
+                Report.PrintSettings.Printer = PrintNeg.relacionImpresora;
+                //int numeroPr = (int)ImpreNego.numImpresion;
+                int numeroPr = (int)PrintNeg.numImpresion;
+                if (PrintNeg != null)
+                {
+                    for (int i = 0; i < numeroPr; i++)
+                    {
+                        Report.Report.PrintSettings.ShowDialog = false;
+                        Report.Print();
+                    }
+                }
+
+
+
+
+            }
+  
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("No se Pudo imrimir.");
+        }
+
+    }
+
+
     public void ImprimirComprobanteFinal(rePrintResponse order, String nameVendedor, String nameAlmacen, String namecargo, String NombreInfra, string fecha, PrintQueue address)
     {
         var pathReport = "";
@@ -2907,7 +3538,10 @@ public class Commons
                 }
 
                 //var numeroConverson = Convert.ToDecimal(order.ImporteNacional);
-                var numeroConverson = Convert.ToDecimal(order.importeTotal - descuenT);
+                //var numeroConverson = Convert.ToDecimal(order.importeTotal - descuenT);
+                var Prop = decimal.Parse(listGeneral[0].Propina);
+                var RConsum = decimal.Parse(listGeneral[0].RConsumo);
+                var numeroConverson = Convert.ToDecimal(order.importeTotal - descuenT) + Prop + RConsum;
                 conver = Conversiones.Enletras(numeroConverson) + " " + Moden;
 
 
@@ -3008,6 +3642,10 @@ public class Commons
                 Report.Report.SetParameterValue("PorcentrajeDetraccion", order.PorcentajeDetraccion);
                 Report.Report.SetParameterValue("MontoDetraccion", order.MontoDetraccion);
 
+                //Recargo al consumo y propina
+                Report.Report.SetParameterValue("RConsumo", RConsum);
+                Report.Report.SetParameterValue("Propina", Prop);
+
                 if (address.TipoNegocio== "HOTEL")
                 {
                     Report.Report.SetParameterValue("CatHabitacion", address.TipoHabitacion_Hotel);
@@ -3023,7 +3661,20 @@ public class Commons
 
                 //ValidarTrueFalse(datosGenera, order, Report, address, listGeneral, ImpreNego, returConfigura, pathD, UsuOrder);
                 //ValidarTrueFalse(datosGenera, order, Report, address, listGeneral, ImpreNego, returConfigura, pathD);
+                if (RConsum > 0)
+                {
+                    DataBand RConsumo = Report.Report.FindObject("RConsumo") as DataBand;
+                    RConsumo.Visible = true;
 
+
+                }
+                if (Prop > 0)
+                {
+                    DataBand Propina = Report.Report.FindObject("Propina") as DataBand;
+                    Propina.Visible = true;
+
+
+                }
                 ValidarTrueFalse(order, Report, address, listGeneral, pathD);
 
 
@@ -3688,6 +4339,8 @@ public class Commons
         var direcc = "";
         var cuentaSoles = "";
         var cuentaDolares = "";
+        var RecarC = 0.00;
+        var PropinaC = 0.00;
 
         //if (datosGen != null)
         if (p.DatosGen != null)
@@ -4159,6 +4812,66 @@ public class Commons
 
             }
 
+            if (address.TipoNegocio == "RESTAURANTE")
+            {
+
+
+                var listaPro = (from dvd in listInvoiceDet
+                                group dvd by new
+                                {
+                                    dvd.Descripcion,
+                                    dvd.Unidad,
+                                    dvd.Cantidad,
+                                    dvd.PrecioUnitario,
+                                    dvd.Importe,
+                                    dvd.tipoExistencia
+                                } into g
+                                select new
+                                {
+                                    cantidad = g.Count(t => t.Cantidad != null),
+                                    g.Key.Descripcion,
+                                    g.Key.Unidad,
+                                    g.Key.Cantidad,
+                                    g.Key.PrecioUnitario,
+                                    g.Key.Importe,
+                                    g.Key.tipoExistencia,
+                                }).ToList();
+
+                listInvoiceDet = new List<DocumentoFacturaDetalle>();
+                foreach (var item in listaPro)
+                {
+                    if (item.tipoExistencia != "RC" && item.tipoExistencia != "PR")
+                    {
+                        var ObjDoc = new DocumentoFacturaDetalle();
+                        ObjDoc.Descripcion = item.Descripcion;
+                        ObjDoc.Unidad = item.Unidad;
+                        ObjDoc.Cantidad = item.cantidad.ToString();
+                        ObjDoc.PrecioUnitario = item.PrecioUnitario;
+
+                        var prodImpor = item.cantidad * decimal.Parse(item.PrecioUnitario);
+                        ObjDoc.Importe = prodImpor.ToString();
+
+                        listInvoiceDet.Add(ObjDoc);
+                    }
+                    else
+                    {
+                        if (item.tipoExistencia == "RC")
+                        {
+                            RecarC = double.Parse(item.Importe);
+                        }
+                        else
+                        {
+                            PropinaC = double.Parse(item.Importe);
+                        }
+
+
+                    }
+
+                }
+
+            }
+
+
 
 
             objCuenta.OpExonerada = String.Format("{0:0.00}", ExoMN);
@@ -4184,7 +4897,9 @@ public class Commons
             else
             {
                 objCuenta.TotalDescuento = String.Format("{0:0.00}", p.totaldescuento) + " -";
-                objCuenta.ImporteTotal = String.Format("{0:0.00}", p.importeTotal);
+                //objCuenta.ImporteTotal = String.Format("{0:0.00}", p.importeTotal);
+                var ImporteGlobal = (decimal)(RecarC + PropinaC) + p.importeTotal;
+                objCuenta.ImporteTotal = String.Format("{0:0.00}", ImporteGlobal);
             }
 
 
@@ -4198,47 +4913,8 @@ public class Commons
                 //}
             }
 
-            if (address.TipoNegocio == "RESTAURANTE")
-            {
-
-
-                var listaPro = (from dvd in listInvoiceDet
-                                group dvd by new
-                                {
-                                    dvd.Descripcion,
-                                    dvd.Unidad,
-                                    dvd.Cantidad,
-                                    dvd.PrecioUnitario,
-                                    dvd.Importe
-                                } into g
-                                select new
-                                {
-                                    cantidad = g.Count(t => t.Cantidad != null),
-                                    g.Key.Descripcion,
-                                    g.Key.Unidad,
-                                    g.Key.Cantidad,
-                                    g.Key.PrecioUnitario,
-                                    g.Key.Importe
-                                }).ToList();
-
-                listInvoiceDet = new List<DocumentoFacturaDetalle>();
-                foreach (var item in listaPro)
-                {
-                    var ObjDoc = new DocumentoFacturaDetalle();
-                    ObjDoc.Descripcion = item.Descripcion;
-                    ObjDoc.Unidad = item.Unidad;
-                    ObjDoc.Cantidad = item.cantidad.ToString();
-                    ObjDoc.PrecioUnitario = item.PrecioUnitario;
-
-                    var prodImpor = item.cantidad * decimal.Parse(item.PrecioUnitario);
-                    ObjDoc.Importe = prodImpor.ToString();
-
-                    listInvoiceDet.Add(ObjDoc);
-                }
-
-            }
-
-
+            objCuenta.RConsumo = String.Format("{0:0.00}", RecarC);
+            objCuenta.Propina = String.Format("{0:0.00}", PropinaC);
 
             //objCuenta.DocumentoFacturaDetalleDescuentos = listInvoiceDetDesc;
             objCuenta.DocumentoCajaDetalle = ListcajadeDoc;
@@ -4948,8 +5624,8 @@ public class Commons
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
             Report.Load(path);
 
-            var INgreT = listGeneral.FirstOrDefault().OtrosEgresos;
-            var EgreT = listGeneral.FirstOrDefault().OtrosIngresos;
+            var INgreT = listGeneral.FirstOrDefault().OtrosIngresos;
+            var EgreT = listGeneral.FirstOrDefault().OtrosEgresos;
             var otroT = listGeneral.FirstOrDefault().CobranzasDeudas;
             var SaldCaja = listGeneral.FirstOrDefault().FondoInicio;
 
@@ -4993,7 +5669,7 @@ public class Commons
 
     }
 
-    public void ImprimirProductosCategoria(List<documentoventaAbarrotesDet> ListProduCategoria, ImpresorasNegocio PrintNegoc)
+    public void ImprimirKardexResumen(List<documentoCaja> ListKardex, ImpresorasNegocio PrintNegoc, PrintQueue ValidarF,  documentoCaja DocAnulado)
     {
         var pathReport = "";
         var Report = new FastReport.Report();
@@ -5001,25 +5677,56 @@ public class Commons
         try
         {
 
-            var listGeneral = new List<documentoventaAbarrotesDet>();
+            var listGeneral = new List<CajaReport>();
 
 
             //TITULO
 
+            switch (ValidarF.Formato)
+            {
+                case "TK":
+                    pathReport = @"formatos\reports\Caja\infCajasKardexResumen.frx";
+                    break;
+                default:
+                    break;
+            }
 
-                    pathReport = @"formatos\reports\printer\infCantidadProductosCategoriasWeb.frx";
-      
 
 
-            //listGeneral.AddRange(GetProductCate(ListProduCategoria));
+            listGeneral.AddRange(GetKardexResumen(ListKardex, ValidarF));
 
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
             Report.Load(path);
 
+            var INgreT = listGeneral.FirstOrDefault().OtrosIngresos;
+            var EgreT = listGeneral.FirstOrDefault().OtrosEgresos;
+            var otroT = listGeneral.FirstOrDefault().CobranzasDeudas;
+            var SaldCaja = listGeneral.FirstOrDefault().FondoInicio;
+            var FondInicio = listGeneral.FirstOrDefault().FondInicialTotal;
+            var SaldoEfe = listGeneral.FirstOrDefault().VentaEfectivo;
+            var otrosEfe = listGeneral.FirstOrDefault().OtrosEgresosTotal;
 
-            Report.RegisterData(ListProduCategoria, "RestPedidos");
+            var TotalC = listGeneral.FirstOrDefault().Total;
+
+            Report.Report.SetParameterValue("TotalIngresos", INgreT);
+            Report.Report.SetParameterValue("TotalEgresos", EgreT);
+            Report.Report.SetParameterValue("TotalOtrosPagos", otroT);
+            Report.Report.SetParameterValue("Moneda", "S/.");
+            Report.Report.SetParameterValue("VentaEfectivo", SaldoEfe);
+            Report.Report.SetParameterValue("FondoInicio", FondInicio);
+            Report.Report.SetParameterValue("OtrosEfe", otrosEfe);
+
+            Report.Report.SetParameterValue("SaldoCaja", SaldCaja);
+
+            //var TotalDinero =  double.Parse(TotalC) + double.Parse(otroT);
+            Report.Report.SetParameterValue("DineroTotal", String.Format("{0:0.00}", otroT));
+            Report.Report.SetParameterValue("CantAnulados", String.Format("{0:0}", DocAnulado.DocAnulados.CantidadBE));
+            Report.Report.SetParameterValue("ImportAnulados", String.Format("{0:0.00}", DocAnulado.DocAnulados.ImporteNacional));
+
+            Report.RegisterData(listGeneral, "Cajas");
             Report.Prepare();
 
+            validarCajas(ValidarF, Report);
             var pdfExport = new FastReport.Export.Pdf.PDFExport();
 
             Report.Report.Report.Export(pdfExport, strm);
@@ -5039,6 +5746,89 @@ public class Commons
                     Report.Print();
                 }
             }
+
+
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("No se Pudo imrimir.");
+        }
+
+    }
+
+    public void ImprimirProductosCategoria(List<item> ListProduCategoria, ImpresorasNegocio PrintNegoc, PrintQueue Validar)
+    {
+        try
+        {
+
+            var Report = new FastReport.Report();
+            MemoryStream strm = new MemoryStream();
+
+            //var consultaNombre = userdata;// await UserAPI.GetId(new Helios.Seguridad.Business.Entity.Usuario() { IDUsuario = iduser });
+
+
+            //TITULO
+        
+
+                    var pathReport = "";
+
+                    var listGeneral = new List<SpPedidosRest>();
+
+                pathReport = @"formatos\Reports\Printer\infCantidadProductosCategoriasWeb.frx";
+
+
+
+            listGeneral.AddRange(GetProductCate(ListProduCategoria));
+
+
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, pathReport);
+                        Report.Load(path);
+
+            var INgreT = listGeneral.FirstOrDefault().TotalImporte;
+
+            Report.Report.SetParameterValue("Moneda", "S/.");
+            Report.Report.SetParameterValue("ImporteT", INgreT);
+
+
+            Report.RegisterData(listGeneral, "RestPedidos");
+                        Report.Prepare();
+
+            if (Validar.FormatoTipo != "PreImpresionKardex")
+            {
+                DataBand dtfechas = Report.Report.FindObject("dtfechas") as DataBand;
+                dtfechas.Visible = true;
+            }
+
+
+
+            var pdfExport = new FastReport.Export.Pdf.PDFExport();
+                        pdfExport.ShowProgress = false;
+                        pdfExport.Subject = "Subject";
+                        pdfExport.Title = "xxxxxxx";
+                        pdfExport.Compressed = true;
+                        pdfExport.AllowPrint = true;
+                        pdfExport.EmbeddingFonts = true;
+                        Report.Report.Report.Export(pdfExport, strm);
+
+                        pdfExport.Dispose();
+                        strm.Position = 0;
+
+
+                        Report.PrintSettings.Printer = PrintNegoc.relacionImpresora;
+                        int numeroPr = (int)PrintNegoc.numImpresion;
+                        if (PrintNegoc != null)
+                        {
+                            for (int i = 0; i < numeroPr; i++)
+                            {
+                                Report.Report.PrintSettings.ShowDialog = false;
+                                Report.Print();
+                            }
+                        }
+
+
+
+
 
 
         }
@@ -5096,10 +5886,10 @@ public class Commons
                         objCuentaEntrada.DescripcionCaja = item.destino;
                     }
                     objCuentaEntrada.DescripcionCaja = item.destino;
-                    objCuentaEntrada.MontoSolesCaja = item.montoMNSalida.ToString();
+                    objCuentaEntrada.MontoSolesCaja = " - "+ item.montoMNSalida.ToString();
                     listInvoiceEntrada.Add(objCuentaEntrada);
 
-                    TotalIngresos += double.Parse(item.montoMNSalida.ToString());
+                    TotalEgresos += double.Parse(item.montoMNSalida.ToString());
                 }
                 else if (item.nombreCosto == "Entrada")
                 {
@@ -5113,7 +5903,8 @@ public class Commons
                     objCuentaSalida.MontoSolesCajaS = item.montoSoles.ToString();
                     listInvoiceSalida.Add(objCuentaSalida);
 
-                    TotalEgresos += double.Parse(item.montoSoles.ToString());
+                    TotalIngresos += double.Parse(item.montoSoles.ToString());
+                    
                 }
             }
             else//otros pagos
@@ -5130,7 +5921,7 @@ public class Commons
         caja.FechaApertura = fechaApertura;
         caja.FechaCierre = FechaCierre;
 
-        var totalC = TotalEgresos - TotalIngresos;
+        var totalC = TotalIngresos -  TotalEgresos;
         var GeneralTotal = totalC + TotalOtros;
         caja.CierreGeneralDetalle = listInvoiceEntrada;
         caja.CierreGeneralDetalleSalida = listInvoiceSalida;
@@ -5149,17 +5940,216 @@ public class Commons
         return cajaList;
     }
 
-    public List<documentoventaAbarrotesDet> GetProductCate(List<documentoventaAbarrotesDet> ListaProdCat)
+    public List<CajaReport> GetKardexResumen(List<documentoCaja> ListaKard, PrintQueue Printq)
     {
-      
-       
+        var TotalEgresos = 0.0;
+        var TotalIngresos = 0.0;
+        var TotalOtros = 0.0;
+        var TotalOtrosTotal = 0.0;
+        var TotalEfectivo = 0.0;
+        var caja = new CajaReport();
+        var cajaList = new List<CajaReport>();
+        var listInvoiceSalida = new List<CierreGeneralDetalleReportSalida>();
+        var listInvoiceEntrada = new List<CierreGeneralDetalleReport>();
+        var listInvoiceOtros = new List<CierreGeneralDetalleReportOtros>();
+
+
+   
+        var fechaApertura = "";
+        var FechaCierre = "";
+        var ventaEfectivo = 0.00;
+        var FondoIni = 0.00;
+        var otrosD = "";
+        foreach (var item in ListaKard)
+        {
+            var listInvoiceSalidaDetalle = new List<CierreGeneralDetalleReportSalidaDetalle>();
+            var listInvoiceEntradaDetalle = new List<CierreGeneralDetalleReportDetalle>();
+            var listInvoiceOtrosDetalle = new List<CierreGeneralDetalleReportOtrosDetalle>();
+
+            fechaApertura = item.FechaApertura;
+            FechaCierre = item.FechaCierre;
+            if (item.entidadFinanciera == "EP")//efectivo
+            {
+                if (item.nombreCosto == "Salida")
+                {
+                    var objCuentaSalida = new CierreGeneralDetalleReportSalida();
+                   
+                    objCuentaSalida.DescripcionCajaS = item.NombreOperacion;
+                    if (item.destino != "")
+                    {
+                        objCuentaSalida.DescripcionCajaS = item.destino;
+                    }
+
+                    objCuentaSalida.MontoSolesCajaS = " - " + item.montoMNSalida.ToString();
+                  
+
+                    TotalEgresos += double.Parse(item.montoMNSalida.ToString());
+
+
+                    var objCuentaSalidaDetalle = new CierreGeneralDetalleReportSalidaDetalle();
+                    foreach (var itemdet in item.documentoCajaDetalle)
+                    {
+                        objCuentaSalidaDetalle = new CierreGeneralDetalleReportSalidaDetalle();
+                        objCuentaSalidaDetalle.DescripcionCajaSDetalle = itemdet.DescripcionBE;
+                        objCuentaSalidaDetalle.MontoSolesCajaSDetalle = itemdet.montoSoles.GetValueOrDefault().ToString("N2");
+                        listInvoiceSalidaDetalle.Add(objCuentaSalidaDetalle);
+                    }
+
+                    objCuentaSalida.CierreGeneralDetalleSalida_SubDetalle = listInvoiceSalidaDetalle;
+
+                    listInvoiceSalida.Add(objCuentaSalida);
+
+                }
+                else if (item.nombreCosto == "Entrada")
+                {
+                    if (item.NombreOperacion== "Cobro de venta al Contado")
+                    {
+                        //medios de pagos
+                        var objCuentaotros = new CierreGeneralDetalleReportOtros();
+                        objCuentaotros.DescripcionCajaOtros = item.NombreOperacion;
+                        objCuentaotros.MontoSolesCajaOtros = item.montoSoles.ToString();
+                        listInvoiceOtros.Add(objCuentaotros);
+                        ventaEfectivo = double.Parse(item.montoSoles.ToString());
+                        TotalOtros += double.Parse(item.montoSoles.ToString());
+                    }
+                    else
+                    {
+                        //if (item.NombreOperacion == "Cobro de venta al Contado" || item.destino == "")
+                        //{
+                        //    ventaEfectivo = item.montoSoles.ToString();
+                        //}
+                        if (item.destino == "OTRO")
+                        {
+                            otrosD = item.montoSoles.ToString();
+                        }
+                        if (item.destino == "FONDO DE INICIO")
+                        {
+                            FondoIni = double.Parse(item.montoSoles.ToString());
+                        }
+                        var objCuentaEntrada = new CierreGeneralDetalleReport();
+                        objCuentaEntrada.DescripcionCaja = item.NombreOperacion;
+                        if (item.destino != "")
+                        {
+                            objCuentaEntrada.DescripcionCaja = item.destino;
+                        }
+                        objCuentaEntrada.DescripcionCaja = item.destino;
+                        objCuentaEntrada.MontoSolesCaja = item.montoSoles.ToString();
+
+
+                        TotalIngresos += double.Parse(item.montoSoles.ToString());
+
+
+                        var objCuentaIngresoDetalle = new CierreGeneralDetalleReportDetalle();
+                        foreach (var itemdet in item.documentoCajaDetalle)
+                        {
+                            objCuentaIngresoDetalle = new CierreGeneralDetalleReportDetalle();
+                            objCuentaIngresoDetalle.DescripcionCajaDetalle = itemdet.DescripcionBE;
+                            objCuentaIngresoDetalle.MontoSolesCajaDetalle = itemdet.montoSoles.GetValueOrDefault().ToString("N2");
+                            listInvoiceEntradaDetalle.Add(objCuentaIngresoDetalle);
+                        }
+                        objCuentaEntrada.CierreGeneralDetalle_Subdetalle = listInvoiceEntradaDetalle;
+                        listInvoiceEntrada.Add(objCuentaEntrada);
+                    }
+                       
+                }
+            }
+            else//otros pagos
+            {
+                var objCuentaotros = new CierreGeneralDetalleReportOtros();
+                objCuentaotros.DescripcionCajaOtros = item.estado;
+                objCuentaotros.MontoSolesCajaOtros = item.montoUsdTransacc.ToString();
+                listInvoiceOtros.Add(objCuentaotros);
+
+                TotalOtros += double.Parse(item.montoUsdTransacc.ToString());
+
+                //TotalOtrosTotal += double.Parse(item.montoUsdTransacc.ToString());
+            }
+        }
+
+        caja.FechaApertura = fechaApertura;
+        caja.FechaCierre = FechaCierre;
+
+        var totalC = TotalIngresos  - TotalEgresos;
+        var GeneralTotal = totalC + TotalOtros;
+        var TotalV = totalC ;
+        caja.CierreGeneralDetalle = listInvoiceEntrada;
+        caja.CierreGeneralDetalleSalida = listInvoiceSalida;
+        caja.CierreGeneralDetalleOtros = listInvoiceOtros;
+
+        TotalEfectivo = (double.Parse(FondoIni.ToString()) + double.Parse(ventaEfectivo.ToString()) + double.Parse(otrosD)) - TotalEgresos;
+        caja.OtrosEgresos = " - " + TotalEgresos.ToString("N2");
+        caja.OtrosIngresos = TotalIngresos.ToString("N2");
+        caja.CobranzasDeudas = TotalOtros.ToString("N2");//total de otros pagos
+        caja.FondoInicio = totalC.ToString("N2"); //total de egresos e ingresos
+        caja.Total = TotalEfectivo.ToString("N2");
+        caja.Usuario = Printq.UsuarioEnvio;
+        caja.VentaEfectivo = ventaEfectivo.ToString();
+        caja.FondInicialTotal = FondoIni.ToString();
+        caja.OtrosEgresosTotal = otrosD;
+        caja.VentageneralTotal = GeneralTotal.ToString("N2");
+        cajaList.Add(caja);
+
+
+
+        return cajaList;
+    }
+    public List<SpPedidosRest> GetProductCate(List<item> ListaProdCat)
+    {
+        var General = new SpPedidosRest();
+        var listGeneral = new List<SpPedidosRest>();
+
+        var Generaldet = new SpPedidosRestDet();
+        var listGeneraldet = new List<SpPedidosRestDet>();
+
+        var COMBOdet = new SpCombosRest();
+        var listCOMBOdet = new List<SpCombosRest>();
+
+        General.FechaApertura = DateTime.Now.ToString("dd/MM/yyyy");
+        General.Usuario = ListaProdCat.FirstOrDefault().ListProductos.FirstOrDefault().UsuarioBE;
+        var cantidad = 0.00;
+        var TotalImporte = 0.00;
+     
+
         foreach (var det in ListaProdCat)
         {
-          
-        }
-    
+            var CategoriaTotal = 0.00;
+            listCOMBOdet = new List<SpCombosRest>();
+            Generaldet = new SpPedidosRestDet();
+            Generaldet.DescPediDet = det.descripcion;
 
-        return ListaProdCat;
+            foreach (var itemProd in det.ListProductos)
+            {
+                COMBOdet = new SpCombosRest();
+                COMBOdet.NombreCombo = itemProd.nombreItem;
+                COMBOdet.Cantidad = itemProd.monto1.GetValueOrDefault().ToString("N2");
+                var precioC = itemProd.importeMN / itemProd.monto1;
+                COMBOdet.PrecioCombo = precioC.GetValueOrDefault().ToString("N2");
+                COMBOdet.TotalCombo = itemProd.importeMN.GetValueOrDefault().ToString("N2");
+
+                CategoriaTotal = CategoriaTotal + double.Parse(itemProd.importeMN.ToString());
+
+
+                listCOMBOdet.Add(COMBOdet);
+
+                Generaldet.CombosRest = listCOMBOdet;
+            }
+
+            TotalImporte = TotalImporte + CategoriaTotal;
+
+            Generaldet.Importe = CategoriaTotal.ToString("N2");
+
+            listGeneraldet.Add(Generaldet);
+
+            General.PedidosRestDet = listGeneraldet;
+        }
+
+        General.TotalImporte = TotalImporte.ToString("N2");
+
+        listGeneral.Add(General);
+
+
+        return listGeneral;
+
     }
     public string GenerarQrBase64(string texto)
     {

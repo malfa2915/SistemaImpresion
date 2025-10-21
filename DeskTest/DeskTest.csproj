@@ -313,6 +313,7 @@
     <Compile Include="Api\DocumentoVentaDetAPI.cs" />
     <Compile Include="Api\EntidadAPI.cs" />
     <Compile Include="Api\ImpresorasNegocioAPI.cs" />
+    <Compile Include="Api\ImpresorasNegocioDetAPI.cs" />
     <Compile Include="Api\ListCuotasAPI.cs" />
     <Compile Include="Api\PrintQueueAPI.cs" />
     <Compile Include="Form1.cs">
@@ -327,13 +328,17 @@
     <Compile Include="Api\UserAPI.cs" />
     <Compile Include="Models\PrinterPedidosRest\BaseCaja\CajaReport.cs" />
     <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReport.cs" />
+    <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReportDetalle.cs" />
     <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReportOtros.cs" />
+    <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReportOtrosDetalle.cs" />
     <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReportSalida.cs" />
+    <Compile Include="Models\PrinterPedidosRest\BaseCaja\CierreGeneralDetalleReportSalidaDetalle.cs" />
     <Compile Include="Models\PrinterPedidosRest\BaseRest\ReporteRestaurant.cs" />
     <Compile Include="Models\PrinterPedidosRest\Guide\Conductores.cs" />
     <Compile Include="Models\PrinterPedidosRest\Guide\DocumentoGuiaDetalleP.cs" />
     <Compile Include="Models\PrinterPedidosRest\Guide\DocumentoGuiaP.cs" />
     <Compile Include="Models\PrinterPedidosRest\Guide\Placas.cs" />
+    <Compile Include="Models\PrinterPedidosRest\Invoice\Categorias.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\CronogramaPagos.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\CuentaDolares.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\CuentaSoles.cs" />
@@ -346,6 +351,7 @@
     <Compile Include="Models\PrinterPedidosRest\Invoice\DocumentoFactura.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\DocumentoFacturaDetalle.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\DocumentoFacturaDetalleDescuentos.cs" />
+    <Compile Include="Models\PrinterPedidosRest\Invoice\DocumentoFacturaXCategoria.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\NotaCredito.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\SpDocumentoCompra.cs" />
     <Compile Include="Models\PrinterPedidosRest\Invoice\SpDocumentoCompraDetalle.cs" />
@@ -485,6 +491,30 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="formatos\reports\printer\infCantidadProductosCategoriasWeb.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\Caja\infCajasKardexResumen.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printer\InfReporteFactutrasWeb.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_HO.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfDocumentoFacturasWebA5_Matricial_LX350_VE.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfReporteFactutrasWebA4.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printer\InfDocXCategoria.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfDocXCategoriaA4.frx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="formatos\reports\printerSales\InfDocCategoriaPromedioXMesaA4.frx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />

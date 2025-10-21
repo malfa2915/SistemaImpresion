@@ -12,5 +12,7 @@ namespace DeskTest.Models.PrinterPedidosRest.BaseCaja
         public string DescripcionCajaS { get; set; }
         public string MontoSolesCajaS { get; set; }
         public string MontoDolaresCajaS { get; set; }
+
+        public List<CierreGeneralDetalleReportSalidaDetalle> CierreGeneralDetalleSalida_SubDetalle { get; set; }
     }
 }
