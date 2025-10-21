@@ -1,12 +1,15 @@
-﻿using System;
+﻿using Helios.Cont.Business.Entity;
+using System;
 
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-public class DocumentoFactura
-{
+
+    public class DocumentoFacturaXCategoria
+    {
+
     public string SerieFact { get; set; }
     public string NroSerieFact { get; set; }
     public string RucPasajero { get; set; }
@@ -47,21 +50,12 @@ public class DocumentoFactura
     public string DireccionDestino { get; set; }
     public string Servicio { get; set; }
     public string DescTerminos { get; set; }
-    public string color_print { get; set; }
-    public bool? SalesCode { get; set; }
-    public string tipo_documento { get; set; }
-    public string Montoletras { get; set; }
-    public string tasaIgv { get; set; }
-    public string simboloMoneda { get; set; }
-    public string QrImageBase64 { get; set; }
-    public string LogoBase64 { get; set; }
+    public string TotalpromedioTicket { get; set; }
+    public string TotalpromedioAtencion { get; set; }
+    public string TotalVentaReport { get; set; }
 
-    public string RConsumo { get; set; }
-    public string Propina { get; set; }
-
-    public List<Detraccion> Detraccion { get; set; }
     public List<DatosEmpresa> DatosEmpresa { get; set; }
-    public List<DocumentoFacturaDetalle> DocumentoFacturaDetalle { get; set; }
+    public List<Categorias> CategoriasDoc { get; set; }
     public List<CronogramaPagos> CronogramaPagos { get; set; }
     public List<CuentaDolares> CuentaDolares { get; set; }
     public List<CuentaSoles> CuentaSoles { get; set; }
@@ -70,9 +64,6 @@ public class DocumentoFactura
     public List<NotaCredito> NotaCredito { get; set; }
     public List<Cuentas_Cobrar> Cuentas_Cobrar { get; set; }
     public List<spkDocumentoCajaDetalle> DocumentoCajaDetalle { get; set; }
-
-
+    public List<DocumentoFacturaDetalle> DocumentoFacturaDetalle { get; set; }
 }
-
-
 

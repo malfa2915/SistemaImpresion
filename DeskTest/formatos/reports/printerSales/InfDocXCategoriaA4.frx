@@ -1,0 +1,218 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Report ScriptLanguage="CSharp" ReportInfo.Created="09/23/2025 09:23:07" ReportInfo.Modified="10/01/2025 21:42:05" ReportInfo.CreatorVersion="2020.3.7.0">
+  <Dictionary>
+    <BusinessObjectDataSource Name="DocumentoFacturasXCategoria" ReferenceName="DocumentoFacturasXCategoria" DataType="null" Enabled="true">
+      <Column Name="SerieFact" DataType="System.String"/>
+      <Column Name="NroSerieFact" DataType="System.String"/>
+      <Column Name="RucPasajero" DataType="System.String"/>
+      <Column Name="Pasajero" DataType="System.String"/>
+      <Column Name="DireccionPasajero" DataType="System.String"/>
+      <Column Name="RucCliente" DataType="System.String"/>
+      <Column Name="Cliente" DataType="System.String"/>
+      <Column Name="Direccion" DataType="System.String"/>
+      <Column Name="TipoMoneda" DataType="System.String"/>
+      <Column Name="FechaEmision" DataType="System.String"/>
+      <Column Name="FechaVencimiento" DataType="System.String"/>
+      <Column Name="NumeroPedido" DataType="System.String"/>
+      <Column Name="OrdenCompra" DataType="System.String"/>
+      <Column Name="NumeroGuia" DataType="System.String"/>
+      <Column Name="CondicionPago" DataType="System.String"/>
+      <Column Name="OpGratuitas" DataType="System.String"/>
+      <Column Name="OpExonerada" DataType="System.String"/>
+      <Column Name="OpInafecto" DataType="System.String"/>
+      <Column Name="OpGravada" DataType="System.String"/>
+      <Column Name="TotalDescuento" DataType="System.String"/>
+      <Column Name="ISC" DataType="System.String"/>
+      <Column Name="IGV" DataType="System.String"/>
+      <Column Name="ICBPER" DataType="System.String"/>
+      <Column Name="ImporteTotal" DataType="System.String"/>
+      <Column Name="Obsevaciones" DataType="System.String"/>
+      <Column Name="CodQR" DataType="System.String"/>
+      <Column Name="CodBarra" DataType="System.String"/>
+      <Column Name="Vendedor" DataType="System.String"/>
+      <Column Name="Cajero" DataType="System.String"/>
+      <Column Name="Efectivo" DataType="System.String"/>
+      <Column Name="Vuelto" DataType="System.String"/>
+      <Column Name="Asiento" DataType="System.String"/>
+      <Column Name="FechaViaje" DataType="System.String"/>
+      <Column Name="HoraViaje" DataType="System.String"/>
+      <Column Name="Origen" DataType="System.String"/>
+      <Column Name="DireccionOrigen" DataType="System.String"/>
+      <Column Name="Destino" DataType="System.String"/>
+      <Column Name="DireccionDestino" DataType="System.String"/>
+      <Column Name="Servicio" DataType="System.String"/>
+      <Column Name="DescTerminos" DataType="System.String"/>
+      <BusinessObjectDataSource Name="DatosEmpresa" DataType="null" Enabled="true">
+        <Column Name="Ruc" DataType="System.String"/>
+        <Column Name="RazonSocial" DataType="System.String"/>
+        <Column Name="Domicilio" DataType="System.String"/>
+        <Column Name="Establecimiento" DataType="System.String"/>
+        <Column Name="Telefeno" DataType="System.String"/>
+        <Column Name="NombreComercial" DataType="System.String"/>
+        <Column Name="Domicilio02" DataType="System.String"/>
+        <Column Name="Publicidad" DataType="System.String"/>
+        <Column Name="DescripcionFoot03" DataType="System.String"/>
+        <Column Name="logo" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CategoriasDoc" DataType="null" Enabled="true">
+        <Column Name="IdEmpresa" DataType="System.String"/>
+        <Column Name="IdEstablecimiento" DataType="System.String"/>
+        <Column Name="Descripcion" DataType="System.String"/>
+        <Column Name="Tipo" DataType="System.String"/>
+        <Column Name="Estado" DataType="System.String"/>
+        <Column Name="fechaActualizacion" DataType="System.String"/>
+        <BusinessObjectDataSource Name="DocumentoFacturaDetalle" DataType="null" Enabled="true">
+          <Column Name="NroItem" DataType="System.String"/>
+          <Column Name="Codigo" DataType="System.String"/>
+          <Column Name="Descripcion" DataType="System.String"/>
+          <Column Name="Unidad" DataType="System.String"/>
+          <Column Name="Cantidad" DataType="System.String"/>
+          <Column Name="PrecioUnitario" DataType="System.String"/>
+          <Column Name="Descuento" DataType="System.String"/>
+          <Column Name="DescuentoImporte" DataType="System.String"/>
+          <Column Name="Importe" DataType="System.String"/>
+        </BusinessObjectDataSource>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CronogramaPagos" DataType="null" Enabled="true">
+        <Column Name="NroItemCronogramas" DataType="System.String"/>
+        <Column Name="ImporteCronograma" DataType="System.String"/>
+        <Column Name="FechaVencimientoCronograma" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaDolares" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaDolares" DataType="System.String"/>
+        <Column Name="DescripcionCuentaDolares" DataType="System.String"/>
+        <Column Name="DescripcionCCICuentaDolares" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaSoles" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaSoles" DataType="System.String"/>
+        <Column Name="DescripcionCuentaSoles" DataType="System.String"/>
+        <Column Name="DescripcionCCICuentaSoles" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="CuentaSoles_Dolares" DataType="null" Enabled="true">
+        <Column Name="NroItemCuentaSolesDolares" DataType="System.String"/>
+        <Column Name="DescripcionCuenta_Soles" DataType="System.String"/>
+        <Column Name="DescripcionCCICuenta_Soles" DataType="System.String"/>
+        <Column Name="DescripcionCuenta_Dolares" DataType="System.String"/>
+        <Column Name="DescripcionCCICuenta_Dolares" DataType="System.String"/>
+        <Column Name="AdicionalCuentaSoles" DataType="System.String"/>
+        <Column Name="AdicionalCuentaDolares" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="Direcciones" DataType="null" Enabled="true">
+        <Column Name="DirecionCliente" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="NotaCredito" DataType="null" Enabled="true">
+        <Column Name="DescripNC" DataType="System.String"/>
+        <Column Name="MotivoNC" DataType="System.String"/>
+        <Column Name="TipoNC" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="Cuentas_Cobrar" DataType="null" Enabled="true">
+        <Column Name="FechaCC" DataType="System.String"/>
+        <Column Name="TipoCC" DataType="System.String"/>
+        <Column Name="NroDocCC" DataType="System.String"/>
+        <Column Name="ImporteCC" DataType="System.String"/>
+        <Column Name="PagoCC" DataType="System.String"/>
+        <Column Name="DeudaCC" DataType="System.String"/>
+        <Column Name="NroCuotaCC" DataType="System.String"/>
+        <Column Name="FechaPagoCC" DataType="System.String"/>
+        <Column Name="CuotaDescripcionCC" DataType="System.String"/>
+        <Column Name="NumeroSerieCC" DataType="System.String"/>
+        <Column Name="NumeroCC" DataType="System.String"/>
+        <Column Name="SerieCC" DataType="System.String"/>
+        <Column Name="RecibidoCC" DataType="System.String"/>
+        <Column Name="VueltoCC" DataType="System.String"/>
+        <Column Name="TotalCC" DataType="System.String"/>
+        <Column Name="SaldoCC" DataType="System.String"/>
+        <Column Name="EfectivoCC" DataType="System.String"/>
+        <Column Name="DocumentoCC" DataType="System.String"/>
+        <Column Name="OperacionCC" DataType="System.String"/>
+        <Column Name="EntidadCC" DataType="System.String"/>
+        <Column Name="FormaCC" DataType="System.String"/>
+        <Column Name="OtrosCC" DataType="System.String"/>
+        <Column Name="ObervacionCC" DataType="System.String"/>
+      </BusinessObjectDataSource>
+      <BusinessObjectDataSource Name="DocumentoCajaDetalle" DataType="null" Enabled="true">
+        <Column Name="FechaDC" DataType="System.String"/>
+        <Column Name="DetalleitemDC" DataType="System.String"/>
+        <Column Name="MontoSolesDC" DataType="System.String"/>
+        <Column Name="DescripcionBEDC" DataType="System.String"/>
+        <Column Name="DescripcionFiancieraDC" DataType="System.String"/>
+        <Column Name="DocumentoAfectyadoDC" DataType="System.String"/>
+        <Column Name="DocumentoAfectyadoDetDC" DataType="System.String"/>
+      </BusinessObjectDataSource>
+    </BusinessObjectDataSource>
+    <Parameter Name="SimboloMoneda" DataType="System.String"/>
+    <Parameter Name="TotalVenta" DataType="System.String"/>
+  </Dictionary>
+  <ReportPage Name="Page1" RawPaperSize="9" TopMargin="5" BottomMargin="5" Watermark.Font="Arial, 60pt">
+    <PageHeaderBand Name="PageHeader1" Width="718.2" Height="56.7">
+      <TextObject Name="Text82" Left="283.5" Top="9.45" Width="190.89" Height="20.03" Text="REPORTE DE VENTAS" VertAlign="Center" Font="Segoe UI, 12pt, style=Bold"/>
+      <TextObject Name="TxtNumRuc2" Left="255.15" Top="37.8" Width="56.7" Height="18.9" Text="R.U.C." Font="Arial, 11pt, style=Bold"/>
+      <TextObject Name="txtDesRuc2" Left="321.3" Top="37.8" Width="132.3" Height="18.9" Text="[DocumentoFacturasXCategoria.DatosEmpresa.Ruc]" Font="Arial, 12pt, style=Bold"/>
+      <ChildBand Name="CBRasonSocial" Top="59.9" Width="718.2" Height="29.86" Visible="false" CanGrow="true" CanShrink="true" CanBreak="true">
+        <ShapeObject Name="Shape7" Left="13.23" Top="1.51" Width="699.3" Height="28.35" Border.ShadowColor="LightGray" Border.Color="LightGray" Border.Width="0" Fill.Color="LightGray"/>
+        <TextObject Name="Text131" Left="28.35" Top="6.05" Width="659.61" Height="17.01" CanGrow="true" CanShrink="true" Text="[DocumentoFacturasXCategoria.DatosEmpresa.RazonSocial]" HorzAlign="Center" VertAlign="Center" Font="Segoe UI, 9.5pt, style=Bold"/>
+        <ChildBand Name="CbNombreComercial" Top="92.96" Width="718.2" Height="15.12" Visible="false" CanGrow="true" CanShrink="true" CanBreak="true">
+          <TextObject Name="txtNombrecomercial" Left="28.35" Width="680.4" Height="15.12" CanGrow="true" CanShrink="true" Text="[DocumentoFacturasXCategoria.DatosEmpresa.NombreComercial]" HorzAlign="Center" Font="Arial, 8pt"/>
+          <ChildBand Name="CbDireccion" Top="111.28" Width="718.2" Height="18.9" Visible="false" CanGrow="true" CanShrink="true" CanBreak="true">
+            <TextObject Name="Text133" Left="28.35" Top="3.78" Width="680.4" Height="15.12" CanGrow="true" CanShrink="true" Text="[DocumentoFacturasXCategoria.DatosEmpresa.Domicilio]" HorzAlign="Center" Font="Arial, 8pt"/>
+          </ChildBand>
+        </ChildBand>
+      </ChildBand>
+    </PageHeaderBand>
+    <DataBand Name="Data2" Top="133.38" Width="718.2" Height="106.22" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="DocumentoFacturasXCategoria">
+      <TextObject Name="txtFechaAt" Left="15.12" Top="11.34" Width="105.84" Height="10.58" Text="FECHA DE EMISIÓN" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="txtFechaAtDesc" Left="114.16" Top="11.34" Width="113.4" Height="12.85" Text="[DocumentoFacturasXCategoria.FechaEmision]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <TextObject Name="txtMoneda" Left="15.12" Top="26.08" Width="94.5" Height="10.21" Text="COMPROBANTE" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="txtMonedaDesc" Left="114.16" Top="26.08" Width="170.1" Height="10.21" Text="[DocumentoFacturasXCategoria.OrdenCompra]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <TextObject Name="Text1" Left="15.12" Top="41.58" Width="94.5" Height="10.21" Text="SERIE/NUMERO" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text2" Left="114.16" Top="41.58" Width="113.4" Height="10.21" Text="[DocumentoFacturasXCategoria.NroSerieFact]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <TextObject Name="Text3" Left="232.47" Top="54.05" Width="56.7" Height="10.21" Text="CLIENTE" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text4" Left="284.26" Top="54.05" Width="415.8" Height="10.21" Text="[DocumentoFacturasXCategoria.Cliente]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <LineObject Name="Line1" Left="18.9" Top="4.91" Width="680.4" Border.Style="Dash" Diagonal="true"/>
+      <TextObject Name="Text55" Left="15.12" Top="54.05" Width="56.7" Height="10.21" Text="NRO. DOC" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text56" Left="114.16" Top="54.05" Width="113.4" Height="10.21" Text="[DocumentoFacturasXCategoria.RucCliente]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <SubreportObject Name="Subreport1" Left="9.45" Top="96.77" Width="189" Height="9.45" ReportPage="Page2"/>
+      <TextObject Name="Text78" Left="15.12" Top="68.04" Width="103.95" Height="10.21" Text="INFRAESTRUCTURA" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text79" Left="114.16" Top="68.04" Width="170.1" Height="10.21" Text="[DocumentoFacturasXCategoria.Origen]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+      <TextObject Name="Text80" Left="15.12" Top="81.27" Width="103.95" Height="10.21" Text="CANT. COMENSALES" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <TextObject Name="Text81" Left="114.16" Top="81.27" Width="170.1" Height="10.21" Text="[DocumentoFacturasXCategoria.Servicio]" VertAlign="Center" Font="Segoe UI, 7pt, style=Bold"/>
+    </DataBand>
+    <DataBand Name="Data1" Top="242.8" Width="718.2" Height="26.46">
+      <TextObject Name="Text134" Left="393.88" Top="10.96" Width="103.95" Height="10.21" Text="[TotalVenta]" VertAlign="Center" Font="Segoe UI, 11pt, style=Bold"/>
+      <TextObject Name="Text135" Left="364.77" Top="9.45" Width="24.57" Height="17.01" Text="[SimboloMoneda]" Font="Arial, 10pt"/>
+      <TextObject Name="Text136" Left="236.25" Top="9.45" Width="124.74" Height="17.01" Text="TOTAL VENTA&#13;&#10;" Font="Arial, 11.5pt, style=Bold"/>
+    </DataBand>
+    <PageFooterBand Name="PageFooter1" Top="272.46" Width="718.2"/>
+  </ReportPage>
+  <ReportPage Name="Page2" RawPaperSize="9" Watermark.Font="Arial, 60pt">
+    <DataBand Name="Data3" Top="3.2" Width="718.2" Height="28.35" DataSource="CategoriasDoc">
+      <TextObject Name="Text67" Left="104.71" Top="6.05" Width="378" Height="10.21" Text="[DocumentoFacturasXCategoria.CategoriasDoc.Descripcion]" VertAlign="Center" Font="Segoe UI, 8pt, style=Bold"/>
+      <SubreportObject Name="Subreport3" Top="18.9" Width="94.5" Height="9.45" ReportPage="Page4"/>
+      <TextObject Name="Text132" Left="28.35" Top="6.05" Width="75.6" Height="10.21" Text="CATEGORIA:" VertAlign="Center" Font="Segoe UI, 7.5pt"/>
+      <DataHeaderBand Name="DataHeader1" Width="718.2"/>
+    </DataBand>
+    <DataBand Name="Data4" Top="34.75" Width="718.2" Height="26.46">
+      <TextObject Name="Text75" Left="639.58" Top="10.96" Width="75.6" Height="10.21" Text="[DocumentoFacturasXCategoria.ImporteTotal]" VertAlign="Center" Font="Segoe UI, 10pt, style=Bold"/>
+      <TextObject Name="Text77" Left="610.47" Top="9.45" Width="24.57" Height="17.01" Text="[SimboloMoneda]" Font="Arial, 10pt"/>
+      <TextObject Name="txtTotalventa" Left="529.2" Top="9.45" Width="68.04" Height="17.01" Text="TOTAL&#13;&#10;" Font="Arial, 10pt, style=Bold"/>
+    </DataBand>
+  </ReportPage>
+  <ReportPage Name="Page4" RawPaperSize="9" Watermark.Font="Arial, 60pt">
+    <DataBand Name="Data5" Top="22.1" Width="718.2" Height="15.49" CanGrow="true" CanShrink="true" CanBreak="true" DataSource="DocumentoFacturaDetalle">
+      <TextObject Name="Text70" Left="585.9" Top="1.13" Width="49.14" Height="11.34" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturasXCategoria.CategoriasDoc.DocumentoFacturaDetalle.PrecioUnitario]" Font="Arial, 8pt"/>
+      <TextObject Name="Text68" Left="9.45" Top="1.13" Width="531.09" Height="14.36" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturasXCategoria.CategoriasDoc.DocumentoFacturaDetalle.Descripcion]" Font="Arial, 8.5pt, style=Bold"/>
+      <TextObject Name="Text69" Left="542.43" Top="1.13" Width="45.36" Height="11.34" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturasXCategoria.CategoriasDoc.DocumentoFacturaDetalle.Cantidad]" Font="Arial, 8pt"/>
+      <TextObject Name="Text71" Left="640.71" Top="1.13" Width="58.59" Height="11.34" CanGrow="true" CanShrink="true" ShiftMode="WhenOverlapped" Text="[DocumentoFacturasXCategoria.CategoriasDoc.DocumentoFacturaDetalle.Importe]" Font="Arial, 8pt, style=Bold"/>
+      <DataHeaderBand Name="DataHeader3" Width="718.2" Height="18.9">
+        <ShapeObject Name="Shape10" Left="3.78" Top="3.78" Width="699.3" Height="15.12" Border.Color="Gray" Fill.Color="DodgerBlue" Shape="RoundRectangle"/>
+        <LineObject Name="Line23" Left="538.65" Top="3.78" Height="13.23" Border.Color="White" Diagonal="true"/>
+        <LineObject Name="Line24" Left="585.9" Top="3.78" Height="13.23" Border.Color="White" Diagonal="true"/>
+        <LineObject Name="Line27" Left="642.6" Top="3.78" Height="13.23" Border.Color="White" Diagonal="true"/>
+        <TextObject Name="Text110" Left="226.8" Top="5.67" Width="94.5" Height="12.85" Text="DESCRIPCIÓN&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text112" Left="538.65" Top="5.67" Width="47.25" Height="12.85" Text="CANT.&#13;&#10;&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text113" Left="585.9" Top="5.67" Width="56.7" Height="12.85" Text="P. UNIT.&#13;&#10;" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+        <TextObject Name="Text115" Left="637.31" Top="5.67" Width="66.15" Height="12.85" Text="IMPORTE" HorzAlign="Center" Font="Arial, 8pt, style=Bold" TextFill.Color="White"/>
+      </DataHeaderBand>
+    </DataBand>
+  </ReportPage>
+</Report>

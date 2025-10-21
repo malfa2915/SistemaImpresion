@@ -80,7 +80,7 @@ namespace DeskTest
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 13);
             this.label1.TabIndex = 2;
-            this.label1.Text = "Ver. 15.07.2025";
+            this.label1.Text = "Ver. 17.09.2025";
             // 
             // panel1
             // 

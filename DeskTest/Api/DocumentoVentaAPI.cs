@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -199,6 +200,79 @@ public static class DocumentoVentaAPI
         //httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("bearer", Preferences.Get("accesToken", string.Empty));
         var response = await httpClient.GetStringAsync(helpers.url + "api/Sale/Reprint?id=" + id + "&terminos="+ terminos + "&idEstablecimiento="+ Idestablecimiento + "&IdEmpresa=" + empresa);
         return JsonConvert.DeserializeObject<rePrintResponse>(response);
+    }
+
+    public static async Task<List<documentoventaAbarrotes>> PrintDocumentos(documentoventaAbarrotes items)
+    {
+        var httpClient = new HttpClient();
+        var json = JsonConvert.SerializeObject(items);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync(helpers.url + "api/Sale/PrintDocumentos", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonResult = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<documentoventaAbarrotes>>(jsonResult);
+            return result;
+        }
+        else
+        {
+            var responseError = new HttpResponseMessage(HttpStatusCode.NotFound)
+            {
+                Content = new StringContent(string.Format("Verificar los campos")),
+                ReasonPhrase = "Verificar los compos"
+            };
+
+            return null;
+        }
+    }
+
+    public static async Task<List<documentoventaAbarrotes>> PrintDocumentosXCategoria(documentoventaAbarrotes items)
+    {
+        var httpClient = new HttpClient();
+        var json = JsonConvert.SerializeObject(items);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync(helpers.url + "api/Sale/PrintDocumentosXCategoria", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonResult = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<documentoventaAbarrotes>>(jsonResult);
+            return result;
+        }
+        else
+        {
+            var responseError = new HttpResponseMessage(HttpStatusCode.NotFound)
+            {
+                Content = new StringContent(string.Format("Verificar los campos")),
+                ReasonPhrase = "Verificar los compos"
+            };
+
+            return null;
+        }
+    }
+
+
+    public static async Task<List<documentoventaAbarrotes>> PrintPromedioXmesa(documentoventaAbarrotes items)
+    {
+        var httpClient = new HttpClient();
+        var json = JsonConvert.SerializeObject(items);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var response = await httpClient.PostAsync(helpers.url + "api/Sale/SearchProdInfraestrurexMesa", content);
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonResult = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<List<documentoventaAbarrotes>>(jsonResult);
+            return result;
+        }
+        else
+        {
+            var responseError = new HttpResponseMessage(HttpStatusCode.NotFound)
+            {
+                Content = new StringContent(string.Format("Verificar los campos")),
+                ReasonPhrase = "Verificar los compos"
+            };
+
+            return null;
+        }
     }
 
 }

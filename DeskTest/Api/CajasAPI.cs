@@ -40,6 +40,22 @@ namespace DeskTest.Api
             return null;
         }
 
+        public static async Task<List<documentoCaja>> GetKardexReportResumen(documentoCaja item)
+        {
+            var httpClient = new HttpClient();
+            var json = JsonConvert.SerializeObject(item);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await httpClient.PostAsync(helpers.url + "api/DocumentFinance/GetKardexReportResumen", content);
+            if (response.IsSuccessStatusCode)
+            {
+                var jsonResult = await response.Content.ReadAsStringAsync();
+                var result = JsonConvert.DeserializeObject<List<documentoCaja>>(jsonResult);
+                return result;
+            }
+
+            return null;
+        }
+
         public static async Task<cajaUsuario> ReportCierre(cajaUsuario item)
         {
             var httpClient = new HttpClient();
@@ -56,7 +72,7 @@ namespace DeskTest.Api
             return null;
         }
 
-        public static async Task<List<documentoventaAbarrotesDet>> ProductosCategoria(documentoventaAbarrotes venta)
+        public static async Task<List<item>> ProductosCategoria(documentoventaAbarrotes venta)
         {
             var httpClient = new HttpClient();
             var json = JsonConvert.SerializeObject(venta);
@@ -65,7 +81,7 @@ namespace DeskTest.Api
             if (response.IsSuccessStatusCode)
             {
                 var jsonResult = await response.Content.ReadAsStringAsync();
-                var result = JsonConvert.DeserializeObject<List<documentoventaAbarrotesDet>>(jsonResult);
+                var result = JsonConvert.DeserializeObject<List<item>>(jsonResult);
                 return result;
             }
 
