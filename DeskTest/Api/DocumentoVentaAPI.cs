@@ -275,8 +275,8 @@ public static class DocumentoVentaAPI
         }
     }
 
-    #region "Darwin new print"
-    public static async Task<rePrintResponse> directPrintingNew(
+    #region "Darwin"
+    public static async Task<dataPrintPdfModel> directPrintingNew(
         int id_documento,
         string tipo_documento,
         string condicion_pago,
@@ -299,7 +299,7 @@ public static class DocumentoVentaAPI
             "&idEstablecimiento=" + idEstablecimiento +
             "&idEmpresa=" + idEmpresa
             );
-        return JsonConvert.DeserializeObject<rePrintResponse>(response);
+        return JsonConvert.DeserializeObject<dataPrintPdfModel>(response);
     }
     #endregion
 

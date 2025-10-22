@@ -144,11 +144,11 @@ namespace DeskTest
                             {
                                 if (returdelete == true)
                                 {
-                                    var objPrint = new ImpresorasNegocio();
-                                    objPrint.estadoImpresora = "A";
-                                    objPrint.tipoImpresora = "COMPROBANTE";
-                                    objPrint.idEstablecimiento = obj.idEstablecimiento;
-                                    objPrint.idEmpresa = obj.idEmpresa;
+                                    //var objPrint = new ImpresorasNegocio();
+                                    //objPrint.estadoImpresora = "A";
+                                    //objPrint.tipoImpresora = "COMPROBANTE";
+                                    //objPrint.idEstablecimiento = obj.idEstablecimiento;
+                                    //objPrint.idEmpresa = obj.idEmpresa;
 
                                     var id_documento = obj.IdDocumento.GetValueOrDefault();
                                     var tipo_documento = obj.TipoDocumento;
@@ -167,24 +167,30 @@ namespace DeskTest
                                         idEstablecimiento, 
                                         idEmpresa
                                         );
-                                    return;
-                                    //VentaPrintDirect.PrintNegocio = VentaPrintDirect.PrintNegocioLis.Where(s => s.TipoImpresora.ToUpper() == objPrint.tipoImpresora && s.printOutput == obj.Formato).FirstOrDefault();
-                                    //if (VentaPrintDirect.PrintNegocio != null)
-                                    //{
-                                    //    var venta = new documentoventaAbarrotes();
-                                    //    venta.idEmpresa = VentaPrintDirect.idEmpresa;
-                                    //    venta.idEstablecimiento = VentaPrintDirect.idEstablecimiento;
-                                    //    var DatosGen = VentaPrintDirect.DatosGenLis.Where(s => s.tipoImpresion == obj.Formato).FirstOrDefault();
-                                    //    VentaPrintDirect.DatosGen = DatosGen;
-                                    //    if (VentaPrintDirect.PrintNegocio != null && DatosGen != null)
-                                    //    {
-                                    //        commons.ImprimirComprobanteFinalNew(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
-                                    //    }
-                                    //    else
-                                    //    {
-                                    //        MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                    //    }
-                                    //}
+                                    Console.WriteLine(VentaPrintDirect);
+                                    //return;
+                                    if (VentaPrintDirect.impresora_negocio != null && VentaPrintDirect.datos_generales != null)
+                                    {
+                                        if (obj.Formato == "A4")
+                                        {
+                                            //commons.ImprimirComprobanteA4(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
+                                        else if (obj.Formato == "A5")
+                                        {
+                                            //commons.ImprimirComprobanteA5(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
+                                        else
+                                        {
+                                            //commons.ImprimirComprobanteFinal(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        MessageBox.Show("No existe impresora configurada", "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                    }
                                 }
                             }
                             else if (obj.TipoEnvioImpresion == "PrintComprobante")
