@@ -276,7 +276,7 @@ public static class DocumentoVentaAPI
     }
 
     #region "Darwin"
-    public static async Task<dataPrintPdfModel> directPrintingNew(
+    public static async Task<dataPrintPdfModel> directPrinting_ComprobanteVenta(
         int id_documento,
         string tipo_documento,
         string condicion_pago,

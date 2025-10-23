@@ -361,6 +361,10 @@
     <Compile Include="Models\PrinterPedidosRest\SpComplementoRest.cs" />
     <Compile Include="Models\PrinterPedidosRest\SpPedidosRest.cs" />
     <Compile Include="Models\PrinterPedidosRest\SpPedidosRestDet.cs" />
+    <Compile Include="Models\PrintModelsNew\configuracion_inicio.cs" />
+    <Compile Include="Models\PrintModelsNew\documentoPrint.cs" />
+    <Compile Include="Models\PrintModelsNew\documento_venta.cs" />
+    <Compile Include="Models\PrintModelsNew\documento_venta_detalle.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="ico.ico">

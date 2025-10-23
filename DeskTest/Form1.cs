@@ -158,7 +158,7 @@ namespace DeskTest
                                     var formato = obj.Formato;
                                     var tipo_impresora = "COMPROBANTE";
 
-                                    var VentaPrintDirect = await DocumentoVentaAPI.directPrintingNew(
+                                    var printComprobanteVenta = await DocumentoVentaAPI.directPrinting_ComprobanteVenta(
                                         id_documento, 
                                         tipo_documento, 
                                         condicion_pago, 
@@ -167,9 +167,9 @@ namespace DeskTest
                                         idEstablecimiento, 
                                         idEmpresa
                                         );
-                                    Console.WriteLine(VentaPrintDirect);
+                                    Console.WriteLine(printComprobanteVenta);
                                     //return;
-                                    if (VentaPrintDirect.impresora_negocio != null && VentaPrintDirect.datos_generales != null)
+                                    if (printComprobanteVenta.impresora_negocio != null && printComprobanteVenta.datos_generales != null)
                                     {
                                         if (obj.Formato == "A4")
                                         {

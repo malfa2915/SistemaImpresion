@@ -6164,7 +6164,34 @@ public class Commons
             return $"data:image/png;base64,{base64}";
         }
     }
-}
+
+    #region "Darwin"
+    public void ImprimirComprobanteA4_New(dataPrintPdfModel printComprobanteVenta, PrintQueue printRequest)
+    {
+        try
+        {
+            switch (printRequest.TipoNegocio)
+            {
+                case "COMERCIAL":
+                    //ImprimirComprobanteA4_Hotel(printComprobanteVenta, printRequest);
+                    break;
+                default:
+                    MessageBox.Show("No existe configuracuion para "+ printRequest.TipoNegocio, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error_log.txt", ex.ToString());
+            MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+    }
+
+
+    #endregion
+
+    }
 
 
 
