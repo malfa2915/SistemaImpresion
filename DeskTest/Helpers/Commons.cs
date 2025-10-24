@@ -1,9 +1,11 @@
 ﻿using DeskTest.Models.PrinterPedidosRest.BaseCaja;
+using DeskTest.Models.PrintModelsNew;
 using DinkToPdf;
 using FastReport;
 using FastReport.Barcode;
 using FastReport.Table;
 using Helios.Cont.Business.Entity;
+using Helios.Cont.Business.Logic;
 using Helios.Web.Core.Models.Order.PrinterPedidosRest.BaseCaja;
 using Newtonsoft.Json;
 using QRCoder;
@@ -6170,15 +6172,55 @@ public class Commons
     {
         try
         {
-            switch (printRequest.TipoNegocio)
+            //switch (printRequest.TipoNegocio)
+            //{
+            //    case "COMERCIAL":
+            //        //ImprimirComprobanteA4_Hotel(printComprobanteVenta, printRequest);
+            //        break;
+            //    default:
+            //        MessageBox.Show("No existe configuracuion para "+ printRequest.TipoNegocio, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //        break;
+            //}
+
+
+
+            
+
+            var listGeneral = new documentoPrint();
+            var moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "SOLES" : "DOLARES";
+            var simbolo_moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "S/" : "$";
+
+            /* === Empresa === */
+            var datos_empresa = new DatosEmpresa();
+            var datos_generales = printComprobanteVenta.datos_generales;
+            datos_empresa.Ruc = printComprobanteVenta.idEmpresa;
+            datos_empresa.RazonSocial = datos_generales.razonSocial;
+            datos_empresa.Domicilio = datos_generales.direccionEmpresa1;
+            datos_empresa.Domicilio02 = datos_generales.direccionEmpresa2;
+            //Empresa.Telefeno = telefon;
+            //Empresa.Publicidad = p.DatosGen.publicidad2;
+            //Empresa.NombreComercial = p.DatosGen.publicidad1;
+            //Empresa.DescripcionFoot03 = p.DatosGen.publicidad3;
+            var telefonos = "";
+
+            if (datos_generales.telefono4 != null && datos_generales.telefono4.Length > 0)
             {
-                case "COMERCIAL":
-                    //ImprimirComprobanteA4_Hotel(printComprobanteVenta, printRequest);
-                    break;
-                default:
-                    MessageBox.Show("No existe configuracuion para "+ printRequest.TipoNegocio, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    break;
+                telefonos = datos_generales.telefono1 + " / " + datos_generales.telefono2 + " / " + datos_generales.telefono3 + " / " + datos_generales.telefono4;
             }
+            else if (datos_generales.telefono3 != null && datos_generales.telefono3.Length > 0)
+            {
+                telefonos = datos_generales.telefono1 + " / " + datos_generales.telefono2 + " / " + datos_generales.telefono3;
+            }
+            else if (datos_generales.telefono2 != null && datos_generales.telefono2.Length > 0)
+            {
+                telefonos = datos_generales.telefono1 + " / " + datos_generales.telefono2;
+            }
+            else if (datos_generales.telefono1 != null)
+            {
+                telefonos = datos_generales.telefono1;
+            }
+            datos_empresa.Telefeno = telefonos;
+
         }
         catch (Exception ex)
         {

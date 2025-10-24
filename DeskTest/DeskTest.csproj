@@ -370,7 +370,9 @@
     <Content Include="ico.ico">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="libwkhtmltox.dll" />
+    <Content Include="libwkhtmltox.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="print.ico" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -535,7 +537,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Content Include="Sumatra.exe" />
+    <Content Include="Sumatra.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SumatraPDF-settings.txt" />
     <Content Include="Template.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
