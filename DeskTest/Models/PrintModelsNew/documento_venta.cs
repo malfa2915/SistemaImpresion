@@ -9,11 +9,10 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
 
 namespace DeskTest.Models.PrintModelsNew
 {
-    internal class documento_venta
+    public class documento_venta
     {
         public string tipo_Documento { get; set; } // 01=Factura, 03=Boleta, 9907=NF, 07=NC, 08=ND
         public DateTime fecha_emision { get; set; }
-        public string moneda { get; set; } // PEN, USD
         public string serie { get; set; }
         public int numero { get; set; }
         public decimal tasa_igv { get; set; } // % igv

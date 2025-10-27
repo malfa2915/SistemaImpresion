@@ -9,7 +9,7 @@ using static Helios.Cont.Business.Entity.rePrintResponse;
 
 namespace DeskTest.Models.PrintModelsNew
 {
-    internal class documento_venta_detalle
+    public class documento_venta_detalle
     {
         public string nombre_Item { get; set; }
         public string unidad_medida { get; set; }

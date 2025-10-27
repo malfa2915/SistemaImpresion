@@ -523,6 +523,9 @@
     <Content Include="formatos\reports\printerSales\InfDocCategoriaPromedioXMesaA4.frx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="formatos\PrintModelsHtml\PrintA4.cshtml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="packages.config" />
     <Content Include="PedidosTicket.cshtml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

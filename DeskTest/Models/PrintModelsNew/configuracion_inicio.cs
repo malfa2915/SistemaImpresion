@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DeskTest.Models.PrintModelsNew
 {
-    internal class configuracion_inicio
+    public class configuracion_inicio
     {
+        public bool printDireccionEmpresa { get; set; }
+        public bool printAfectoAmazonia { get; set; }
         public string color_print { get; set; }
         public bool? SalesCode { get; set; }
     }

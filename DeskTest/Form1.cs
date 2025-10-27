@@ -174,6 +174,7 @@ namespace DeskTest
                                         if (obj.Formato == "A4")
                                         {
                                             //commons.ImprimirComprobanteA4(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
+                                            commons.ImprimirComprobanteA4_New(printComprobanteVenta, obj);
 
                                         }
                                         else if (obj.Formato == "A5")
