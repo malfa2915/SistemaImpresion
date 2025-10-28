@@ -180,7 +180,7 @@ namespace DeskTest
                                         else if (obj.Formato == "A5")
                                         {
                                             //commons.ImprimirComprobanteA5(VentaPrintDirect, venta.usuarioOperacion, "", venta.cargoOperacion, venta.nombreDistribucion, venta.fechaDoc.ToString(), obj);
-
+                                            commons.ImprimirComprobanteA5_New(printComprobanteVenta, obj);
                                         }
                                         else
                                         {

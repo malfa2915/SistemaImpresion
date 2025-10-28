@@ -35,7 +35,7 @@
         //        minimoUltimaHoja -= 6;
         //    }
         //}
-        minimoUltimaHoja = tieneObservacion ? 23 : 25;
+        minimoUltimaHoja = tieneObservacion ? 22 : 24;
     }
     //para boleta
     if (Model.documento_Venta.tipo_Documento == "03")
@@ -52,7 +52,7 @@
         //{
         //    minimoUltimaHoja = tieneObservacion ? 23 : 25;
         //}
-        minimoUltimaHoja = tieneObservacion ? 23 : 25;
+        minimoUltimaHoja = tieneObservacion ? 22 : 24;
     }
     //para nota de credito
     if (Model.documento_Venta.tipo_Documento == "07")
@@ -103,11 +103,11 @@
 
         if (tieneObservacion)
         {
-            minimoUltimaHoja = tieneCuentas ? 22 : 24;
+            minimoUltimaHoja = tieneCuentas ? 24 : 26;
         }
         else
         {
-            minimoUltimaHoja = tieneCuentas ? 24 : 26;
+            minimoUltimaHoja = tieneCuentas ? 26 : 28;
         }
     }
 
@@ -574,23 +574,30 @@
 			width: 410px;
 		}
 
-			.container__qr-cuentas > div:first-child {
-				width: 450px;
-			}
+            .container__qr-cuentas > div:first-child {
+                /*width: 450px;*/
+                width: 100%;
+                overflow: hidden;
+            }
 
-		.container_qr-imagen {
-			float: left;
-			width: 100px;
-			height: 100px;
-		}
+    .container_qr-imagen {
+        float: left;
+        width: 125px;
+        height: 125px;
+        /*width: 100px;
+        height: 100px;*/
+    }
             .container_qr-imagen img{
                 margin:0;
                 padding:0;
+                margin-top: -10px;
             }
 
             .comprobante-cuenta-info {
                 float: left;
-                padding-left: 50px;
+                /*padding-left: 50px;*/
+                margin-left: 35px;
+                padding-left: 0;
             }
 
 		.comprobante-body {
@@ -634,7 +641,7 @@
 		.comprobante-link-info {
 			clear: both;
 			font-size: 11px;
-			padding-top: 15px;
+			/*padding-top: 15px;*/
 			width: 410px;
 			text-align: start;
 		}
@@ -673,9 +680,14 @@
 				}
 
                 		/* Pie del comprobante */
-		.comprobante-footer-vendedor {
-			text-align: start;
-		}
+    .comprobante-footer-vendedor {
+        text-align: start;
+        /*width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;*/
+        width: 260px;
+        overflow: hidden;
+    }
 
 		.comprobante-footer {
 			border: 1px solid @color;
@@ -690,8 +702,12 @@
 			}
 
 		.comprobante-vendedor-nombre {
-			font-weight: 400;
+			/*font-weight: 400;*/
 		}
+
+        .fw-400 {
+            font-weight: 400;
+        }
 
         /* PARA TABLA CON CUOTAS */
 
@@ -907,7 +923,7 @@
                         <div class="info-factura">
                             <div>
                                 <span class="info-factura__label">Fecha de Emisión:</span><br />
-                                <span class="info-factura__value">@Model.documento_Venta.fecha_emision</span>
+                                <span class="info-factura__value">@Model.documento_Venta.fecha_emision.ToString("dd/MM/yyyy hh:mm tt")</span>
                             </div>
                             <div>
                                 <span class="info-factura__label">Condición de Pago:</span><br />
@@ -996,22 +1012,22 @@
                                         <td class="celda-dato primera-columna">@item.nombre_Item</td>
                                         <td class="celda-dato segunda-columna">@item.unidad_medida</td>
                                         <td class="celda-dato tercera-columna">
-                                            @(item.cantidad == 0 && string.IsNullOrWhiteSpace(item.nombre_Item) ? " " : item.cantidad.ToString("0.##"))
+                                            @(item.cantidad == 0 && string.IsNullOrWhiteSpace(item.nombre_Item) ? " " : item.cantidad.ToString("F2"))
                                         </td>
                                         @*ojo con esta linea *************************************************************************************************** *@
 
                                         <td class="celda-dato cuarta-columna">
                                             @Raw(item.precio == 0 && string.IsNullOrWhiteSpace(item.nombre_Item)
                                                ? "<span style='visibility:hidden'>x</span>"
-                                               : item.precio.ToString("0.00"))
+                                               : item.precio.ToString("F2"))
                                         </td>
 
                                         <td class="celda-dato quinta-columna">
-                                            @(item.descuento_item_monto == 0 ? " " : item.descuento_item_monto.ToString("0.00"))
+                                            @(item.descuento_item_monto == 0 ? " " : item.descuento_item_monto.ToString("F2"))
                                         </td>
 
                                         <td class="celda-dato sexta-columna">
-                                            @(item.monto_base == 0 && string.IsNullOrWhiteSpace(item.nombre_Item) ? " " : (item.monto_base + item.monto_igv).ToString("0.00"))
+                                            @(item.monto_base == 0 && string.IsNullOrWhiteSpace(item.nombre_Item) ? " " : (item.monto_base + item.monto_igv).ToString("F2"))
                                         </td>
 
                                     </tr>
@@ -1037,7 +1053,7 @@
                                     Model.documento_Venta.tipo_Documento == "03" || 
                                     Model.documento_Venta.tipo_Documento == "07")
                                 {
-                                    <img src="@Model.codigo_QR_base64" alt="Código QR" width="100" height="100" />
+                                    <img src="@Model.codigo_QR_base64" alt="Código QR" width="125" height="125" />
                                 }
 
                             </div>
@@ -1104,19 +1120,19 @@
                                     Model.documento_Venta.tipo_Documento == "03" || 
                                     Model.documento_Venta.tipo_Documento == "07")
                                 {
-                                    <tr><td>OP. GRAVADAS</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_gravado</td></tr>
+                                    <tr><td>OP. GRAVADAS</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_gravado.ToString("F2")</td></tr>
                                     <tr><td>OP. GRATUITAS</td><td>@Model.simbolo_moneda</td><td>0.00</td></tr>
-                                    <tr><td>OP. EXONERADAS</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_exonerado</td></tr>
-                                    <tr><td>I.G.V. <strong>@Model.documento_Venta.tasa_igv</strong> %</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_igv</td></tr>
+                                    <tr><td>OP. EXONERADAS</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_exonerado.ToString("F2")</td></tr>
+                                    <tr><td>I.G.V. <strong>@Model.documento_Venta.tasa_igv.ToString("F0")</strong> %</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.monto_igv.ToString("F2")</td></tr>
                                 }
 
-                                <tr><td>DESCUENTO</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.descuento_global_monto.ToString("0.00")</td></tr>
-                                <tr><td><strong>TOTAL VENTA</strong></td><td><strong>@Model.simbolo_moneda</strong></td><td><strong>@Model.documento_Venta.monto_total_venta</strong></td></tr>
+                                <tr><td>DESCUENTO</td><td>@Model.simbolo_moneda</td><td>@Model.documento_Venta.descuento_global_monto.ToString("F2")</td></tr>
+                                <tr><td><strong>TOTAL VENTA</strong></td><td><strong>@Model.simbolo_moneda</strong></td><td><strong>@Model.documento_Venta.monto_total_venta.ToString("F2")</strong></td></tr>
                             </table>
 
                         </div>
                         <div class="comprobante-footer-vendedor">
-                            <strong>Vendedor:</strong> <span class="comprobante-vendedor-nombre">@Model.documento_Venta.cajero_nombre_venta</span>
+                            <strong>Vendedor:</strong> <span class="comprobante-vendedor-nombre fw-400">@Model.documento_Venta.cajero_nombre_venta</span>
                         </div>
                     </div>
                 </div>
@@ -1125,7 +1141,7 @@
                     <div class="comprobante-footer">
                         <div class="comprobante-footer-observacion">
                             <strong>Observaciones:</strong>
-                            <span class="comprobante-vendedor-nombre">
+                            <span class="fw-400">
                                 @(string.IsNullOrWhiteSpace(Model.documento_Venta.glosa) || Model.documento_Venta.glosa == "null" ? "-" : Model.documento_Venta.glosa)
                             </span>
                         </div>

@@ -6186,161 +6186,38 @@ public class Commons
             var listGeneral = new documentoPrint();
             var moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "SOLES" : "DOLARES";
             var simbolo_moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "S/" : "$";
+            var direccion_receptor = printRequest.Direccion;
 
             /* === Empresa === */
             var datos_empresa = new DatosEmpresa();
             var data_datosGen = printComprobanteVenta.datos_generales;
-            datos_empresa.Ruc = printComprobanteVenta.idEmpresa;
-            datos_empresa.RazonSocial = data_datosGen.razonSocial;
-            datos_empresa.Domicilio = data_datosGen.direccionEmpresa1;
-            datos_empresa.Domicilio02 = data_datosGen.direccionEmpresa2;
-            //Empresa.Publicidad = p.DatosGen.publicidad2;
-            //Empresa.NombreComercial = p.DatosGen.publicidad1;
-            //Empresa.DescripcionFoot03 = p.DatosGen.publicidad3;
-            // Crea una lista con todos los posibles teléfonos
-
-            var telefonosList = new List<string>
-            {
-                data_datosGen.telefono1,
-                data_datosGen.telefono2,
-                data_datosGen.telefono3,
-                data_datosGen.telefono4
-            };
-
-            var telefonos = string.Join(" / ", telefonosList.Where(t => !string.IsNullOrWhiteSpace(t)));
-
-            datos_empresa.Telefeno = telefonos;
+            datos_empresa = datosEmpresa(printComprobanteVenta.idEmpresa, data_datosGen);
 
             /* === Logo === */
-            var pathD = "";
-            if (!string.IsNullOrWhiteSpace(data_datosGen.logo))
-            {
-                switch (printComprobanteVenta.idEstablecimiento)
-                {
-                    case 1:
-                        if (data_datosGen.logo == "1") pathD = "C:\\logo\\logo.jpg";
-                        else if (data_datosGen.logo == "2") pathD = "C:\\logo\\logo2.jpg";
-                        else if (data_datosGen.logo == "3") pathD = "C:\\logo\\logo3.jpg";
-                        break;
-                    case 2:
-                        if (data_datosGen.logo == "1") pathD = "C:\\logo\\establecimiento2\\logo.jpg";
-                        else if (data_datosGen.logo == "2") pathD = "C:\\logo\\establecimiento2\\logo2.jpg";
-                        else if (data_datosGen.logo == "3") pathD = "C:\\logo\\establecimiento2\\logo3.jpg";
-                        break;
-                    case 3:
-                        if (data_datosGen.logo == "1") pathD = "C:\\logo\\establecimiento3\\logo.jpg";
-                        else if (data_datosGen.logo == "2") pathD = "C:\\logo\\establecimiento3\\logo2.jpg";
-                        else if (data_datosGen.logo == "3") pathD = "C:\\logo\\establecimiento3\\logo3.jpg";
-                        break;
-                    default:
-                        if (data_datosGen.logo == "1") pathD = "C:\\logo\\establecimiento4\\logo.jpg";
-                        else if (data_datosGen.logo == "2") pathD = "C:\\logo\\establecimiento4\\logo2.jpg";
-                        else if (data_datosGen.logo == "3") pathD = "C:\\logo\\establecimiento4\\logo3.jpg";
-                        break;
-                }
-            }
-            if (File.Exists(pathD))
-            {
-                byte[] imageBytes = File.ReadAllBytes(pathD);
-                string extension = Path.GetExtension(pathD).ToLower(); // .jpg o .png
-                string mimeType = extension == ".png" ? "image/png" : "image/jpeg";
-
-                string base64 = Convert.ToBase64String(imageBytes);
-                string imageBase64 = $"data:{mimeType};base64,{base64}";
-
-                listGeneral.logo_base64 = imageBase64;
-            }
+            listGeneral.logo_base64 = pathLogo(printComprobanteVenta.idEstablecimiento, data_datosGen.logo);
 
             /* === Cuentas Bancarias === */
             var CuentaSoleslist = new List<CuentaSoles>();
             var CuentaDolareslist = new List<CuentaDolares>();
-
-            if (!string.IsNullOrWhiteSpace(data_datosGen.nroCuentaEmpresaSoles))
-            {
-                var cuenta1 = new CuentaSoles
-                {
-                    DescripcionCuentaSoles = data_datosGen.nroCuentaEmpresaSoles
-                };
-                CuentaSoleslist.Add(cuenta1);
-            }
-
-            if (!string.IsNullOrWhiteSpace(data_datosGen.nroCuentaEmpresaSoles2))
-            {
-                var cuenta2 = new CuentaSoles
-                {
-                    DescripcionCuentaSoles = data_datosGen.nroCuentaEmpresaSoles2
-                };
-                CuentaSoleslist.Add(cuenta2);
-            }
-
-            if (!string.IsNullOrWhiteSpace(data_datosGen.nroCuentaEmpresaDolares))
-            {
-                var cuenta1 = new CuentaDolares
-                {
-                    DescripcionCuentaDolares = data_datosGen.nroCuentaEmpresaDolares
-                };
-                CuentaDolareslist.Add(cuenta1);
-            }
-
-            if (!string.IsNullOrWhiteSpace(data_datosGen.nroCuentaEmpresaDolares2))
-            {
-                var cuenta2 = new CuentaDolares
-                {
-                    DescripcionCuentaDolares = data_datosGen.nroCuentaEmpresaDolares2
-                };
-                CuentaDolareslist.Add(cuenta2);
-            }
+            CuentaSoleslist = cuentaSoles(data_datosGen.nroCuentaEmpresaSoles, data_datosGen.nroCuentaEmpresaSoles2);
+            CuentaDolareslist = cuentaDolares(data_datosGen.nroCuentaEmpresaDolares, data_datosGen.nroCuentaEmpresaDolares2);
 
             /* === Configuracion Inicio === */
             var configuracion_inicio = new configuracion_inicio();
             var data_configInicio = printComprobanteVenta.configuracion_inicio;
-
-            configuracion_inicio.printDireccionEmpresa = data_configInicio.printDireccionEmpresa;
-            configuracion_inicio.printAfectoAmazonia = data_configInicio.printAfectoAmazonia;
-            configuracion_inicio.color_print = data_configInicio.color_print;
-            configuracion_inicio.SalesCode = data_configInicio.SalesCode;
+            configuracion_inicio = configInicio(data_configInicio);
 
             /* === Documento Venta === */
             var documento_venta = new documento_venta();
             var data_documento = printComprobanteVenta._documento;
-
-            documento_venta.tipo_Documento = data_documento.tipo_Documento;
-            documento_venta.fecha_emision = data_documento.fecha_emision;
-            documento_venta.serie = data_documento.serie;
-            documento_venta.numero = data_documento.numero;
-            documento_venta.tasa_igv = data_documento.tasa_igv;
-            documento_venta.monto_exonerado = data_documento.monto_exonerado;
-            documento_venta.monto_gravado = data_documento.monto_gravado;
-            documento_venta.monto_inafecto = data_documento.monto_inafecto;
-            documento_venta.monto_igv = data_documento.monto_igv;
-            documento_venta.monto_total_venta = data_documento.monto_total_venta;
-            documento_venta.monto_en_letras = data_documento.monto_en_letras;
-            documento_venta.tipo_documento_receptor = data_documento.tipo_documento_receptor;
-            documento_venta.numero_documento_receptor = data_documento.numero_documento_receptor;
-            documento_venta.razon_social_receptor = data_documento.razon_social_receptor;
-            documento_venta.cajero_nombre_venta = data_documento.cajero_nombre_venta;
-            documento_venta.glosa = data_documento.glosa;
-            documento_venta.tipo_pago = data_documento.tipo_pago;
-            documento_venta.efectivo_recepcionado = data_documento.efectivo_recepcionado;
-            documento_venta.descuento_global_percent = data_documento.descuento_global_percent;
-            documento_venta.descuento_global_monto = data_documento.descuento_global_monto;
+            documento_venta = documentoVenta(data_documento);
 
             /* === Documento Venta Detalle === */
             var documento_venta_detalle_list = new List<documento_venta_detalle>();
             foreach (var item in printComprobanteVenta._documento_detalle)
             {
-                var detalle = new documento_venta_detalle
-                {
-                    nombre_Item = item.nombre_Item,
-                    unidad_medida = item.unidad_medida,
-                    cantidad = item.cantidad,
-                    precio = item.precio,
-                    monto_igv = item.monto_igv,
-                    monto_base = item.monto_base,
-                    descuento_item_percent = item.descuento_item_percent,
-                    descuento_item_monto = item.descuento_item_monto,
-                    codigo_BI = item.CodigoBI
-                };
+                var detalle = new documento_venta_detalle();
+                detalle = documentoVentaDetalle(item);
                 documento_venta_detalle_list.Add(detalle);
             }
 
@@ -6349,7 +6226,6 @@ public class Commons
                        data_documento.monto_total_venta + "|" + data_documento.fecha_emision.ToString("yyyy-MM-dd") + "|" +
                        data_documento.tipo_documento_receptor + "|" + data_documento.numero_documento_receptor;
             string qrBase64 = GenerarQrBase64(textoParaQR);
-            listGeneral.codigo_QR_base64 = qrBase64;
 
             /* === Asignacion de Datos === */
             listGeneral.datos_Empresa = datos_empresa;
@@ -6360,6 +6236,8 @@ public class Commons
             listGeneral.documento_Venta_Detalle = documento_venta_detalle_list;
             listGeneral.moneda = moneda;
             listGeneral.simbolo_moneda = simbolo_moneda;
+            listGeneral.direccion_receptor = direccion_receptor;
+            listGeneral.codigo_QR_base64 = qrBase64;
 
             /* === Impresion === */
             var model = listGeneral;
@@ -6460,11 +6338,338 @@ public class Commons
         }
 
     }
+    public void ImprimirComprobanteA5_New(dataPrintPdfModel printComprobanteVenta, PrintQueue printRequest)
+    {
+        try
+        {
+            //switch (printRequest.TipoNegocio)
+            //{
+            //    case "COMERCIAL":
+            //        //ImprimirComprobanteA4_Hotel(printComprobanteVenta, printRequest);
+            //        break;
+            //    default:
+            //        MessageBox.Show("No existe configuracuion para "+ printRequest.TipoNegocio, "Información", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            //        break;
+            //}
 
+            var listGeneral = new documentoPrint();
+            var moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "SOLES" : "DOLARES";
+            var simbolo_moneda = printComprobanteVenta._documento.moneda.Trim() == "PEN" ? "S/" : "$";
+            var direccion_receptor = printRequest.Direccion;
 
-    #endregion
+            /* === Empresa === */
+            var datos_empresa = new DatosEmpresa();
+            var data_datosGen = printComprobanteVenta.datos_generales;
+            datos_empresa = datosEmpresa(printComprobanteVenta.idEmpresa, data_datosGen);
+
+            /* === Logo === */
+            listGeneral.logo_base64 = pathLogo(printComprobanteVenta.idEstablecimiento, data_datosGen.logo);
+
+            /* === Cuentas Bancarias === */
+            var CuentaSoleslist = new List<CuentaSoles>();
+            var CuentaDolareslist = new List<CuentaDolares>();
+            CuentaSoleslist = cuentaSoles(data_datosGen.nroCuentaEmpresaSoles, data_datosGen.nroCuentaEmpresaSoles2);
+            CuentaDolareslist = cuentaDolares(data_datosGen.nroCuentaEmpresaDolares, data_datosGen.nroCuentaEmpresaDolares2);
+
+            /* === Configuracion Inicio === */
+            var configuracion_inicio = new configuracion_inicio();
+            var data_configInicio = printComprobanteVenta.configuracion_inicio;
+            configuracion_inicio = configInicio(data_configInicio);
+
+            /* === Documento Venta === */
+            var documento_venta = new documento_venta();
+            var data_documento = printComprobanteVenta._documento;
+            documento_venta = documentoVenta(data_documento);
+
+            /* === Documento Venta Detalle === */
+            var documento_venta_detalle_list = new List<documento_venta_detalle>();
+            foreach (var item in printComprobanteVenta._documento_detalle)
+            {
+                var detalle = new documento_venta_detalle();
+                detalle = documentoVentaDetalle(item);
+                documento_venta_detalle_list.Add(detalle);
+            }
+
+            /* === QR === */
+            var textoParaQR = printComprobanteVenta.idEmpresa + "|" + data_documento.tipo_Documento + "|" + data_documento.serie + "|" + data_documento.numero + "|" +
+                       data_documento.monto_total_venta + "|" + data_documento.fecha_emision.ToString("yyyy-MM-dd") + "|" +
+                       data_documento.tipo_documento_receptor + "|" + data_documento.numero_documento_receptor;
+            string qrBase64 = GenerarQrBase64(textoParaQR);
+
+            /* === Asignacion de Datos === */
+            listGeneral.datos_Empresa = datos_empresa;
+            listGeneral.CuentaSoles = CuentaSoleslist;
+            listGeneral.CuentaDolares = CuentaDolareslist;
+            listGeneral.configuracion_Inicio = configuracion_inicio;
+            listGeneral.documento_Venta = documento_venta;
+            listGeneral.documento_Venta_Detalle = documento_venta_detalle_list;
+            listGeneral.moneda = moneda;
+            listGeneral.simbolo_moneda = simbolo_moneda;
+            listGeneral.direccion_receptor = direccion_receptor;
+            listGeneral.codigo_QR_base64 = qrBase64;
+
+            /* === Impresion === */
+            var model = listGeneral;
+
+            //  Leer plantilla Razor
+            string templatePath = Path.Combine(
+                Application.StartupPath,
+                "formatos",
+                "PrintModelsHtml",
+                "PrintA5.cshtml"
+            );
+            
+            if (!File.Exists(templatePath))
+                throw new FileNotFoundException("No se encontró la plantilla:", templatePath);
+
+            string template = File.ReadAllText(templatePath);
+
+            // Usar clave única para RazorEngine
+            string templateKey = Guid.NewGuid().ToString();
+            string htmlResult = Engine.Razor.RunCompile(template, templateKey, null, model);
+
+            //  Configurar el documento PDF 
+            var doc = new HtmlToPdfDocument
+            {
+                GlobalSettings = new GlobalSettings
+                {
+                    ColorMode = DinkToPdf.ColorMode.Color,
+                    Orientation = DinkToPdf.Orientation.Landscape, // ← importante
+                    PaperSize = DinkToPdf.PaperKind.A5,            // ← usa A5 nativo
+                    DPI = 300,
+                    ImageDPI = 300,
+                    Margins = new MarginSettings
+                    {
+                        Top = 10,
+                        Bottom = 10,
+                        Left = 10,
+                        Right = 10
+                    }
+                },
+                Objects = {
+        new ObjectSettings
+        {
+            HtmlContent = htmlResult,
+            WebSettings = new WebSettings
+            {
+                DefaultEncoding = "utf-8",
+                LoadImages = true,
+                PrintMediaType = true,
+                EnableIntelligentShrinking = false,
+                MinimumFontSize = 12
+            }
+                }
+            }
+            };
+
+            //  Convertir a PDF en memoria
+            byte[] pdfBytes = _converter.Convert(doc);
+
+            //  Guardar en archivo temporal
+            string pdfPath = Path.Combine(Application.StartupPath, $"factura_{Guid.NewGuid()}.pdf");
+            File.WriteAllBytes(pdfPath, pdfBytes);
+
+            if (!File.Exists(pdfPath))
+                throw new Exception("No se generó el PDF");
+
+            //  Imprimir con SumatraPDF
+            string exePath = Path.Combine(Application.StartupPath, "Sumatra.exe");
+            if (!File.Exists(exePath))
+                throw new FileNotFoundException("No se encontró SumatraPDF.exe en:", exePath);
+
+            string impresora = printComprobanteVenta.impresora_negocio.relacion_Impresora;
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exePath,
+                Arguments = $"-print-to \"{impresora}\" -print-settings \"paper=A5,landscape,fit\" -silent \"{pdfPath}\"",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = false
+            };
+
+            using (var process = System.Diagnostics.Process.Start(psi))
+            {
+                process?.WaitForExit(10000);
+                process?.Close();
+            }
+
+            Thread.Sleep(500);
+
+            //  Eliminar archivo temporal
+            if (File.Exists(pdfPath))
+                File.Delete(pdfPath);
+        }
+        catch (Exception ex)
+        {
+            File.WriteAllText("error_log.txt", ex.ToString());
+            MessageBox.Show($"Error durante la impresión:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
 
     }
+
+    public DatosEmpresa datosEmpresa(string idEmpresa, dataPrintPdfModel.DatosGeneralesPR dataEmpresa)
+    {
+        var datos_empresa = new DatosEmpresa();
+        datos_empresa.Ruc = idEmpresa;
+        datos_empresa.RazonSocial = dataEmpresa.razonSocial;
+        datos_empresa.Domicilio = dataEmpresa.direccionEmpresa1;
+        datos_empresa.Domicilio02 = dataEmpresa.direccionEmpresa2;
+
+        var telefonosList = new List<string>
+            {
+                dataEmpresa.telefono1,
+                dataEmpresa.telefono2,
+                dataEmpresa.telefono3,
+                dataEmpresa.telefono4
+            };
+
+        var telefonos = string.Join(" / ", telefonosList.Where(t => !string.IsNullOrWhiteSpace(t)));
+
+        datos_empresa.Telefeno = telefonos;
+        return datos_empresa;
+    }
+
+    public string pathLogo(int idEstablecimiento, string logo)
+    {
+        var pathD = "";
+        if (!string.IsNullOrWhiteSpace(logo))
+        {
+            switch (idEstablecimiento)
+            {
+                case 1:
+                    if (logo == "1") pathD = "C:\\logo\\logo.jpg";
+                    else if (logo == "2") pathD = "C:\\logo\\logo2.jpg";
+                    else if (logo == "3") pathD = "C:\\logo\\logo3.jpg";
+                    break;
+                case 2:
+                    if (logo == "1") pathD = "C:\\logo\\establecimiento2\\logo.jpg";
+                    else if (logo == "2") pathD = "C:\\logo\\establecimiento2\\logo2.jpg";
+                    else if (logo == "3") pathD = "C:\\logo\\establecimiento2\\logo3.jpg";
+                    break;
+                case 3:
+                    if (logo == "1") pathD = "C:\\logo\\establecimiento3\\logo.jpg";
+                    else if (logo == "2") pathD = "C:\\logo\\establecimiento3\\logo2.jpg";
+                    else if (logo == "3") pathD = "C:\\logo\\establecimiento3\\logo3.jpg";
+                    break;
+                default:
+                    if (logo == "1") pathD = "C:\\logo\\establecimiento4\\logo.jpg";
+                    else if (logo == "2") pathD = "C:\\logo\\establecimiento4\\logo2.jpg";
+                    else if (logo == "3") pathD = "C:\\logo\\establecimiento4\\logo3.jpg";
+                    break;
+            }
+        }
+        if (File.Exists(pathD))
+        {
+            byte[] imageBytes = File.ReadAllBytes(pathD);
+            string extension = Path.GetExtension(pathD).ToLower(); // .jpg o .png
+            string mimeType = extension == ".png" ? "image/png" : "image/jpeg";
+
+            string base64 = Convert.ToBase64String(imageBytes);
+            string imageBase64 = $"data:{mimeType};base64,{base64}";
+
+            //listGeneral.logo_base64 = imageBase64;
+            return imageBase64;
+        }  
+        return "";
+    }
+
+    public List<CuentaSoles> cuentaSoles(string nroCuentaEmpresaSoles, string nroCuentaEmpresaSoles2)
+    {
+        var CuentaSoleslist = new List<CuentaSoles>();
+        if (!string.IsNullOrWhiteSpace(nroCuentaEmpresaSoles))
+        {
+            var cuenta1 = new CuentaSoles
+            {
+                DescripcionCuentaSoles = nroCuentaEmpresaSoles
+            };
+            CuentaSoleslist.Add(cuenta1);
+        }
+        if (!string.IsNullOrWhiteSpace(nroCuentaEmpresaSoles2))
+        {
+            var cuenta2 = new CuentaSoles
+            {
+                DescripcionCuentaSoles = nroCuentaEmpresaSoles2
+            };
+            CuentaSoleslist.Add(cuenta2);
+        }
+        return CuentaSoleslist;
+    }
+    public List<CuentaDolares> cuentaDolares(string nroCuentaEmpresaDolares, string nroCuentaEmpresaDolares2)
+    {
+        var CuentaDolareslist = new List<CuentaDolares>();
+        if (!string.IsNullOrWhiteSpace(nroCuentaEmpresaDolares))
+        {
+            var cuenta1 = new CuentaDolares
+            {
+                DescripcionCuentaDolares = nroCuentaEmpresaDolares
+            };
+            CuentaDolareslist.Add(cuenta1);
+        }
+        if (!string.IsNullOrWhiteSpace(nroCuentaEmpresaDolares2))
+        {
+            var cuenta2 = new CuentaDolares
+            {
+                DescripcionCuentaDolares = nroCuentaEmpresaDolares2
+            };
+            CuentaDolareslist.Add(cuenta2);
+        }
+        return CuentaDolareslist;
+    }
+    public configuracion_inicio configInicio(dataPrintPdfModel.ConfiguracionIncioPR data_configInicio)
+    {
+        var configuracion_inicio = new configuracion_inicio();
+        configuracion_inicio.printDireccionEmpresa = data_configInicio.printDireccionEmpresa;
+        configuracion_inicio.printAfectoAmazonia = data_configInicio.printAfectoAmazonia;
+        configuracion_inicio.color_print = data_configInicio.color_print;
+        configuracion_inicio.SalesCode = data_configInicio.SalesCode;
+        return configuracion_inicio;
+    }
+    public documento_venta documentoVenta(dataPrintPdfModel.documento data_documento)
+    {
+        var documento_venta = new documento_venta();
+        documento_venta.tipo_Documento = data_documento.tipo_Documento;
+        documento_venta.fecha_emision = data_documento.fecha_emision;
+        documento_venta.serie = data_documento.serie;
+        documento_venta.numero = data_documento.numero;
+        documento_venta.tasa_igv = data_documento.tasa_igv;
+        documento_venta.monto_exonerado = data_documento.monto_exonerado;
+        documento_venta.monto_gravado = data_documento.monto_gravado;
+        documento_venta.monto_inafecto = data_documento.monto_inafecto;
+        documento_venta.monto_igv = data_documento.monto_igv;
+        documento_venta.monto_total_venta = data_documento.monto_total_venta;
+        documento_venta.monto_en_letras = data_documento.monto_en_letras;
+        documento_venta.tipo_documento_receptor = data_documento.tipo_documento_receptor;
+        documento_venta.numero_documento_receptor = data_documento.numero_documento_receptor;
+        documento_venta.razon_social_receptor = data_documento.razon_social_receptor;
+        documento_venta.cajero_nombre_venta = data_documento.cajero_nombre_venta;
+        documento_venta.glosa = data_documento.glosa;
+        documento_venta.tipo_pago = data_documento.tipo_pago;
+        documento_venta.efectivo_recepcionado = data_documento.efectivo_recepcionado;
+        documento_venta.descuento_global_percent = data_documento.descuento_global_percent;
+        documento_venta.descuento_global_monto = data_documento.descuento_global_monto;
+        return documento_venta;
+    }
+    public documento_venta_detalle documentoVentaDetalle(dataPrintPdfModel.documento_detalle data_detalle)
+    {
+        var detalle = new documento_venta_detalle
+        {
+            nombre_Item = data_detalle.nombre_Item,
+            unidad_medida = data_detalle.unidad_medida,
+            cantidad = data_detalle.cantidad,
+            precio = data_detalle.precio,
+            monto_igv = data_detalle.monto_igv,
+            monto_base = data_detalle.monto_base,
+            descuento_item_percent = data_detalle.descuento_item_percent,
+            descuento_item_monto = data_detalle.descuento_item_monto,
+            codigo_BI = data_detalle.CodigoBI
+        };
+        return detalle;
+    }
+      
+    #endregion
+
+}
 
 
 
